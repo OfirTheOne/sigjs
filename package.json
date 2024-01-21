@@ -1,0 +1,57 @@
+{
+  "name": "sig",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.umd.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "lint": "yarn eslint ./src.functional  --ext .ts,.tsx",
+    "format": "yarn prettier --write .",
+    "dev": "vite",
+    "build:lib": "BUILD_TARGET=lib vite build",
+    "dev:app": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "events": "^3.3.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.191",
+    "@types/node": "^18.11.18",
+    "@types/reflect-metadata": "^0.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
+    "csstype": "^3.1.2",
+    "eslint": "^8.38.0",
+    "happy-dom": "^10.3.2",
+    "http-server": "^14.1.1",
+    "lodash": "^4.17.21",
+    "node-sass": "^8.0.0",
+    "mini-css-extract-plugin": "^2.7.3",
+    "prettier": "2.8.7",
+    "sass": "^1.63.6",
+    "serve": "^14.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4",
+    "vite": "^4.4.4",
+    "vite-plugin-dts": "^3.5.3",
+    "vitest": "^0.33.0"
+  }
+}
