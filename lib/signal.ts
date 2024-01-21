@@ -69,6 +69,5 @@ function subscribeSignal<T = unknown>(signal: Signal<T>, callback: Listener<T>):
     return unsubscribe;
 }
 
-
 export type { Signal, Listener };
 export { createSignal, isSignal, subscribeSignal };

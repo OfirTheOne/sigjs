@@ -1,7 +1,6 @@
-import { VirtualElement, Signal, isSignal } from ".";
-import { ELEMENT_TYPE, VirtualElementChild } from "./types";
-
-
+import { Signal, isSignal } from "./signal";
+import { ELEMENT_TYPE } from "./types";
+import type { VirtualElementChild, VirtualElement } from "./types";
 
 function createTextElement(text: string): VirtualElement {
     return {
@@ -60,6 +59,5 @@ function adaptVirtualElementChild(child: VirtualElementChild): VirtualElement {
             throw new Error(`Invalid child type: ${typeof child}`);
     }
 }
-
 
 export { createElement, createTextElement, createSignalElement, createEmptyElement };

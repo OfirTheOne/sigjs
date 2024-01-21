@@ -26,12 +26,8 @@ function renderElement(element: VirtualElement, container: HTMLElement): unknown
     const dom = document.createElement(tagName);
     Object.keys(element.props)
         .filter(isProperty)
-        .forEach(name => {
-            attachPropertyToElement(dom, name, element.props[name]);
-        });
-
+        .forEach(name => attachPropertyToElement(dom, name, element.props[name]));
     element.props.children.forEach(child => render(child, dom));
-
     container.appendChild(dom);
     return dom;
 }
@@ -49,6 +45,5 @@ function renderSignal<T = unknown>(signal: Signal<T>, container: HTMLElement): u
         dom.nodeValue = value as string;
     });
 }
-
 
 export { render };
