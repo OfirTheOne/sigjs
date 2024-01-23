@@ -1,6 +1,10 @@
-import { VirtualElement, Signal, subscribeSignal } from ".";
+import { VirtualElement } from "./types";
+import { Signal, subscribeSignal } from "./signal";
 import { attachPropertyToElement } from "./attach-property";
-import { ElementType, ELEMENT_TYPE } from "./types";
+import { renderIf } from "./control-flow/if";
+import { renderFor } from "./control-flow/for";
+
+import { ElementType, ELEMENT_TYPE, ComponentFunctionWithMeta } from "./types";
 
 function render(element: VirtualElement, container: HTMLElement): unknown {
     switch (element.type as ElementType) {
@@ -14,10 +18,34 @@ function render(element: VirtualElement, container: HTMLElement): unknown {
         case ELEMENT_TYPE.DOM:
             return renderElement(element, container);
         case ELEMENT_TYPE.COMPONENT:
-            throw new Error('Component elements are not supported yet');
+            return renderComponent(element, container);
+        case ELEMENT_TYPE.CONTROL_FLOW:
+            return renderControlFlow(element, container);
         default:
             throw new Error(`Invalid element type: ${element.type}`);
     }
+}
+
+function renderControlFlow(element: VirtualElement, container: HTMLElement): unknown {
+    switch (element.props.controlTag) {
+        case 'IF':
+            return renderIf(element, container, render);
+        case 'FOR':
+            return renderFor(element, container, render);
+        default:
+            throw new Error(`Invalid control flow tag: ${element.props.controlTag}`);
+    }
+}
+
+function renderComponent(componentElement: VirtualElement, container: HTMLElement): unknown {
+    const {component, ...props } = componentElement.props;
+    if(typeof component !== 'function') {
+        throw new Error('Component must be a function');
+    }
+
+    const componentFunction = component as ComponentFunctionWithMeta;
+    const element = componentFunction(props);
+    return render(element, container);
 }
 
 function renderElement(element: VirtualElement, container: HTMLElement): unknown {

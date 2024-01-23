@@ -1,3 +1,6 @@
+import { addGlobal  } from "./global";
+addGlobal();
+
 import { createElement } from "./create-element";
 import { createRoot } from "./create-root";
 import { render } from "./render";

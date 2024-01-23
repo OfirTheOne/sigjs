@@ -1,6 +1,6 @@
 import { Signal, isSignal } from "./signal";
 import { ELEMENT_TYPE } from "./types";
-import type { VirtualElementChild, VirtualElement } from "./types";
+import type { VirtualElementChild, VirtualElement, ComponentFunction } from "./types";
 
 function createTextElement(text: string): VirtualElement {
     return {
@@ -31,8 +31,19 @@ function createEmptyElement(): VirtualElement {
     };
 }
 
-function createElement(type: string, props: object, ...children: VirtualElementChild[]): VirtualElement {
+function createComponentElement(component: ComponentFunction, props: object, ...children: VirtualElementChild[]): VirtualElement {
     return {
+        type: ELEMENT_TYPE.COMPONENT,
+        props: {
+            ...props,
+            component,
+            children: children.map(adaptVirtualElementChild)
+        }
+    };
+}
+
+function createElement(type: string | ComponentFunction, props: object, ...children: VirtualElementChild[]): VirtualElement {
+    return typeof type === 'function' ? createComponentElement(type, props, ...children) : {
         type: ELEMENT_TYPE.DOM, 
         props: {
             ...props,
