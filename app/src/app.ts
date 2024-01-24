@@ -1,7 +1,7 @@
 import './app.scss';
-import { createElement } from '@/index';
-import { createSignal } from '@/signal';
-import { Await, For, If } from '@/control-flow';
+import { createElement } from '@/core/index';
+import { createSignal } from '@/core/signal/signal';
+import { Await, For, If } from '@/core/control-flow';
 
 export function App() {
     return createElement('div', { className: 'container' },

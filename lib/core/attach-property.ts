@@ -1,4 +1,4 @@
-import { isSignal, Signal, subscribeSignal } from "./signal";
+import { isSignal, Signal, subscribeSignal } from "./signal/signal";
 
 function attachPropertyToElement(dom: HTMLElement, name: string, value: unknown): unknown {
     if (name === 'children') {

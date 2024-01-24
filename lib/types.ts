@@ -1,4 +1,4 @@
-import type { Signal } from "./signal";
+import type { Signal } from "./core/signal/signal";
 
 interface ComponentFunction<T = any /* Record<string, unknown> */> {
     (props?: T): VirtualElement;

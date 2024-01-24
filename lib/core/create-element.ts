@@ -1,6 +1,6 @@
-import { Signal, isSignal } from "./signal";
-import { ELEMENT_TYPE } from "./types";
-import type { VirtualElementChild, VirtualElement, ComponentFunction, AsyncComponentFunction } from "./types";
+import { Signal, isSignal } from "./signal/signal";
+import { ELEMENT_TYPE } from "../types";
+import type { VirtualElementChild, VirtualElement, ComponentFunction, AsyncComponentFunction } from "../types";
 
 function createTextElement(text: string): VirtualElement {
     return {

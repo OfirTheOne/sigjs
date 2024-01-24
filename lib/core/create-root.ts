@@ -1,4 +1,4 @@
-import { VirtualElement } from "./types";
+import { VirtualElement } from "../types";
 import { render } from "./render";
 import { getGlobal } from "./global";
 

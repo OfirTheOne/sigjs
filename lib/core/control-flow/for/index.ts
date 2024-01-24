@@ -1,5 +1,5 @@
 import { VirtualElement, VirtualElementChild, ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/types";
-import { isSignal, Signal } from "@/signal";
+import { isSignal, Signal } from "@/core/signal/signal";
 
 type RenderFunction = (
     element: VirtualElement,
