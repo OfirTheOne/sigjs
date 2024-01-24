@@ -1,4 +1,4 @@
-import { createRoot, createElement } from '../../lib/core';
+import { createRoot, createElement } from '@/core';
 import { App } from './app';
 
 createRoot(document.getElementById('root'))
