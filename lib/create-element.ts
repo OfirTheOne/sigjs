@@ -42,8 +42,13 @@ function createComponentElement(component: ComponentFunction | AsyncComponentFun
     };
 }
 
-function createElement(type: string | ComponentFunction, props: object, ...children: VirtualElementChild[]): VirtualElement {
-        // isPromise(type) && type.then((resolvedType) => {
+function createElement(type: string | ComponentFunction): VirtualElement;
+function createElement(type: string | ComponentFunction, props: object, ...children: VirtualElementChild[]): VirtualElement
+function createElement(
+    type: string | ComponentFunction, 
+    props: object | undefined = {}, 
+    ...children: VirtualElementChild[]
+): VirtualElement {
         return typeof type === 'function' ? createComponentElement(type, props, ...children) : {
         type: ELEMENT_TYPE.DOM, 
         props: {
