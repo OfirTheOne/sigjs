@@ -8,15 +8,17 @@ type RenderFunction = (
 
 interface AwaitProps {
     fallback: VirtualElement,
-    component: AsyncComponentFunction,
 }
 
-function Await(props: AwaitProps): VirtualElement {
+
+
+function Await(component: AsyncComponentFunction, props: AwaitProps): VirtualElement {
     return {
         type: ELEMENT_TYPE.CONTROL_FLOW,
         props: {
             children: [],
             ...props,
+            component,
             controlTag: CONTROL_FLOW_TAG.AWAIT,
         }
     };
@@ -27,8 +29,12 @@ function renderAwait(
     container: HTMLElement, 
     render: RenderFunction
 ): HTMLElement | Text {
-    const { fallback, component } = (element.props as unknown as AwaitProps);
-    const fallbackDom = render(fallback, container)
+    const component = element.props.component as AsyncComponentFunction;
+    if (typeof component !== 'function') {
+        throw new Error(`Invalid component type: ${component}`);
+    }
+    const { fallback } = (element.props as unknown as AwaitProps);
+    const fallbackDom = render(fallback, container);
     container.appendChild(fallbackDom);
     Promise.resolve(component())
         .then((componentElement) => {
