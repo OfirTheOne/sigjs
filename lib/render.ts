@@ -1,33 +1,39 @@
-import { VirtualElement } from "./types";
-import { Signal, subscribeSignal } from "./signal";
+import type { VirtualElement, ComponentFunctionWithMeta, ElementType } from "./types";
+import type { Signal } from "./signal";
+import { subscribeSignal } from "./signal";
 import { attachPropertyToElement } from "./attach-property";
 import { renderIf } from "./control-flow/if";
 import { renderFor } from "./control-flow/for";
+import { renderAwait } from "./control-flow/await";
+import { ELEMENT_TYPE } from "./types";
 
-import { ElementType, ELEMENT_TYPE, ComponentFunctionWithMeta } from "./types";
-
-
-function renderGlue(dom: Node, container: HTMLElement) {
-    container.appendChild(dom);
+function rootRender(
+    element: VirtualElement,
+    container: HTMLElement,
+): HTMLElement | Text {
+    const dom = render(element, container);
+    if (dom.parentElement !== container) {
+        container.appendChild(dom);
+    }
     return dom;
 }
 
 function render(
-        element: VirtualElement, 
-        container: HTMLElement,
-    ): HTMLElement | Text {
+    element: VirtualElement,
+    container: HTMLElement,
+): HTMLElement | Text {
     switch (element.type as ElementType) {
-        case ELEMENT_TYPE.TEXT:
-            return renderText(element.props.nodeValue as string, container);
-        case ELEMENT_TYPE.SIGNAL:
-            return renderSignal(element.props.signal as Signal, container);
-        case ELEMENT_TYPE.EMPTY:
+        case ELEMENT_TYPE.TEXT: /* edge node */
+            return renderText(element.props.nodeValue as string);
+        case ELEMENT_TYPE.SIGNAL: /* edge node */
+            return renderSignal(element.props.signal as Signal);
+        case ELEMENT_TYPE.EMPTY: /* edge node */
             return container;
-        case ELEMENT_TYPE.DOM:
-            return renderElement(element, container);
-        case ELEMENT_TYPE.COMPONENT:
+        case ELEMENT_TYPE.DOM: /* non edge node - internally glue any child nodes */
+            return renderElement(element);
+        case ELEMENT_TYPE.COMPONENT: /* non edge node */
             return renderComponent(element, container);
-        case ELEMENT_TYPE.CONTROL_FLOW:
+        case ELEMENT_TYPE.CONTROL_FLOW: /* non edge node - internally glue any child nodes */
             return renderControlFlow(element, container);
         default:
             throw new Error(`Invalid element type: ${element.type}`);
@@ -35,7 +41,7 @@ function render(
 }
 
 function renderControlFlow(
-    element: VirtualElement, 
+    element: VirtualElement,
     container: HTMLElement
 ): HTMLElement | Text {
     switch (element.props.controlTag) {
@@ -43,59 +49,61 @@ function renderControlFlow(
             return renderIf(element, container, render);
         case 'FOR':
             return renderFor(element, container, render);
+        case 'AWAIT':
+            return renderAwait(element, container, render);
         default:
             throw new Error(`Invalid control flow tag: ${element.props.controlTag}`);
     }
 }
 
 function renderComponent(
-    componentElement: VirtualElement, 
+    componentElement: VirtualElement,
     container: HTMLElement,
 ): HTMLElement | Text {
-    const {component, ...props } = componentElement.props;
-    if(typeof component !== 'function') {
+    const { component, ...props } = componentElement.props;
+    if (typeof component !== 'function') {
         throw new Error('Component must be a function');
     }
 
     const componentFunction = component as ComponentFunctionWithMeta;
     const element = componentFunction(props);
-    return render(element, container);
+    const domElement = render(element, container);
+    return domElement;
 }
 
 function renderElement(
-    element: VirtualElement, 
-    container: HTMLElement,
+    element: VirtualElement,
 ): HTMLElement {
     const isProperty = (key: string) => key !== 'children';
-    const { tagName, children, ...props} = element.props;
+    const { tagName, children, ...props } = element.props;
     const dom = document.createElement(tagName as string);
     Object.keys(props)
         .filter(isProperty)
         .forEach(name => attachPropertyToElement(dom, name, props[name]));
-    children.forEach(child => render(child, dom));
-    renderGlue(dom, container);
+    children.forEach(child => {
+        const childDom = render(child, dom);
+        if (childDom.parentElement !== dom) {
+            dom.appendChild(childDom);
+        }
+    });
     return dom;
 }
 
 function renderText(
-    text: string, 
-    container: HTMLElement,
+    text: string,
 ): HTMLElement | Text {
     const dom = document.createTextNode(text);
-    renderGlue(dom, container);
     return dom;
 }
 
 function renderSignal<T = unknown>(
-    signal: Signal<T>, 
-    container: HTMLElement,
+    signal: Signal<T>,
 ): Text {
     const dom = document.createTextNode(signal.value as string);
-    renderGlue(dom, container);
     subscribeSignal(signal, (value: unknown) => {
         dom.nodeValue = value as string;
     });
     return dom;
 }
 
-export { render, renderGlue };
+export { rootRender as render };
