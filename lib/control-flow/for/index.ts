@@ -24,27 +24,29 @@ function renderFor(
     element: VirtualElement, 
     container: HTMLElement, 
     render: ((element: VirtualElement, container: HTMLElement) => unknown)
-): void {
+): HTMLElement | Text {
     const { list, factory } = (element.props as unknown as ForProps);
-    const placeholder = document.createElement('for-ph');
-    container.appendChild(placeholder);
+    const placeholderDom = document.createElement('for-ph');
+    container.appendChild(placeholderDom);
     const factoryFn = typeof factory === 'function' ? factory : () => factory;
-    while (placeholder.lastChild) {
-        placeholder.lastChild.remove();
+    // const indexItems = new Map<string, >()
+    while (placeholderDom.lastChild) {
+        placeholderDom.lastChild.remove();
     }
     if (!isSignal<Array<unknown>>(list)) {
         const elements = list.map(factoryFn);
-        elements.forEach(element => render(element, placeholder));
+        elements.forEach(element => render(element, placeholderDom));
     } else {
         const listSignal = list;
         listSignal.subscribe((list) => {
-            while (placeholder.lastChild) {
-                placeholder.lastChild.remove();
+            while (placeholderDom.lastChild) {
+                placeholderDom.lastChild.remove();
             }
             const elements = list.map(factoryFn);
-            elements.forEach(element => render(element, placeholder));
+            elements.forEach(element => render(element, placeholderDom));
         });
     }
+    return container;
 }
 
 export type { ForProps };

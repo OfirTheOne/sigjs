@@ -1,6 +1,13 @@
 import { Signal, isSignal } from "@/signal";
 import { VirtualElement, ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/types";
 
+
+type RenderFunction = (
+    element: VirtualElement, 
+    container: HTMLElement,
+    glue: (dom: Node, container: HTMLElement) => HTMLElement
+) => HTMLElement | Text;
+
 interface IfProps {
     condition: Signal<any>;
     then: VirtualElement;
@@ -22,8 +29,8 @@ customElements.define('if-ph', class extends HTMLElement {});
 function renderIf(
     element: VirtualElement, 
     container: HTMLElement, 
-    render: ((element: VirtualElement, container: HTMLElement) => unknown)
-): unknown {
+    render: RenderFunction
+): HTMLElement | Text {
     const { condition, then, fallback } = (element.props as unknown as IfProps);
     const placeholder = document.createElement('if-ph');
     if (!isSignal(condition)) {
@@ -34,9 +41,9 @@ function renderIf(
         conditionSignal.subscribe((conditionValue) => {
             placeholder.childNodes.forEach(child => child.remove());
             if (conditionValue) {
-                return render(then, placeholder);
+                return render(then, placeholder, (() => ({}) as any));
             } else if (fallback) {
-                return render(fallback, placeholder);
+                return render(fallback, placeholder, (() => ({}) as any));
             } else {
                 return container;
             }
