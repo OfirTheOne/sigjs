@@ -1,11 +1,9 @@
 import { Signal, isSignal } from "@/signal";
 import { VirtualElement, ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/types";
 
-
 type RenderFunction = (
     element: VirtualElement, 
     container: HTMLElement,
-    glue: (dom: Node, container: HTMLElement) => HTMLElement
 ) => HTMLElement | Text;
 
 interface IfProps {
@@ -33,22 +31,23 @@ function renderIf(
 ): HTMLElement | Text {
     const { condition, then, fallback } = (element.props as unknown as IfProps);
     const placeholder = document.createElement('if-ph');
-    if (!isSignal(condition)) {
-        return container;
-    } else {
+    if (isSignal(condition)) {
         const conditionSignal = condition;
         container.appendChild(placeholder);
         conditionSignal.subscribe((conditionValue) => {
             placeholder.childNodes.forEach(child => child.remove());
             if (conditionValue) {
-                return render(then, placeholder, (() => ({}) as any));
+                const thenElementDom = render(then, placeholder);
+                placeholder.appendChild(thenElementDom);
             } else if (fallback) {
-                return render(fallback, placeholder, (() => ({}) as any));
+                const fallbackElementDom = render(fallback, placeholder);
+                placeholder.appendChild(fallbackElementDom);
             } else {
                 return container;
             }
         });
     }
+    return placeholder;
 }
 
 export type { IfProps };

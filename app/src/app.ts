@@ -1,8 +1,7 @@
 import './app.scss';
 import { createRoot, createElement } from '../../lib/index';
 import { createSignal } from '../../lib/index';
-import { For, If } from '@/control-flow';
-
+import { Await, For, If } from '@/control-flow';
 
 
 createRoot(document.getElementById('root')).render(
@@ -14,6 +13,7 @@ createRoot(document.getElementById('root')).render(
             'nunc sapien aliquet urna, sed aliquam nisl nunc sed nisl.'
         ),
         createElement('a', { className: 'link', href: 'https://google.com' }, 'Google'),
+        Await({ component: AsyncUser, fallback: createElement('p', {}, 'Loading...')}),
         createElement(Counter, { title: 'Counter 1'}),
         createElement(Counter, { title: 'Counter 2'}),
     )
@@ -33,12 +33,30 @@ function Counter({ title } : { title: string }) {
     });
     return (
         createElement('div', {},
-            createElement('p', {}, `${title}: `,count, ' is ', className), // Display the current count
-            createElement('button', { onClick: () => setCount(count.value + 1) }, 'Increment count'), // Button to increment the count
+            createElement('p', {}, `${title}: `,count, ' is ', className),
+            createElement('button', { onClick: () => setCount(count.value + 1) }, 'Increment count'),
             createElement('div', {},
-                If({ condition: count, then: createElement('p', {}, 'Count is not zero') }),
-                For({ list, factory: (item) => createElement('p', {}, item) }),
+                If({ 
+                    condition: count, 
+                    then: createElement('p', {}, 'Count is not zero') 
+                }),
+                For({ 
+                    list, 
+                    factory: (item) => createElement('p', {}, item) 
+                }),
             )
         )
     );
 }
+
+
+function delay (ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function AsyncUser() {
+    await delay(1000);
+    return createElement('div', {},
+        createElement('p', {}, 'User name: ', 'John Doe'),
+    );
+} 

@@ -1,6 +1,6 @@
 import { Signal, isSignal } from "./signal";
 import { ELEMENT_TYPE } from "./types";
-import type { VirtualElementChild, VirtualElement, ComponentFunction } from "./types";
+import type { VirtualElementChild, VirtualElement, ComponentFunction, AsyncComponentFunction } from "./types";
 
 function createTextElement(text: string): VirtualElement {
     return {
@@ -31,7 +31,7 @@ function createEmptyElement(): VirtualElement {
     };
 }
 
-function createComponentElement(component: ComponentFunction, props: object, ...children: VirtualElementChild[]): VirtualElement {
+function createComponentElement(component: ComponentFunction | AsyncComponentFunction, props: object, ...children: VirtualElementChild[]): VirtualElement {
     return {
         type: ELEMENT_TYPE.COMPONENT,
         props: {
@@ -43,7 +43,8 @@ function createComponentElement(component: ComponentFunction, props: object, ...
 }
 
 function createElement(type: string | ComponentFunction, props: object, ...children: VirtualElementChild[]): VirtualElement {
-    return typeof type === 'function' ? createComponentElement(type, props, ...children) : {
+        // isPromise(type) && type.then((resolvedType) => {
+        return typeof type === 'function' ? createComponentElement(type, props, ...children) : {
         type: ELEMENT_TYPE.DOM, 
         props: {
             ...props,
