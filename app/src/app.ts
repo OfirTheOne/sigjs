@@ -1,10 +1,10 @@
 import './app.scss';
-import { createRoot, createElement } from '@/index';
+import { createElement } from '@/index';
 import { createSignal } from '@/signal';
 import { Await, For, If } from '@/control-flow';
 
-createRoot(document.getElementById('root')).render(
-    createElement('div', { className: 'container' },
+export function App() {
+    return createElement('div', { className: 'container' },
         createElement('h1', { className: 'title' }, 'Hello World'),
         createElement('p', { className: 'text' }, 
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' + 
@@ -15,8 +15,8 @@ createRoot(document.getElementById('root')).render(
         Await(AsyncUser, { fallback: createElement('p', {}, 'Loading...') }),
         createElement(Counter, { title: 'Counter 1'}),
         createElement(Counter, { title: 'Counter 2'}),
-    )
-);
+    );
+}
 
 function Counter({ title } : { title: string }) {
     const [count, setCount] = createSignal(0);
