@@ -1,6 +1,6 @@
-import { VirtualElement } from "../types";
+import { VirtualElement } from "../../types";
+import { setRenderedRoot, getGlobal, addRoot  } from "../global";
 import { render } from "./render";
-import { getGlobal } from "./global";
 
 interface RootElement {
     render: (element: VirtualElement) => void;
@@ -11,18 +11,20 @@ interface RootElementWithMetadata extends RootElement {
     id: string;
 }
 
-
 function createRoot(domElement?: HTMLElement | null): RootElement {
+    const rootId = `[[r-${Object.keys(getGlobal().roots).length}]]`;
     const root: RootElementWithMetadata = {
-        id: `[[r-${getGlobal().roots.length}]]`,
+        id: rootId,
         domElement,
         render(element: VirtualElement) {
             if (!domElement) {
                 throw new Error('No root element provided');
             }
+            setRenderedRoot(root.id);
             render(element, domElement);
         }
     };
+    addRoot(root);
     return root;
 }
 

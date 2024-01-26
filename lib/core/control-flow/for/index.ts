@@ -1,5 +1,5 @@
 import { VirtualElement, VirtualElementChild, ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/types";
-import { isSignal, Signal } from "@/core/signal/signal";
+import { isSignal, Signal, subscribeSignal } from "@/core/signal";
 
 type RenderFunction = (
     element: VirtualElement,
@@ -45,16 +45,15 @@ function renderFor(
         placeholderDom.lastChild.remove();
     }
     if (!isSignal<Array<unknown>>(list)) {
-        const elements = list.map(factoryFn);
-        elements.forEach(element => render(element, placeholderDom));
+        const childElements = list.map(factoryFn);
+        childElements.forEach(childElement => render(childElement, placeholderDom));
     } else {
         const listSignal = list;
-        listSignal.subscribe((list) => {
+        subscribeSignal(listSignal, (list) => {
             while (placeholderDom.lastChild) {
                 placeholderDom.lastChild.remove();
             }
             const elementsDom = list.map((item, i) => {
-                factoryFn
                 const indexValue = indexFn(item, i);
                 const indexItem = indexItems.get(indexValue);
                 if (indexItem) {

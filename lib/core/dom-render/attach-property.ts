@@ -1,4 +1,5 @@
-import { isSignal, Signal, subscribeSignal } from "./signal/signal";
+import { ElementRef } from "@/types";
+import { isSignal, Signal, subscribeSignal } from "../signal";
 
 function attachPropertyToElement(dom: HTMLElement, name: string, value: unknown): unknown {
     if (name === 'children') {
@@ -7,6 +8,16 @@ function attachPropertyToElement(dom: HTMLElement, name: string, value: unknown)
     if (name === 'className') {
         name = 'class';
     }
+    if(name === 'ref') {
+        if(typeof value === 'function') {
+            value(dom);
+            return;
+        } else if(typeof value === 'object') {
+            (value as ElementRef).current = dom;
+            return;
+        }
+    }
+
     if (isSignal(value)) {
         return attachSignalToElement(value, dom, name);
     }
@@ -38,6 +49,7 @@ function attachSignalToElement<T = unknown>(
     element: HTMLElement, 
     property: string
 ): unknown {
+    element.setAttribute(`[sid:${property}]`, signal.id);
     return subscribeSignal(signal, (value: unknown) => {
         attachPropertyToElement(element, property, value);
     });

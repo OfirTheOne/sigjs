@@ -1,20 +1,20 @@
 import './app.scss';
-import { createElement } from '@/core/index';
+import { element } from '@/core/index';
 import { createSignal } from '@/core/signal/signal';
 import { Await, For, If } from '@/core/control-flow';
 
-export function App() {
-    return createElement('div', { className: 'container' },
-        createElement('h1', { className: 'title' }, 'Hello World'),
-        createElement('p', { className: 'text' }, 
+export function App2() {
+    return element('div', { className: 'container' },
+        element('h1', { className: 'title' }, 'Hello World'),
+        element('p', { className: 'text' }, 
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' + 
             'Nullam auctor, nisl eget ultricies aliquam, ' + 
             'nunc sapien aliquet urna, sed aliquam nisl nunc sed nisl.'
         ),
-        createElement('a', { className: 'link', href: 'https://google.com' }, 'Google'),
-        Await(AsyncUser, { fallback: createElement('p', {}, 'Loading...') }),
-        createElement(Counter, { title: 'Counter 1'}),
-        createElement(Counter, { title: 'Counter 2'}),
+        element('a', { className: 'link', href: 'https://google.com' }, 'Google'),
+        Await(AsyncUser, { fallback: element('p', {}, 'Loading...') }),
+        element(Counter, { title: 'Counter 1'}),
+        element(Counter, { title: 'Counter 2'}),
     );
 }
 
@@ -31,17 +31,17 @@ function Counter({ title } : { title: string }) {
         return list;
     });
     return (
-        createElement('div', {},
-            createElement('p', {}, `${title}: `,count, ' is ', className),
-            createElement('button', { onClick: () => setCount(count.value + 1) }, 'Increment count'),
-            createElement('div', {},
+        element('div', {},
+            element('p', {}, `${title}: `,count, ' is ', className),
+            element('button', { onClick: () => setCount(count.value + 1) }, 'Increment count'),
+            element('div', {},
                 If({ 
                     condition: count, 
-                    then: createElement('p', {}, 'Count is not zero') 
+                    then: element('p', {}, 'Count is not zero') 
                 }),
                 For({ 
                     list, 
-                    factory: (item) => createElement('p', {}, item) 
+                    factory: (item) => element('p', {}, item) 
                 }),
             )
         )
@@ -50,8 +50,8 @@ function Counter({ title } : { title: string }) {
 
 async function AsyncUser() {
     await delay(5000);
-    return createElement('div', {},
-        createElement('p', {}, 'User name: ', 'John Doe'),
+    return element('div', {},
+        element('p', {}, 'User name: ', 'John Doe'),
     );
 } 
 
@@ -59,3 +59,38 @@ function delay (ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+export function App() {
+    const [searchInput, setSearchInput] = createSignal('');
+    const [users,] = createSignal(['John', 'Jane', 'Doe']);
+    const [filteredUsers,] = createSignal<string[]>(users());
+
+    filteredUsers.link(searchInput, (searchInputValue) => {
+        return users().filter(user => user.includes(searchInputValue));
+    });
+
+    return element('div', { className: 'container', },
+        element('input', { type: 'checkbox', hidden: true, id: "menu-button" }),
+        element('label', { for: "menu-button", className: 'toggle-menu' }, 'Toggle Menu'),
+        element('div', { className: 'menu' },
+            'Menu content...'
+        ),
+
+        element('input', { 
+            type: 'text', 
+            value: searchInput(), 
+            onInput: (event: Event) => setSearchInput((event.target as HTMLInputElement).value) 
+        }),
+        For({ 
+            list: filteredUsers, 
+            factory: (user) => element('p', {}, user), 
+            index: (user, i) => `${user}-${i}`
+        }),
+    );
+}
+
+
+`
+<div>
+    <p> {#sid:10002} </p>
+</div>
+`

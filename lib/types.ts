@@ -1,4 +1,4 @@
-import type { Signal } from "./core/signal/signal";
+import type { Signal } from "./core/signal";
 
 interface ComponentFunction<T = any /* Record<string, unknown> */> {
     (props?: T): VirtualElement;
@@ -23,6 +23,10 @@ interface VirtualElement {
     };
 }
 
+interface ElementRef {
+    current?: HTMLElement;
+}
+
 const ELEMENT_TYPE = {
     DOM: 'DOM_ELEMENT',
     TEXT: 'TEXT_ELEMENT',
@@ -33,6 +37,10 @@ const ELEMENT_TYPE = {
 } as const;
 
 type ElementType = typeof ELEMENT_TYPE[keyof typeof ELEMENT_TYPE];
+
+type CommonProps = {
+    ref?: ElementRef;
+};
 
 const CONTROL_FLOW_TAG = {
     IF: 'IF',
@@ -45,6 +53,8 @@ type ControlFlowTag = typeof CONTROL_FLOW_TAG[keyof typeof CONTROL_FLOW_TAG];
 export type { 
     VirtualElement, 
     VirtualElementChild, 
+    ElementRef,
+    CommonProps,
     ElementType, 
     ControlFlowTag, 
     ComponentFunction, 

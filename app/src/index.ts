@@ -1,7 +1,5 @@
-import { createRoot, createElement } from '@/core';
+import { createRoot, element } from '@/core';
 import { App } from './app';
 
 createRoot(document.getElementById('root'))
-    .render(
-        createElement(App)
-    );
+    .render(element(App));

@@ -1,14 +1,10 @@
-import { addGlobal  } from "./global";
-addGlobal();
-
-import { createElement } from "./create-element";
-import { createRoot } from "./create-root";
-import { render } from "./render";
-import { Signal, isSignal, subscribeSignal, createSignal } from "./signal/signal";
-import type { VirtualElement } from "../types";
+import { createElement } from "./dom-render/create-element";
+import { createRoot } from "./dom-render/create-root";
+import { render } from "./dom-render/render";
+import { isSignal, subscribeSignal, createSignal } from "./signal";
+import type { Signal } from "./signal";
 
 export type {
-    VirtualElement,
     Signal
 };
 
@@ -17,6 +13,6 @@ export {
     createSignal,
     isSignal,
     subscribeSignal,
-    createElement,
+    createElement as element,
     render,
 };

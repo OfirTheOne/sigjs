@@ -1,18 +1,11 @@
+import { Signal, Listener } from "./types";
 
-type Listener<T = unknown> = (value: T) => void;
+let signalCounter = 0
 
-interface Signal<T = unknown> {
-    (): T;
-    value: T;
-    setValue(value: T | ((value: T) => T)): void;
-    subscribe(listener: Listener<T>): () => void;
-    link<L = T>(signal: Signal<L>, pipe?: (value: L) => T): () => void;
-    readonly listeners: Listener<T>[];
-}
-
-function createSignal<T>(value: T): [Signal<T>, (value: T) => void] {
+function createSignal<T>(value: T, id?: string): [Signal<T>, (value: T) => void] {
     let listeners: Listener<T>[] = [];
-    const nonCallableSignal: Pick<Signal<T>, 'link' | 'listeners' | 'subscribe' | 'value' | 'setValue'> = {
+    const nonCallableSignal: Pick<Signal<T>, 'id' | 'link' | 'listeners' | 'subscribe' | 'value' | 'setValue'> = {
+        id: id ?? String(signalCounter),
         get value() {
             return value;
         },
@@ -49,7 +42,7 @@ function createSignal<T>(value: T): [Signal<T>, (value: T) => void] {
         }
     };
     const callableSignal = function(this: Signal<T>) {
-        return this.value;
+        return nonCallableSignal.value;
     };
     Object.defineProperty(callableSignal, 'value', {
         get() {
@@ -66,6 +59,7 @@ function createSignal<T>(value: T): [Signal<T>, (value: T) => void] {
     });
     callableSignal.subscribe = nonCallableSignal.subscribe;
     callableSignal.link = nonCallableSignal.link;
+    signalCounter++;
     return [callableSignal as Signal<T>, (newValue: T) => nonCallableSignal.value = newValue];
 }
 
@@ -83,5 +77,5 @@ function subscribeSignal<T = unknown>(signal: Signal<T>, callback: Listener<T>):
     return unsubscribe;
 }
 
-export type { Signal, Listener };
+
 export { createSignal, isSignal, subscribeSignal };

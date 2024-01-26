@@ -1,4 +1,5 @@
 
+import { getRenderedRoot, setRenderedRoot } from "@/core/global";
 import { AsyncComponentFunction, CONTROL_FLOW_TAG, ELEMENT_TYPE, VirtualElement } from "@/types";
 
 type RenderFunction = (
@@ -9,8 +10,6 @@ type RenderFunction = (
 interface AwaitProps {
     fallback: VirtualElement,
 }
-
-
 
 function Await(component: AsyncComponentFunction, props: AwaitProps): VirtualElement {
     return {
@@ -29,6 +28,7 @@ function renderAwait(
     container: HTMLElement, 
     render: RenderFunction
 ): HTMLElement | Text {
+    const root = getRenderedRoot();
     const component = element.props.component as AsyncComponentFunction;
     if (typeof component !== 'function') {
         throw new Error(`Invalid component type: ${component}`);
@@ -38,6 +38,7 @@ function renderAwait(
     container.appendChild(fallbackDom);
     Promise.resolve(component())
         .then((componentElement) => {
+            setRenderedRoot(root.id);
             const componentElementDom = render(componentElement, container);
             if(fallbackDom.parentElement !== container) {
                 container.appendChild(componentElementDom);

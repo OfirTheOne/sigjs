@@ -1,4 +1,4 @@
-import { Signal, isSignal } from "@/core/signal/signal";
+import { Signal, isSignal } from "@/core/signal";
 import { VirtualElement, ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/types";
 
 type RenderFunction = (

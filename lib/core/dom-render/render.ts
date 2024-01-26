@@ -1,11 +1,11 @@
-import type { VirtualElement, ComponentFunctionWithMeta, ElementType } from "../types";
-import type { Signal } from "./signal/signal";
-import { subscribeSignal } from "./signal/signal";
+import type { VirtualElement, ComponentFunctionWithMeta, ElementType } from "../../types";
+import type { Signal } from "../signal";
+import { subscribeSignal } from "../signal";
 import { attachPropertyToElement } from "./attach-property";
-import { renderIf } from "./control-flow/if";
-import { renderFor } from "./control-flow/for";
-import { renderAwait } from "./control-flow/await";
-import { ELEMENT_TYPE } from "../types";
+import { renderIf } from "../control-flow/if";
+import { renderFor } from "../control-flow/for";
+import { renderAwait } from "../control-flow/await";
+import { ELEMENT_TYPE } from "../../types";
 
 function rootRender(
     element: VirtualElement,
