@@ -1,3 +1,4 @@
+import { isRawElement } from "@/common/is-raw-element";
 import { Signal, isSignal } from "@/core/signal";
 import { ELEMENT_TYPE } from "@/types";
 import type { VirtualElementChild, VirtualElement, ComponentFunction, AsyncComponentFunction, CommonProps } from "@/types";
@@ -22,7 +23,7 @@ function createSignalElement<T = unknown>(signal: Signal<T>): VirtualElement {
     };
 }
 
-function createEmptyElement(): VirtualElement { 
+function createEmptyElement(): VirtualElement {
     return {
         type: ELEMENT_TYPE.EMPTY,
         props: {
@@ -42,21 +43,31 @@ function createComponentElement(component: ComponentFunction | AsyncComponentFun
     };
 }
 
-function createElement(type: string | ComponentFunction): VirtualElement;
-function createElement(type: string | ComponentFunction, props: Record<string, any> & CommonProps, ...children: VirtualElementChild[]): VirtualElement
+function createElement(type: string | ComponentFunction | HTMLElement): VirtualElement;
+function createElement(type: string | ComponentFunction | HTMLElement, props: Record<string, any> & CommonProps, ...children: VirtualElementChild[]): VirtualElement
 function createElement(
-    type: string | ComponentFunction, 
-    props: (Record<string, any> & CommonProps) | undefined = {}, 
+    type: string | ComponentFunction | HTMLElement,
+    props: (Record<string, any> & CommonProps) | undefined = {},
     ...children: VirtualElementChild[]
 ): VirtualElement {
-        return typeof type === 'function' ? createComponentElement(type, props, ...children) : {
-        type: ELEMENT_TYPE.DOM, 
-        props: {
-            ...props,
-            tagName: type,
-            children: children.map(adaptVirtualElementChild)
-        }
-    };
+    return typeof type === 'function'
+        ? createComponentElement(type, props, ...children)
+        : isRawElement(type)
+            ? {
+                type: ELEMENT_TYPE.RAW,
+                props: {
+                    ...props,
+                    rawElement: type,
+                    children: []
+                }
+            } : {
+                type: ELEMENT_TYPE.DOM,
+                props: {
+                    ...props,
+                    tagName: type,
+                    children: children.map(adaptVirtualElementChild)
+                }
+            };
 }
 
 function adaptVirtualElementChild(child: VirtualElementChild): VirtualElement {

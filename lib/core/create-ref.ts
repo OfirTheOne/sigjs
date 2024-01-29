@@ -1,6 +1,6 @@
 import { ElementRef } from "@/types";
 
-function createRef(initValue?: HTMLElement): ElementRef {
+function createRef<T = HTMLElement>(initValue?: T): ElementRef<T> {
     return {
         current: initValue
     };

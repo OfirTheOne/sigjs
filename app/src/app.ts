@@ -2,10 +2,47 @@ import './app.scss';
 import { element } from '@/core/index';
 import { createSignal } from '@/core/signal/signal';
 import { Await, For, If } from '@/core/control-flow';
+import { createRef } from '@/core/create-ref';
+import { createRouter, getRouter } from '@/router/router';
 
-export function App2() {
+
+export function App() {
+
+    const menuButton = createRef<HTMLInputElement>();
+    return element('div', { className: 'container', },
+        element('input', { type: 'checkbox', hidden: true, id: "menu-button" }),
+        element(
+            'label', 
+            { for: "menu-button", className: 'toggle-menu', ref: menuButton }, 
+            'Toggle Menu'
+        ),
+        element('div', { className: 'menu' },
+            'Menu content...'
+        ),
+        createRouter({
+            routes: [
+                {
+                    path: '/',
+                    component: Page02,
+                },
+                {
+                    path: '/about',
+                    component: () => {
+                        return element('div', {}, 'about page') 
+                    }
+                }
+            ],
+    
+        })
+    );
+}
+
+export function Page02() {
+    const {push} = getRouter();
     return element('div', { className: 'container' },
         element('h1', { className: 'title' }, 'Hello World'),
+        element('button', { onClick: () => push('/about') }, 'Click'),
+
         element('p', { className: 'text' }, 
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' + 
             'Nullam auctor, nisl eget ultricies aliquam, ' + 
@@ -59,27 +96,36 @@ function delay (ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function App() {
+export function Page01() {
     const [searchInput, setSearchInput] = createSignal('');
     const [users,] = createSignal(['John', 'Jane', 'Doe']);
     const [filteredUsers,] = createSignal<string[]>(users());
-
+    const menuButton = createRef<HTMLInputElement>();
+    const {push} = getRouter();
     filteredUsers.link(searchInput, (searchInputValue) => {
         return users().filter(user => user.includes(searchInputValue));
     });
 
     return element('div', { className: 'container', },
         element('input', { type: 'checkbox', hidden: true, id: "menu-button" }),
-        element('label', { for: "menu-button", className: 'toggle-menu' }, 'Toggle Menu'),
+        element('button', { onClick: () => push('/about') }, 'Click'),
+        element(
+            'label', 
+            { for: "menu-button", className: 'toggle-menu', ref: menuButton }, 
+            'Toggle Menu'
+        ),
         element('div', { className: 'menu' },
             'Menu content...'
         ),
 
-        element('input', { 
-            type: 'text', 
-            value: searchInput(), 
-            onInput: (event: Event) => setSearchInput((event.target as HTMLInputElement).value) 
-        }),
+        element('div', { className: 'input-container' },
+            element('label', {}, 'Search'),
+            element('input', { 
+                type: 'text', 
+                value: searchInput(), 
+                onInput: (event: Event) => setSearchInput((event.target as HTMLInputElement).value) 
+            }),
+        ),
         For({ 
             list: filteredUsers, 
             factory: (user) => element('p', {}, user), 
@@ -87,10 +133,3 @@ export function App() {
         }),
     );
 }
-
-
-`
-<div>
-    <p> {#sid:10002} </p>
-</div>
-`

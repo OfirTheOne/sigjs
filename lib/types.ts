@@ -23,11 +23,12 @@ interface VirtualElement {
     };
 }
 
-interface ElementRef {
-    current?: HTMLElement;
+interface ElementRef<T = HTMLElement> {
+    current?: T;
 }
 
 const ELEMENT_TYPE = {
+    RAW: 'RAW_ELEMENT',
     DOM: 'DOM_ELEMENT',
     TEXT: 'TEXT_ELEMENT',
     SIGNAL: 'SIGNAL_ELEMENT',

@@ -29,6 +29,8 @@ function render(
             return renderSignal(element.props.signal as Signal);
         case ELEMENT_TYPE.EMPTY: /* edge node */
             return container;
+        case ELEMENT_TYPE.RAW: /* edge node */
+            return element.props.rawElement as HTMLElement;
         case ELEMENT_TYPE.DOM: /* non edge node - internally glue any child nodes */
             return renderElement(element);
         case ELEMENT_TYPE.COMPONENT: /* non edge node */
