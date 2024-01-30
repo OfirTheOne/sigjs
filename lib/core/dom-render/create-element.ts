@@ -1,7 +1,7 @@
 import { isRawElement } from "@/common/is-raw-element";
 import { Signal, isSignal } from "@/core/signal";
 import { ELEMENT_TYPE } from "@/types";
-import type { VirtualElementChild, VirtualElement, ComponentFunction, AsyncComponentFunction, CommonProps } from "@/types";
+import type { VirtualElementChild, VirtualElement, ComponentFunction, AsyncComponentFunction, Props, CommonProps } from "@/types";
 
 function createTextElement(text: string): VirtualElement {
     return {
@@ -44,10 +44,10 @@ function createComponentElement(component: ComponentFunction | AsyncComponentFun
 }
 
 function createElement(type: string | ComponentFunction | HTMLElement): VirtualElement;
-function createElement(type: string | ComponentFunction | HTMLElement, props: Record<string, any> & CommonProps, ...children: VirtualElementChild[]): VirtualElement
+function createElement<T = Record<string, unknown>>(type: string | ComponentFunction | HTMLElement, props: Props<T>, ...children: VirtualElementChild[]): VirtualElement
 function createElement(
     type: string | ComponentFunction | HTMLElement,
-    props: (Record<string, any> & CommonProps) | undefined = {},
+    props: Props | undefined = {},
     ...children: VirtualElementChild[]
 ): VirtualElement {
     return typeof type === 'function'

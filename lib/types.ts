@@ -27,6 +27,8 @@ interface ElementRef<T = HTMLElement> {
     current?: T;
 }
 
+
+
 const ELEMENT_TYPE = {
     RAW: 'RAW_ELEMENT',
     DOM: 'DOM_ELEMENT',
@@ -40,8 +42,12 @@ const ELEMENT_TYPE = {
 type ElementType = typeof ELEMENT_TYPE[keyof typeof ELEMENT_TYPE];
 
 type CommonProps = {
+    className?: string;
     ref?: ElementRef;
 };
+
+type Props<T = Record<string, unknown>> = T & CommonProps;
+
 
 const CONTROL_FLOW_TAG = {
     IF: 'IF',
@@ -56,6 +62,7 @@ export type {
     VirtualElementChild, 
     ElementRef,
     CommonProps,
+    Props,
     ElementType, 
     ControlFlowTag, 
     ComponentFunction, 
