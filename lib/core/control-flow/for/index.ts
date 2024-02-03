@@ -49,6 +49,7 @@ function renderFor(
         childElements.forEach(childElement => render(childElement, placeholderDom));
     } else {
         const listSignal = list;
+        placeholderDom.setAttribute('signal', listSignal.id);
         subscribeSignal(listSignal, (list) => {
             while (placeholderDom.lastChild) {
                 placeholderDom.lastChild.remove();

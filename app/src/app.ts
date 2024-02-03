@@ -8,7 +8,6 @@ import { a, button, div, h1, input, label, p } from '@/convenient/element';
 
 
 export function App() {
-
     const menuButton = createRef<HTMLInputElement>();
     return div({ className: 'container', },
         input({ type: 'checkbox', hidden: true, id: "menu-button" }),
@@ -42,14 +41,13 @@ export function Page02() {
     return div({ className: 'container' },
         h1({ className: 'title' }, 'Hello World'),
         button({ onClick: () => push('/about') }, 'Click'),
-
         p({ className: 'text' },
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
             'Nullam auctor, nisl eget ultricies aliquam, ' +
             'nunc sapien aliquet urna, sed aliquam nisl nunc sed nisl.'
         ),
         a({ className: 'link', href: 'https://google.com' }, 'Google'),
-        Await(AsyncUser, { fallback: element('p', {}, 'Loading...') }),
+        Await(AsyncUser, { fallback: p({}, 'Loading...') }),
         element(Counter, { title: 'Counter 1' }),
         element(Counter, { title: 'Counter 2' }),
     );
@@ -134,10 +132,4 @@ export function Page01() {
 }
 
 
-/*
 
-return div({}).with(
-    p({}).with('User name: ', 'John Doe'),    
-);  
-
-*/

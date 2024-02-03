@@ -9,7 +9,7 @@ type SigGlobal = Readonly<{
     [RenderedRootSymbol]: {
         rootId?: string;
     }
-}>
+}>;
 
 function getRenderedRoot() {
     const rootId = getGlobal()[RenderedRootSymbol].rootId;

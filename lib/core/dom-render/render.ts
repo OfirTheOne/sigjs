@@ -26,7 +26,7 @@ function render(
         case ELEMENT_TYPE.TEXT: /* edge node */
             return renderText(element.props.nodeValue as string);
         case ELEMENT_TYPE.SIGNAL: /* edge node */
-            return renderSignal(element.props.signal as Signal);
+            return renderSignal(element.props.signal as Signal, container);
         case ELEMENT_TYPE.EMPTY: /* edge node */
             return container;
         case ELEMENT_TYPE.RAW: /* edge node */
@@ -100,8 +100,11 @@ function renderText(
 
 function renderSignal<T = unknown>(
     signal: Signal<T>,
+    container: HTMLElement,
 ): Text {
     const dom = document.createTextNode(signal.value as string);
+    const childIndex = container.children.length;
+    container.setAttribute(`data-signal:${childIndex}`, signal.id);
     subscribeSignal(signal, (value: unknown) => {
         dom.nodeValue = value as string;
     });

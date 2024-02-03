@@ -34,6 +34,7 @@ function renderIf(
     if (isSignal(condition)) {
         const conditionSignal = condition;
         container.appendChild(placeholder);
+        container.setAttribute('signal', conditionSignal.id);
         conditionSignal.subscribe((conditionValue) => {
             placeholder.childNodes.forEach(child => child.remove());
             if (conditionValue) {

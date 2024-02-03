@@ -1,18 +1,17 @@
 import { isPromise } from "@/common/is-promise";
-import { uniqueId } from "@/common/uniqu-id";
+import { uniqueId } from "@/common/unique-id";
 import { element, render } from '@/core';
 import { getRenderedRoot } from "@/core/global";
 import type { RootElementWithMetadata } from "@/core/dom-render/create-root";
 import type { AsyncComponentFunction, ComponentFunction, VirtualElement } from "@/types";
 
-const routersStore: Record<string, Router> = {}
+const routersStore: Record<string, Router> = {};
 
 type RouteCommonConfig = {
     path: string;
     id?: string;
     onEnter?: () => void;
 };
-
 type RouteAsyncConfig = {
     component: AsyncComponentFunction;
     fallback?: ComponentFunction;
@@ -149,8 +148,6 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
     navigate(window.location.pathname);
     return router;
 }
-
-
 
 function createRouter(config: RouterConfig): VirtualElement {
     return element(() => { 
