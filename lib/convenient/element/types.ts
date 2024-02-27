@@ -61,7 +61,23 @@ export interface HTMLElementEventHandlers {
     onWheel?: (event: WheelEvent) => void;
 }
 
-export interface HTMLElementAttributes extends HTMLElementEventHandlers {
+export type HTMLElementEventHandlersExtendsBasic = {
+    stopPropagation?: boolean;
+    preventDefault?: boolean;
+}
+    
+export type HTMLElementEventHandlersExtendsConcurrency = {
+    [K in keyof HTMLElementEventHandlers as
+    `${K}:debounce:${number}`
+    | `${K}:debounce`
+    | `${K}:throttle:${number}`
+    | `${K}:throttle`]: HTMLElementEventHandlers[K];
+};
+
+export interface HTMLElementAttributes extends 
+    HTMLElementEventHandlers, 
+    HTMLElementEventHandlersExtendsBasic,
+    HTMLElementEventHandlersExtendsConcurrency {
     accesskey?: string;
     autocapitalize?: "off" | "none" | "on" | "sentences" | "words" | "characters";
     autofocus?: boolean;

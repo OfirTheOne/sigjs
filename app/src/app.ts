@@ -68,7 +68,7 @@ function Counter({ title }: { title: string }) {
     return (
         div({},
             p({}, `${title}: `, count, ' is ', className),
-            button({ onClick: () => setCount(count.value + 1) }, 'Increment count'),
+            button({ 'onClick:throttle:1000': () => setCount(count.value + 1) }, 'Increment count'),
             div({},
                 If({
                     condition: count,

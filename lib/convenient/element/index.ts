@@ -1,6 +1,8 @@
 import { createElement } from "@/core/dom-render/create-element";
 import { VirtualElement, VirtualElementChild, Props } from "@/types";
 import * as HEA from "./types";
+import { debounce } from "@/common/debounce";
+import { throttle } from "@/common/throttle";
 
 type ElementWrapper = (
     VirtualElement & 
@@ -9,13 +11,70 @@ type ElementWrapper = (
 
 function createWrapper<T>(tagName: string)   {
     return function (props?: Props<T>, ...children: VirtualElementChild[]): ElementWrapper {
-        const el = createElement(tagName, props || {}, ...children);
+        const transformedProps = transformProps(props || {});
+        const el = createElement(tagName, transformedProps, ...children);
         el['with'] = function (...children: VirtualElementChild[]) {
             el.props.children = children as VirtualElement['props']['children'];
             return el;
         };
         return el as ElementWrapper;
     };
+}
+
+function transformProps<T>(props: Props<T>):Props<T> {
+
+    const stopPropagationExistent = props['stopPropagation'];
+    const preventDefaultExistent = props['preventDefault'];
+    for(const key in props) {
+        const isEvent = typeof props[key] === 'function' && key.startsWith('on');
+
+        if(isEvent && stopPropagationExistent) {
+            const eventHandler: ((e: Event) => void) = props[key];
+            const wrappedEventHandler = function (this: HTMLElement, e: Event) {
+                e?.stopPropagation?.();
+                return eventHandler.call(this, e);
+            }
+            props[key] = wrappedEventHandler
+        }
+
+        if(isEvent && preventDefaultExistent) {
+            const eventHandler: ((e: Event) => void) = props[key];
+            const wrappedEventHandler = function (this: HTMLElement, e: Event) {
+                e?.preventDefault?.();
+                return eventHandler.call(this, e);
+            }
+            props[key] = wrappedEventHandler
+        }
+
+        if (isEvent && key.includes(':debounce')) {
+            if(key.endsWith(':debounce')) {
+                const eventName = key.replace(':debounce', '');
+                const debouncedEvent = debounce(props[key], 500);
+                props[eventName] = debouncedEvent;
+            } else {
+                const [eventName, debounceTime] = key.split(':debounce:');
+                if(Number.isNaN(Number(debounceTime)) || !eventName) {
+                    throw new Error('Invalid debounce event');
+                }
+                const debouncedEvent = debounce(props[key], Number(debounceTime));
+                props[eventName] = debouncedEvent;
+            }
+        } else if (isEvent && key.includes(':throttle')) {
+            if(key.endsWith(':throttle')) {
+                const eventName = key.replace(':throttle', '');
+                const throttledEvent = throttle(props[key], 500);
+                props[eventName] = throttledEvent;
+            } else {
+                const [eventName, throttleTime] = key.split(':throttle:');
+                if(Number.isNaN(Number(throttleTime)) || !eventName) {
+                    throw new Error('Invalid throttle event');
+                }
+                const throttledEvent = throttle(props[key], Number(throttleTime));
+                props[eventName] = throttledEvent;
+            }
+        }
+    }
+    return props;
 }
 
 const div = createWrapper<HEA.HTMLElementAttributes>('div');
