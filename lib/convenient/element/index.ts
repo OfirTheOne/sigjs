@@ -30,20 +30,20 @@ function transformProps<T>(props: Props<T>):Props<T> {
 
         if(isEvent && stopPropagationExistent) {
             const eventHandler: ((e: Event) => void) = props[key];
-            const wrappedEventHandler = function (this: HTMLElement, e: Event) {
+            const wrappedEventHandler = function stopPropagationWrapper(this: HTMLElement, e: Event) {
                 e?.stopPropagation?.();
                 return eventHandler.call(this, e);
             }
-            props[key] = wrappedEventHandler
+            props[key] = wrappedEventHandler;
         }
 
         if(isEvent && preventDefaultExistent) {
             const eventHandler: ((e: Event) => void) = props[key];
-            const wrappedEventHandler = function (this: HTMLElement, e: Event) {
+            const wrappedEventHandler = function preventDefaultWrapper (this: HTMLElement, e: Event) {
                 e?.preventDefault?.();
                 return eventHandler.call(this, e);
             }
-            props[key] = wrappedEventHandler
+            props[key] = wrappedEventHandler;
         }
 
         if (isEvent && key.includes(':debounce')) {
@@ -59,7 +59,9 @@ function transformProps<T>(props: Props<T>):Props<T> {
                 const debouncedEvent = debounce(props[key], Number(debounceTime));
                 props[eventName] = debouncedEvent;
             }
-        } else if (isEvent && key.includes(':throttle')) {
+        } 
+        
+        if (isEvent && key.includes(':throttle')) {
             if(key.endsWith(':throttle')) {
                 const eventName = key.replace(':throttle', '');
                 const throttledEvent = throttle(props[key], 500);
@@ -213,4 +215,4 @@ export {
     dialog,
     slot,
     template,
-}
+};
