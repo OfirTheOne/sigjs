@@ -27,7 +27,7 @@ customElements.define('for-ph', class extends HTMLElement { });
 
 function renderFor(
     element: VirtualElement,
-    container: HTMLElement,
+    _container: HTMLElement,
     render: RenderFunction
 ): HTMLElement | Text {
     const { list, factory, index } = (element.props as unknown as ForProps);
