@@ -1,10 +1,10 @@
 import './app.scss';
-import { element } from '@/core/index';
-import { createSignal } from '@/core/signal/signal';
-import { Await, For, If } from '@/core/control-flow';
-import { createRef } from '@/core/create-ref';
-import { createRouter, getRouter } from '@/router/router';
-import { a, button, div, h1, input, label, p } from '@/convenient/element';
+// import { element } from '@sig/convenient/element';
+import { createSignal } from '@sig/core/signal/signal';
+import { Await, For, If } from '@sig/core/control-flow';
+import { createRef } from '@sig/core/create-ref';
+import { createRouter, getRouter } from '@sig/router/router';
+import { a, button, div, h1, input, label, p } from '@sig/convenient/element';
 
 
 export function App() {
@@ -27,7 +27,9 @@ export function App() {
                 {
                     path: '/about',
                     component: () => {
-                        return element('div', {}, 'about page')
+                        return <div>
+                            about page
+                        </div>;
                     }
                 }
             ],
@@ -36,7 +38,7 @@ export function App() {
     );
 }
 
-export function Page02() {
+export function Page02(): JSX.Element {
     const { push } = getRouter();
     return div({ className: 'container' },
         h1({ className: 'title' }, 'Hello World'),
@@ -48,9 +50,9 @@ export function Page02() {
         ),
         a({ className: 'link', href: 'https://google.com' }, 'Google'),
         Await(AsyncUser, { fallback: p({}, 'Loading...') }),
-        element(Counter, { title: 'Counter 1' }),
-        element(Counter, { title: 'Counter 2' }),
-    );
+        // element(Counter, { title: 'Counter 2' }),
+        <Counter title='Counter 1' />
+        );
 }
 
 function Counter({ title }: { title: string }) {

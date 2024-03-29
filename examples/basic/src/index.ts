@@ -1,4 +1,4 @@
-import { createRoot, element } from '@/core';
+import { createRoot, element } from '@sig/core';
 import { App } from './app';
 
 createRoot(document.getElementById('root'))
