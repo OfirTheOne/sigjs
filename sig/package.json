@@ -7,7 +7,7 @@
     "dist"
   ],
   "main": "./dist/index.js",
-  "module": "./dist/index.umd.js",
+  "module": "./dist/index.umd.cjs",
   "exports": {
     ".": {
       "import": "./dist/index.js",
