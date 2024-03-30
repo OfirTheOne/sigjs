@@ -1,28 +1,23 @@
 import './app.scss';
-// import { element } from '@sig/convenient/element';
 import { VirtualElement, createSignal } from 'sig';
 import { Await, For, If, createRef } from 'sig/core';
 import { createRouter, getRouter } from 'sig/router';
-import { a, button, div, h1, p } from 'sig/convenient';
-
 
 export function App(): VirtualElement {
     const menuButton = createRef<HTMLInputElement>();
-    return div({ className: 'container', },
-        <>
-            <input type='checkbox' hidden id="menu-button" />
-            <label
-                for={"menu-button"}
-                className={'toggle-menu'}
-                ref={menuButton}
-            >
-                Toggle Menu
-            </label>
-            <div  className='menu'>
-                Menu content...
-            </div>
-        </>,
-        createRouter({
+    return <div className='container'>
+        <input type='checkbox' hidden id="menu-button" />
+        <label
+            for={"menu-button"}
+            className={'toggle-menu'}
+            ref={menuButton}
+        >
+            Toggle Menu
+        </label>
+        <div className='menu'>
+            Menu content...
+        </div>
+        {createRouter({
             routes: [
                 {
                     path: '/',
@@ -38,25 +33,26 @@ export function App(): VirtualElement {
                 }
             ],
 
-        })
-    );
+        })}
+    </div>
 }
 
 export function Page02(): JSX.Element {
     const { push } = getRouter();
-    return div({ className: 'container' },
-        h1({ className: 'title' }, 'Hello World'),
-        button({ onClick: () => push('/about') }, 'Click'),
-        p({ className: 'text' },
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
+    return <div className='container'>
+        <h1 className='title'>Hello World</h1>
+        <button onClick={() => push('/about')}>Click</button>
+        <p className='text'>
+            {'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
             'Nullam auctor, nisl eget ultricies aliquam, ' +
-            'nunc sapien aliquet urna, sed aliquam nisl nunc sed nisl.'
-        ),
-        a({ className: 'link', href: 'https://google.com' }, 'Google'),
-        <Await component={AsyncUser} fallback={<p>Loading...</p>} />,
-        // element(Counter, { title: 'Counter 2' }),
+            'nunc sapien aliquet urna, sed aliquam nisl nunc sed nisl.'}
+        </p>
+        <a className='link' href='https://google.com'>
+            Google
+        </a>
+        <Await component={AsyncUser} fallback={<p>Loading...</p>} />
         <Counter title='Counter 1' />
-        );
+    </div>;
 }
 
 function Counter({ title }: { title: string }) {
@@ -94,9 +90,9 @@ function Counter({ title }: { title: string }) {
 
 async function AsyncUser() {
     await delay(5000);
-    return div({},
-        p({}, 'User name: ', 'John Doe'),
-    );
+    return <div>
+        <p>User name: John Doe</p>
+    </div>;
 }
 
 function delay(ms: number) {
@@ -113,23 +109,22 @@ export function Page01() {
         return users().filter(user => user.includes(searchInputValue));
     });
 
-    return <div  className='container'> 
-        <input  type='checkbox' hidden id="menu-button" />
-
-        <button  onClick={() => push('/about')}>Click</button>
+    return <div className='container'>
+        <input type='checkbox' hidden id="menu-button" />
+        <button onClick={() => push('/about')}>Click</button>
         <label for="menu-button" className='toggle-menu' ref={menuButton}>Toggle Menu</label>
         <div className='menu'>Menu content...</div>
         <div className='input-container'>
             <label>Search</label>
-            <input 
-                type='text' 
-                value={searchInput()} 
-                onInput={(event: Event) => setSearchInput((event.target as HTMLInputElement).value)} 
+            <input
+                type='text'
+                value={searchInput()}
+                onInput={(event: Event) => setSearchInput((event.target as HTMLInputElement).value)}
             />
         </div>
         <For
             list={filteredUsers}
-            factory={(user) => <p>{user}</p> }
+            factory={(user) => <p>{user}</p>}
             index={(user, i) => `${user}-${i}`}
         />
     </div>;
