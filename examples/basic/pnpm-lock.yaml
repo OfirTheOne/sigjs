@@ -23,6 +23,9 @@ dependencies:
   postcss:
     specifier: ^8.4.30
     version: 8.4.38
+  sig:
+    specifier: link:/Users/og8217/projects/sig/sig
+    version: link:../../sig
   tailwindcss:
     specifier: ^3.3.3
     version: 3.4.3(ts-node@10.9.2)

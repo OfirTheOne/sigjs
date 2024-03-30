@@ -1,23 +1,27 @@
 import './app.scss';
 // import { element } from '@sig/convenient/element';
-import { createSignal } from '@sig/core/signal/signal';
-import { Await, For, If } from '@sig/core/control-flow';
-import { createRef } from '@sig/core/create-ref';
-import { createRouter, getRouter } from '@sig/router/router';
-import { a, button, div, h1, input, label, p } from '@sig/convenient/element';
+import { VirtualElement, createSignal } from 'sig';
+import { Await, For, If, createRef } from 'sig/core';
+import { createRouter, getRouter } from 'sig/router';
+import { a, button, div, h1, p } from 'sig/convenient';
 
 
-export function App() {
+export function App(): VirtualElement {
     const menuButton = createRef<HTMLInputElement>();
     return div({ className: 'container', },
-        input({ type: 'checkbox', hidden: true, id: "menu-button" }),
-        label(
-            { for: "menu-button", className: 'toggle-menu', ref: menuButton },
-            'Toggle Menu'
-        ),
-        div({ className: 'menu' },
-            'Menu content...'
-        ),
+        <>
+            <input type='checkbox' hidden id="menu-button" />
+            <label
+                for={"menu-button"}
+                className={'toggle-menu'}
+                ref={menuButton}
+            >
+                Toggle Menu
+            </label>
+            <div  className='menu'>
+                Menu content...
+            </div>
+        </>,
         createRouter({
             routes: [
                 {
@@ -49,7 +53,7 @@ export function Page02(): JSX.Element {
             'nunc sapien aliquet urna, sed aliquam nisl nunc sed nisl.'
         ),
         a({ className: 'link', href: 'https://google.com' }, 'Google'),
-        Await(AsyncUser, { fallback: p({}, 'Loading...') }),
+        <Await component={AsyncUser} fallback={<p>Loading...</p>} />,
         // element(Counter, { title: 'Counter 2' }),
         <Counter title='Counter 1' />
         );
@@ -68,20 +72,23 @@ function Counter({ title }: { title: string }) {
         return list;
     });
     return (
-        div({},
-            p({}, `${title}: `, count, ' is ', className),
-            button({ 'onClick:throttle:1000': () => setCount(count.value + 1) }, 'Increment count'),
-            div({},
-                If({
-                    condition: count,
-                    then: p({}, 'Count is not zero')
-                }),
-                For({
-                    list,
-                    factory: (item) => p({}, item)
-                }),
-            )
-        )
+        <div>
+            <p>{title}: {count}, is {className}</p>
+            <button
+                onClick={() => setCount(count.value + 1)}>
+                Increment count
+            </button>
+            <div>
+                <If
+                    condition={count}
+                    then={<p>Count is not zero</p>}
+                />
+                <For
+                    list={list}
+                    factory={(item) => <p>{item}</p>}
+                />
+            </div>
+        </div>
     );
 }
 
@@ -106,31 +113,26 @@ export function Page01() {
         return users().filter(user => user.includes(searchInputValue));
     });
 
-    return div({ className: 'container', },
-        input({ type: 'checkbox', hidden: true, id: "menu-button" }),
-        button({ onClick: () => push('/about') }, 'Click'),
-        label(
-            { for: "menu-button", className: 'toggle-menu', ref: menuButton },
-            'Toggle Menu'
-        ),
-        div({ className: 'menu' },
-            'Menu content...'
-        ),
+    return <div  className='container'> 
+        <input  type='checkbox' hidden id="menu-button" />
 
-        div({ className: 'input-container' },
-            label({}, 'Search'),
-            input({
-                type: 'text',
-                value: searchInput(),
-                onInput: (event: Event) => setSearchInput((event.target as HTMLInputElement).value)
-            }),
-        ),
-        For({
-            list: filteredUsers,
-            factory: (user) => p({}, user),
-            index: (user, i) => `${user}-${i}`
-        }),
-    );
+        <button  onClick={() => push('/about')}>Click</button>
+        <label for="menu-button" className='toggle-menu' ref={menuButton}>Toggle Menu</label>
+        <div className='menu'>Menu content...</div>
+        <div className='input-container'>
+            <label>Search</label>
+            <input 
+                type='text' 
+                value={searchInput()} 
+                onInput={(event: Event) => setSearchInput((event.target as HTMLInputElement).value)} 
+            />
+        </div>
+        <For
+            list={filteredUsers}
+            factory={(user) => <p>{user}</p> }
+            index={(user, i) => `${user}-${i}`}
+        />
+    </div>;
 }
 
 

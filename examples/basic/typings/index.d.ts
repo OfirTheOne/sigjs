@@ -1,5 +1,5 @@
 import type * as CSS from 'csstype';
-// import type { Trackable } from "@/sig/signal";
+import type { VirtualElement } from "@sig/types";
 
 declare global {
 
@@ -37,6 +37,8 @@ declare global {
 
     export type Element
       = IntrinsicElements
+      | VirtualElement
+      | VirtualElementChild
       | string
       | number
       | boolean
