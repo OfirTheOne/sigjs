@@ -8,6 +8,10 @@ export type {
     Signal
 };
 
+export * from './control-flow';
+
+export * from './create-ref';
+
 export {
     createRoot,
     createSignal,

@@ -6,6 +6,7 @@ import { renderIf } from "../control-flow/if";
 import { renderFor } from "../control-flow/for";
 import { renderAwait } from "../control-flow/await";
 import { ELEMENT_TYPE } from "../../types";
+import { isVirtualElement } from "../utils";
 
 function rootRender(
     element: VirtualElement,
@@ -83,8 +84,11 @@ function renderElement(
         .filter(isProperty)
         .forEach(name => attachPropertyToElement(dom, name, props[name]));
     children.forEach(child => {
+        if(!isVirtualElement(child)) {
+            throw new Error('Invalid child element');
+        }
         const childDom = render(child, dom);
-        if (childDom.parentElement !== dom) {
+        if (childDom !== dom && childDom.parentElement !== dom) {
             dom.appendChild(childDom);
         }
     });

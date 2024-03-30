@@ -1,5 +1,6 @@
 
 import { getRenderedRoot, setRenderedRoot } from "@/core/global";
+import { AwaitControlFlow } from "@/symbols";
 import { AsyncComponentFunction, CONTROL_FLOW_TAG, ELEMENT_TYPE, VirtualElement } from "@/types";
 
 type RenderFunction = (
@@ -9,19 +10,22 @@ type RenderFunction = (
 
 interface AwaitProps {
     fallback: VirtualElement,
+    component: AsyncComponentFunction;
 }
 
-function Await(component: AsyncComponentFunction, props: AwaitProps): VirtualElement {
+function Await(props: AwaitProps): VirtualElement {
     return {
         type: ELEMENT_TYPE.CONTROL_FLOW,
         props: {
             children: [],
             ...props,
-            component,
             controlTag: CONTROL_FLOW_TAG.AWAIT,
         }
     };
 }
+
+Await['$$type'] = AwaitControlFlow;
+
 
 function renderAwait(
     element: VirtualElement, 

@@ -19,7 +19,7 @@ interface VirtualElement {
     type: string;
     props: {
         [key: string]: unknown;
-        children: VirtualElement[];
+        children: VirtualElementChild[];
     };
 }
 

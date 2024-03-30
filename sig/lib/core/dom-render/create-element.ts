@@ -50,8 +50,9 @@ function createElement(
     props: Props | undefined = {},
     ...children: VirtualElementChild[]
 ): VirtualElement {
+    const flatChildren = children.flat(Infinity);
     return typeof type === 'function'
-        ? createComponentElement(type, props, ...children)
+        ? createComponentElement(type, props, ...flatChildren)
         : isRawElement(type)
             ? {
                 type: ELEMENT_TYPE.RAW,
@@ -65,7 +66,7 @@ function createElement(
                 props: {
                     ...props,
                     tagName: type,
-                    children: children.map(adaptVirtualElementChild)
+                    children: flatChildren.map(adaptVirtualElementChild)
                 }
             };
 }
@@ -74,15 +75,15 @@ function adaptVirtualElementChild(child: VirtualElementChild): VirtualElement {
     switch (true) {
         case isSignal(child):
             return createSignalElement(child);
+        case child === null:
+        case child === undefined:
+            return createEmptyElement();
         case typeof child === 'object':
             return child;
         case typeof child === 'string':
         case typeof child === 'number':
         case typeof child === 'boolean':
             return createTextElement(String(child));
-        case child === null:
-        case child === undefined:
-            return createEmptyElement();
         default:
             throw new Error(`Invalid child type: ${typeof child}`);
     }

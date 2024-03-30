@@ -11,14 +11,29 @@
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "require": "./dist/index.js"
+      "require": "./dist/index.umd.cjs"
+    },
+    "./core": {
+      "import": "./dist/core/index.js",
+      "require": "./dist/core/index.umd.cjs"
+    },
+    "./jsx": {
+      "import": "./dist/jsx/index.js",
+      "require": "./dist/jsx/index.umd.cjs"
+    },
+    "./router": {
+      "import": "./dist/router/index.js",
+      "require": "./dist/router/index.umd.cjs"
+    },
+    "./convenient": {
+      "import": "./dist/convenient/index.js",
+      "require": "./dist/convenient/index.umd.cjs"
     }
   },
   "scripts": {
     "lint": "yarn eslint ./src.functional  --ext .ts,.tsx",
     "format": "yarn prettier --write .",
     "dev": "vite",
-    "build:lib": "BUILD_TARGET=lib vite build",
     "dev:app": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",

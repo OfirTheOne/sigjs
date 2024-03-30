@@ -8,9 +8,21 @@ export default defineConfig({
   build: {
     sourcemap: true,
     lib: {
-      entry: path.resolve(__dirname, "lib/index.ts"),
+      entry: {
+        main: './lib/index.ts',
+        core: './lib/core/index.ts',
+        jsx: './lib/jsx/index.ts',
+        router: './lib/router/index.ts',
+        convenient: './lib/convenient/index.ts'
+      },
+      formats: ['es', 'cjs'],
+      fileName: (format, entryName: string) => {
+        return `${
+          entryName === 'main' ? 
+            '' : `${entryName}/` 
+          }index.${format === 'es' ? 'js' : 'umd.cjs'}`;
+      },
       name: pkg.name,
-      fileName: "index",
     },
   },
   resolve: {

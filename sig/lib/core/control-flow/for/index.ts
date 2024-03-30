@@ -1,5 +1,6 @@
 import { VirtualElement, VirtualElementChild, ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/types";
 import { isSignal, Signal, subscribeSignal } from "@/core/signal";
+import { ForControlFlow } from "@/symbols";
 
 type RenderFunction = (
     element: VirtualElement,
@@ -22,6 +23,8 @@ function For<T = unknown>(props: ForProps<T>): VirtualElement {
         }
     };
 }
+
+For['$$type'] = ForControlFlow;
 
 customElements.define('for-ph', class extends HTMLElement { });
 

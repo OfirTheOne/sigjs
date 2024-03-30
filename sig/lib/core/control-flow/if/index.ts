@@ -1,4 +1,5 @@
 import { Signal, isSignal } from "@/core/signal";
+import { IfControlFlow } from "@/symbols";
 import { VirtualElement, ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/types";
 
 type RenderFunction = (
@@ -22,6 +23,9 @@ function If(props: IfProps): VirtualElement {
         }
     };
 } 
+
+If['$$type'] = IfControlFlow;
+
 customElements.define('if-ph', class extends HTMLElement {});
 
 function renderIf(
