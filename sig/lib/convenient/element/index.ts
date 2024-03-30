@@ -4,20 +4,10 @@ import * as HEA from "./types";
 import { debounce } from "@/common/debounce";
 import { throttle } from "@/common/throttle";
 
-type ElementWrapper = (
-    VirtualElement & 
-    { with: (...children: VirtualElement['props']['children']) => VirtualElement }
-);
-
 function createWrapper<T>(tagName: string)   {
-    return function (props?: Props<T>, ...children: VirtualElementChild[]): ElementWrapper {
+    return function (props?: Props<T>, ...children: VirtualElementChild[]): VirtualElement {
         const transformedProps = transformProps(props || {});
-        const el = createElement(tagName, transformedProps, ...children);
-        el['with'] = function (...children: VirtualElementChild[]) {
-            el.props.children = children as VirtualElement['props']['children'];
-            return el;
-        };
-        return el as ElementWrapper;
+        return createElement(tagName, transformedProps, ...children);
     };
 }
 
