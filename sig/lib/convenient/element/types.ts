@@ -74,8 +74,14 @@ export type HTMLElementEventHandlersExtendsConcurrency = {
     | `${K}:throttle`]: HTMLElementEventHandlers[K];
 };
 
+interface NonNativeElementAttributes {
+    ref?: any;
+    className?: string;
+}
+
 export interface HTMLElementAttributes extends 
     HTMLElementEventHandlers, 
+    NonNativeElementAttributes,
     HTMLElementEventHandlersExtendsBasic,
     HTMLElementEventHandlersExtendsConcurrency {
     accesskey?: string;
