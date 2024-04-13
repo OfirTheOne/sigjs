@@ -42,7 +42,7 @@ export class Store<T> {
 
     select<U>(selector: Selector<T, U>, comparator?: Comparator<U>): Signal<U> {
         if (!this.signals.has(selector)) {
-            const [signal, ] = createSignal<unknown>(selector(this.state));
+            const [signal, ] = createSignal<unknown>(selector(this.state), `store-${this.signals.size}`);
             this.signals.set(selector, { 
                 signal, 
                 comparator: comparator as Comparator<unknown> || defaultComparator
