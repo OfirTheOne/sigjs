@@ -50,6 +50,7 @@ export function App(): VirtualElement {
 export function Page02(): JSX.Element {
     const { push } = getRouter();
     return <div className='container'>
+        { myElem }
         <h1 className='title'>Hello World</h1>
         <button onClick={() => push('/about')}>Click</button>
         <p className='text'>
@@ -83,7 +84,7 @@ function Counter({ title }: { title: string }) {
             <button
                 onClick={() => increment()}>
                 Increment count
-            </button>,
+            </button>
 
             
             <div>
