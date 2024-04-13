@@ -7,8 +7,7 @@ import { store, increment } from './store'
 const myElem = document.createElement('p');
 myElem.innerHTML='Hello World';
 
-
-export function App(): VirtualElement {
+function AppLayout(_props, children) {
     const menuButton = createRef<HTMLInputElement>();
     return <div className='container'>
         <input type='checkbox' hidden id="menu-button" />
@@ -22,6 +21,12 @@ export function App(): VirtualElement {
         <div className='menu'>
             Menu content...
         </div>
+        { children }
+    </div>
+} 
+
+export function App(): VirtualElement {
+    return <AppLayout>
         {createRouter({
             routes: [
                 {
@@ -39,7 +44,7 @@ export function App(): VirtualElement {
             ],
 
         })}
-    </div>
+    </AppLayout>
 }
 
 export function Page02(): JSX.Element {
@@ -61,7 +66,6 @@ export function Page02(): JSX.Element {
 }
 
 function Counter({ title }: { title: string }) {
-    // const [count, setCount] = createSignal(0);
     const count = store.select((state) => state.count)
     const [className,] = createSignal('even');
     const [list,] = createSignal<number[]>([]);
