@@ -2,6 +2,11 @@ import './app.scss';
 import { VirtualElement, createSignal } from 'sig';
 import { Await, For, If, createRef } from 'sig/core';
 import { createRouter, getRouter } from 'sig/router';
+import { store, increment } from './store'
+
+const myElem = document.createElement('p');
+myElem.innerHTML='Hello World';
+
 
 export function App(): VirtualElement {
     const menuButton = createRef<HTMLInputElement>();
@@ -56,7 +61,8 @@ export function Page02(): JSX.Element {
 }
 
 function Counter({ title }: { title: string }) {
-    const [count, setCount] = createSignal(0);
+    // const [count, setCount] = createSignal(0);
+    const count = store.select((state) => state.count)
     const [className,] = createSignal('even');
     const [list,] = createSignal<number[]>([]);
     className.link(count, (countValue) => countValue % 2 ? 'odd' : 'even');
@@ -71,9 +77,11 @@ function Counter({ title }: { title: string }) {
         <div>
             <p>{title}: {count}, is {className}</p>
             <button
-                onClick={() => setCount(count.value + 1)}>
+                onClick={() => increment()}>
                 Increment count
-            </button>
+            </button>,
+
+            
             <div>
                 <If
                     condition={count}
@@ -82,6 +90,7 @@ function Counter({ title }: { title: string }) {
                 <For
                     list={list}
                     factory={(item) => <p>{item}</p>}
+                    index={(item, i) => `${item}-${i}`}
                 />
             </div>
         </div>
@@ -129,6 +138,7 @@ export function Page01() {
         />
     </div>;
 }
+
 
 
 
