@@ -5,7 +5,7 @@ let signalCounter = 0
 function createSignal<T>(value: T, id?: string): [Signal<T>, (value: T) => void] {
     let listeners: Listener<T>[] = [];
     const nonCallableSignal: Pick<Signal<T>, 'id' | 'link' | 'listeners' | 'subscribe' | 'emit' | 'value' | 'setValue'> = {
-        id: id ?? String(signalCounter),
+        id: id || String(signalCounter),
         get value() {
             return value;
         },
@@ -58,6 +58,11 @@ function createSignal<T>(value: T, id?: string): [Signal<T>, (value: T) => void]
     Object.defineProperty(callableSignal, 'listeners', {
         get() {
             return nonCallableSignal.listeners;
+        }
+    });
+    Object.defineProperty(callableSignal, 'id', {
+        get() {
+            return nonCallableSignal.id;
         }
     });
     callableSignal.subscribe = nonCallableSignal.subscribe;
