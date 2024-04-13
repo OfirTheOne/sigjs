@@ -11,6 +11,7 @@ export default defineConfig({
       entry: {
         main: './lib/index.ts',
         core: './lib/core/index.ts',
+        store: './lib/store/index.ts',
         jsx: './lib/jsx/index.ts',
         router: './lib/router/index.ts',
         convenient: './lib/convenient/index.ts'
