@@ -3,11 +3,6 @@ import type { VirtualElement } from "@sig/types";
 import type * as HEA from "@sig/convenient/element/types";
 
 declare global {
-
-  // export namespace Sig {
-  //   export type ClassList = Array<Trackable<unknown> | string | string[] | Record<string, boolean | Trackable<unknown>>>;
-
-  // }
   export namespace JSX {
 
 
