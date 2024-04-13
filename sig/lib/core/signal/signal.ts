@@ -4,13 +4,16 @@ let signalCounter = 0
 
 function createSignal<T>(value: T, id?: string): [Signal<T>, (value: T) => void] {
     let listeners: Listener<T>[] = [];
-    const nonCallableSignal: Pick<Signal<T>, 'id' | 'link' | 'listeners' | 'subscribe' | 'value' | 'setValue'> = {
+    const nonCallableSignal: Pick<Signal<T>, 'id' | 'link' | 'listeners' | 'subscribe' | 'emit' | 'value' | 'setValue'> = {
         id: id ?? String(signalCounter),
         get value() {
             return value;
         },
         set value(newValue: T) {
             value = newValue;
+            this.emit(newValue);
+        },
+        emit(value: T) {
             listeners.forEach(listener => listener(value));
         },
         setValue(newValue: ((value: T) => T) | T ) {
@@ -59,6 +62,8 @@ function createSignal<T>(value: T, id?: string): [Signal<T>, (value: T) => void]
     });
     callableSignal.subscribe = nonCallableSignal.subscribe;
     callableSignal.link = nonCallableSignal.link;
+    callableSignal.setValue = nonCallableSignal.setValue;
+    callableSignal.emit = nonCallableSignal.emit;
     signalCounter++;
     return [callableSignal as Signal<T>, (newValue: T) => nonCallableSignal.value = newValue];
 }

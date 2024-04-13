@@ -7,6 +7,7 @@ interface Signal<T = unknown> {
     id: string;
     value: T;
     setValue(value: T | ((value: T) => T)): void;
+    emit(value: T): void;
     subscribe(listener: Listener<T>): () => void;
     link<L = T>(signal: Signal<L>, pipe?: (value: L) => T): () => void;
     readonly listeners: Listener<T>[];
