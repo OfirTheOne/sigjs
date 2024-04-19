@@ -49,7 +49,7 @@ function attachSignalToElement<T = unknown>(
     element: HTMLElement, 
     property: string
 ): unknown {
-    element.setAttribute(`[sid:${property}]`, signal.id);
+    element.setAttribute(`sid:${property}`, signal.id);
     return subscribeSignal(signal, (value: unknown) => {
         attachPropertyToElement(element, property, value);
     });

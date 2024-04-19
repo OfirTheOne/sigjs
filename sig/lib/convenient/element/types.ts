@@ -1,5 +1,5 @@
 
-export interface HTMLElementEventHandlers {
+export interface HTMLElementEventHandlers<E = HTMLElement> {
     onAbort?: (event: UIEvent) => void;
     onAnimationEnd?: (event: AnimationEvent) => void;
     onAnimationIteration?: (event: AnimationEvent) => void;
@@ -27,7 +27,7 @@ export interface HTMLElementEventHandlers {
     onEnded?: (event: Event) => void;
     onError?: (event: ErrorEvent) => void;
     onFocus?: (event: FocusEvent) => void;
-    onInput?: (event: InputEvent) => void;
+    onInput?: (event: InputEvent & { target: E }) => void;
     onInvalid?: (event: Event) => void;
     onKeyDown?: (event: KeyboardEvent) => void;
     onKeyPress?: (event: KeyboardEvent) => void;
@@ -79,8 +79,8 @@ interface NonNativeElementAttributes {
     className?: string;
 }
 
-export interface HTMLElementAttributes extends 
-    HTMLElementEventHandlers, 
+export interface HTMLElementAttributes<E = HTMLElement> extends 
+    HTMLElementEventHandlers<E>, 
     NonNativeElementAttributes,
     HTMLElementEventHandlersExtendsBasic,
     HTMLElementEventHandlersExtendsConcurrency {
@@ -296,15 +296,15 @@ export interface FontElementAttributes extends HTMLElementAttributes {
 }
 
 export interface FormElementAttributes extends HTMLElementAttributes {
-    accept: string;
-    'accept-charset': string;
-    action: string;
-    autocomplete: string;
-    enctype: string;
-    method: string;
-    name: string;
-    novalidate: boolean;
-    target: string;
+    accept?: string;
+    'accept-charset'?: string;
+    action?: string;
+    autocomplete?: string;
+    enctype?: string;
+    method?: string;
+    name?: string;
+    novalidate?: boolean;
+    target?: string;
 }
 
 export interface FrameElementAttributes extends HTMLElementAttributes {
@@ -400,7 +400,7 @@ export interface ImgElementAttributes extends HTMLElementAttributes {
     width?: string;
 }
 
-export interface InputElementAttributes extends HTMLElementAttributes {
+export interface InputElementAttributes extends HTMLElementAttributes<HTMLInputElement> {
     accept?: string;
     alt?: string;
     autocomplete?: "on" | "off";
@@ -673,9 +673,10 @@ export interface TemplateElementAttributes extends HTMLElementAttributes {
     // No specific attributes for <template>
 }
 
-export interface TextareaElementAttributes extends HTMLElementAttributes {
+export interface TextareaElementAttributes extends HTMLElementAttributes<HTMLTextAreaElement> {
     autocomplete?: "on" | "off";
     cols?: number;
+    value?: string;
     dirname?: string;
     disabled?: boolean;
     form?: string;
