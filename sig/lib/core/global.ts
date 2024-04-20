@@ -13,6 +13,9 @@ type SigGlobal = Readonly<{
 
 function getRenderedRoot() {
     const rootId = getGlobal()[RenderedRootSymbol].rootId;
+    if(!rootId) {
+        throw new Error('Out of a root context');
+    }
     return getGlobal().roots?.[rootId];
 }
 
