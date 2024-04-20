@@ -7,6 +7,7 @@ import { renderFor } from "../control-flow/for";
 import { renderAwait } from "../control-flow/await";
 import { ELEMENT_TYPE } from "../../types";
 import { isVirtualElement } from "../utils";
+import { renderSSR } from "../ssr/ssr";
 
 function rootRender(
     element: VirtualElement,
@@ -19,29 +20,47 @@ function rootRender(
     return dom;
 }
 
-function render(
-    element: VirtualElement,
-    container: HTMLElement,
-): HTMLElement | Text {
+function render(element: VirtualElement[], container: HTMLElement): HTMLElement | Text;
+function render(element: VirtualElement, container?: HTMLElement): HTMLElement | Text;
+function render(element: VirtualElement | VirtualElement[], container?: HTMLElement): HTMLElement | Text {
+    if (Array.isArray(element)) {
+        if(!container)
+            throw new Error('Invalid container element for multiple rendering');
+        return renderChildren(element, container);
+    }
     switch (element.type as ElementType) {
         case ELEMENT_TYPE.TEXT: /* edge node */
             return renderText(element.props.nodeValue as string);
-        case ELEMENT_TYPE.SIGNAL: /* edge node */
-            return renderSignal(element.props.signal as Signal, container);
-        case ELEMENT_TYPE.EMPTY: /* edge node */
-            return container;
-        case ELEMENT_TYPE.RAW: /* edge node */
-            return element.props.rawElement as HTMLElement;
         case ELEMENT_TYPE.DOM: /* non edge node - internally glue any child nodes */
             return renderElement(element);
+        case ELEMENT_TYPE.RAW: /* edge node */
+            return element.props.rawElement as HTMLElement;
+        case ELEMENT_TYPE.EMPTY: /* edge node */
+            if(!container) 
+                throw new Error('Invalid container element for empty rendering');
+            return container;
+        case ELEMENT_TYPE.SIGNAL: /* edge node */
+            if(!container) 
+                throw new Error('Invalid container element for signal rendering');  
+            return renderSignal(element.props.signal as Signal, container);
         case ELEMENT_TYPE.COMPONENT: /* non edge node */
+            if(!container) 
+                throw new Error('Invalid container element for component rendering');
             return renderComponent(element, container);
         case ELEMENT_TYPE.CONTROL_FLOW: /* non edge node - internally glue any child nodes */
+            if(!container) 
+                throw new Error('Invalid container element for control flow rendering');
             return renderControlFlow(element, container);
+        case ELEMENT_TYPE.SSR: /* non edge node - internally glue any child nodes */
+            if(!container) 
+                throw new Error('Invalid container element for SSR rendering');
+            return renderSSR(element, container, render);
         default:
             throw new Error(`Invalid element type: ${element.type}`);
     }
-}
+}  
+
+type RenderFunction = typeof render;
 
 function renderControlFlow(
     element: VirtualElement,
@@ -83,16 +102,23 @@ function renderElement(
     Object.keys(props)
         .filter(isProperty)
         .forEach(name => attachPropertyToElement(dom, name, props[name]));
-    children.forEach(child => {
+    return renderChildren(children as VirtualElement[], dom);
+}
+
+function renderChildren(
+    children: VirtualElement[],
+    container: HTMLElement,
+): HTMLElement {
+    children.flat(Infinity).filter(Boolean).forEach(child => {
         if(!isVirtualElement(child)) {
             throw new Error('Invalid child element');
         }
-        const childDom = render(child, dom);
-        if (childDom !== dom && childDom.parentElement !== dom) {
-            dom.appendChild(childDom);
+        const childDom = render(child, container);
+        if (childDom !== container && childDom.parentElement !== container) {
+            container.appendChild(childDom);
         }
     });
-    return dom;
+    return container;
 }
 
 function renderText(
@@ -115,4 +141,4 @@ function renderSignal<T = unknown>(
     return dom;
 }
 
-export { rootRender as render };
+export { rootRender as render, renderElement, type RenderFunction };
