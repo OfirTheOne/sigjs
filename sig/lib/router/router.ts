@@ -103,6 +103,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         const componentElementOrPromise = route.component();
         if(isPromise(componentElementOrPromise)) {
             const routeAsync = route as RouteCommonConfig & RouteAsyncConfig;
+            const routeAsyncId = routeAsync.id as string;
             // Show loading component
             if (routeAsync.loading) {
                 const loadingComponent = routeAsync.loading();
@@ -110,12 +111,12 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
                 routerElement.appendChild(loadingDom);
                 if(routeAsync.onEnter) routeAsync.onEnter();
             }
-            if(!memoRenderedRoute[routeAsync.id]) {
+            if(!memoRenderedRoute[routeAsyncId]) {
                 componentElementOrPromise.then(componentElement => {
                     // Remove loading component
                     routerElement.innerHTML = '';
                     const componentDom = render(componentElement, routerElement);
-                    memoRenderedRoute[routeAsync.id] = componentDom;
+                    memoRenderedRoute[routeAsyncId] = componentDom;
                     routerElement.appendChild(componentDom); 
                 }).catch(() => {
                     // If loading the component fails, load the fallback component if it exists
@@ -127,18 +128,19 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
                     }
                 });
             } else {
-                routerElement.appendChild(memoRenderedRoute[routeAsync.id]);
+                routerElement.appendChild(memoRenderedRoute[routeAsyncId]);
             }
         } else {
             routerElement.innerHTML = '';
             const routeSync = route as RouteCommonConfig & RouteSyncConfig;
-            if(!memoRenderedRoute[routeSync.id]) {
+            const routeSyncId = routeSync.id as string;
+            if(!memoRenderedRoute[routeSyncId]) {
                 const componentElement = routeSync.component();
                 const componentDom = render(componentElement, routerElement);
-                memoRenderedRoute[routeSync.id] = componentDom;
+                memoRenderedRoute[routeSyncId] = componentDom;
                 routerElement.appendChild(componentDom);
             } else {
-                routerElement.appendChild(memoRenderedRoute[routeSync.id]);
+                routerElement.appendChild(memoRenderedRoute[routeSyncId]);
             }
             if(routeSync.onEnter) routeSync.onEnter();
         }   

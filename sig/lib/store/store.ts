@@ -48,7 +48,10 @@ export class Store<T> {
                 comparator: comparator as Comparator<unknown> || defaultComparator
             });
         }
-        const { signal } = this.signals.get(selector);
+        const { signal } = this.signals.get(selector) || {};
+        if(!signal) {
+            throw new Error('Signal not found');
+        }
         return signal as Signal<U>;
     }
 

@@ -12,6 +12,9 @@ interface RootElementWithMetadata extends RootElement {
 }
 
 function createRoot(domElement?: HTMLElement | null): RootElement {
+    if(!domElement) {
+        throw new Error('No root element found');
+    }
     const rootId = `[[r-${Object.keys(getGlobal().roots).length}]]`;
     const root: RootElementWithMetadata = {
         id: rootId,
