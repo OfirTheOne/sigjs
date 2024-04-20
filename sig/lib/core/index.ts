@@ -12,6 +12,8 @@ export * from './control-flow';
 
 export * from './create-ref';
 
+export * from './ssr/ssr';
+
 export {
     createRoot,
     createSignal,
