@@ -4,13 +4,10 @@ import { VirtualElement, VirtualElementChild, ELEMENT_TYPE } from "@/types";
 import { SSRSymbol } from "@/symbols";
 import { getRenderedRoot, setRenderedRoot } from "@/core/global";
 import { isNodeHTMLElement, isNodeText } from "@/core/utils";
+import { RenderFunction } from "../dom-render/render";
 
+customElements.define('ssr-ph', class extends HTMLElement { });
 customElements.define('sig-outlet', class extends HTMLElement { });
-
-type RenderFunction = (
-    element: VirtualElement | VirtualElement[],
-    container: HTMLElement,
-) => HTMLElement | Text;
 
 interface SSRProps {
     url: string;
@@ -18,6 +15,8 @@ interface SSRProps {
     memo?: boolean | { key: string };
     allowOutlet?: boolean;
     fallback?: VirtualElement;
+    errorElement?: VirtualElement;
+    onError?: (error: Error) => void;
 }
 
 function SSR(props: SSRProps, children: VirtualElementChild[]): VirtualElement {
@@ -39,12 +38,18 @@ function renderSSR(
     render: RenderFunction
 ): HTMLElement | Text {
 
-    const { url, fetchHandler, allowOutlet = true, fallback, children = [] } = (
+    const { url, fetchHandler, allowOutlet = true, fallback, children = [], errorElement, onError } = (
         element.props as unknown as SSRProps & { children: VirtualElement[] });
     const root = getRenderedRoot();
 
-    const fallbackDom = render(fallback, container);
-    container.appendChild(fallbackDom);
+    let fallbackDom: HTMLElement | Text | null = null;
+    const placeholderElm = document.createElement('ssr-ph');
+    if(fallback) {
+        fallbackDom = render(fallback, container);
+        container.appendChild(fallbackDom);
+    } else {
+        container.appendChild(placeholderElm);
+    }
     Promise.resolve(provideHtml(url as string, fetchHandler))
         .then((htmlString) => {
             setRenderedRoot(root.id);
@@ -57,13 +62,36 @@ function renderSSR(
                     outlet.replaceWith(...domChildren);                   
                 }
             }
-            if(fallbackDom.parentElement !== container) {
-                container.appendChild(htmlDom);
+            if(fallbackDom) {
+                if(fallbackDom.parentElement !== container) {
+                    container.appendChild(htmlDom);
+                } else {
+                    container.replaceChild(htmlDom, fallbackDom);
+                }
             } else {
-                container.replaceChild(htmlDom, fallbackDom);
+                container.replaceChild(htmlDom, placeholderElm);
+            }
+        })
+        .catch((error) => {
+            setRenderedRoot(root.id);
+            if(onError) {
+                onError(error);
+            }
+            if(!errorElement) {
+                return;
+            }
+            const errorDom = render(errorElement);
+            if(fallbackDom) {
+                if(fallbackDom.parentElement !== container) {
+                    container.appendChild(errorDom);
+                } else {
+                    container.replaceChild(errorDom, fallbackDom);
+                }
+            } else {
+                container.replaceChild(errorDom, placeholderElm);
             }
         });
-    return fallbackDom;
+    return fallbackDom || placeholderElm;
 
 }
 
@@ -74,7 +102,7 @@ async function provideHtml(url: string, fetchHandler?: () => Promise<string>): P
         }
         return await fetchSSRHtml(url);
     } catch (error) {
-        console.error(error);
+        throw new Error(`Failed to fetch SSR HTML: ${(<Error>error)?.message}`);
     }
 }
 async function fetchSSRHtml(url: string): Promise<string> {
