@@ -50,7 +50,7 @@ function createElement(
     props: Props | undefined = {},
     ...children: VirtualElementChild[]
 ): VirtualElement {
-    const flatChildren = children.flat(Infinity);
+    const flatChildren = children.filter(Boolean).flat(Infinity).filter(Boolean);
     return typeof type === 'function'
         ? createComponentElement(type, props, ...flatChildren)
         : isRawElement(type)

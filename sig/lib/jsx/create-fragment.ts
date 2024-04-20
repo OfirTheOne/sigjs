@@ -1,4 +1,4 @@
-function createFragment(...args: unknown[]) { return args.flat(); }
+function createFragment(_emptyTag: null, ...children: unknown[]) { return children.filter(Boolean).flat(Infinity); }
 
 
 export { createFragment };
