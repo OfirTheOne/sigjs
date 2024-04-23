@@ -1,4 +1,4 @@
-import { Signal, Listener } from "./types";
+import { Signal, Listener } from "./signal.types";
 
 let signalCounter = 0
 
@@ -73,19 +73,5 @@ function createSignal<T>(value: T, id?: string): [Signal<T>, (value: T) => void]
     return [callableSignal as Signal<T>, (newValue: T) => nonCallableSignal.value = newValue];
 }
 
-function isSignal<T = unknown>(value: unknown): value is Signal<T> {
-    return typeof value === 'function' && typeof (value as Signal<T>).subscribe === 'function';
-}
 
-function subscribeSignal<T = unknown>(signal: Signal<T>, callback: Listener<T>): () => void {
-    let lastValue: T = signal.value;
-    const unsubscribe = signal.subscribe((value) => {
-        lastValue = value;
-        callback(value);
-    });
-    callback(lastValue);
-    return unsubscribe;
-}
-
-
-export { createSignal, isSignal, subscribeSignal };
+export { createSignal };

@@ -19,11 +19,14 @@ let posts: {
   }
 ];
 
-app.get('/layout', async (_req, res) => {
-  await delay(5000);
+
+app.get('/layout', async (req, res) => {
+  const query = req.query;
+  const color = query.color || 'blue';
+  // await delay(5000);
   res.send(`
   <div class=" flex flex-col min-h-screen bg-gray-100">
-    <header class="bg-white shadow">
+    <header class="shadow" style="background-color: ${color}">
         <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between">
                 <div class="flex-shrink-0">

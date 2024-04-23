@@ -1,29 +1,34 @@
-
-
 import { VirtualElement, VirtualElementChild, ELEMENT_TYPE } from "@/types";
 import { SSRSymbol } from "@/symbols";
 import { getRenderedRoot, setRenderedRoot } from "@/core/global";
-import { isNodeHTMLElement, isNodeText } from "@/core/utils";
-import { RenderFunction } from "../dom-render/render";
+import { isNodeHTMLElement } from "@/core/utils";
+import { parseHtml } from "./parse-html";
+import { SSRFetch, SSRFetchOptions } from "./ssr.types";
+import type { RenderFunction } from "../dom-render/render";
+import type { RootElementWithMetadata } from "../dom-render/create-root";
+import { Signal } from "../signal/signal.types";
+import { getSignalValue, listen } from "../signal/signal.utils";
+import { isSignal } from "../signal/signal.utils";
+import { fetchHtml } from "./fetch-html";
+
 
 customElements.define('ssr-ph', class extends HTMLElement { });
 customElements.define('sig-outlet', class extends HTMLElement { });
 
 interface SSRProps {
-    url: string;
-    fetchHandler?: () => Promise<string>;
-    memo?: boolean | { key: string };
+    fetch: SSRFetch;
     allowOutlet?: boolean;
     fallback?: VirtualElement;
     errorElement?: VirtualElement;
     onError?: (error: Error) => void;
+    memo?: boolean | { key: string };
 }
 
 function SSR(props: SSRProps, children: VirtualElementChild[]): VirtualElement {
     return {
         type: ELEMENT_TYPE.SSR,
         props: {
-            children,
+            children: children || [],
             ...props,
         }
     };
@@ -31,14 +36,19 @@ function SSR(props: SSRProps, children: VirtualElementChild[]): VirtualElement {
 
 SSR['$$type'] = SSRSymbol;
 
-
 function renderSSR(
     element: VirtualElement,
     container: HTMLElement,
     render: RenderFunction
 ): HTMLElement | Text {
-
-    const { url, fetchHandler, allowOutlet = true, fallback, children = [], errorElement, onError } = (
+    const { 
+        fetch: urlOrHandlerOrFetchConfig, 
+        allowOutlet = true, 
+        fallback, 
+        children = [], 
+        errorElement,
+         onError 
+    } = (
         element.props as unknown as SSRProps & { children: VirtualElement[] });
     const root = getRenderedRoot();
 
@@ -50,76 +60,119 @@ function renderSSR(
     } else {
         container.appendChild(placeholderElm);
     }
-    Promise.resolve(provideHtml(url as string, fetchHandler))
-        .then((htmlString) => {
-            setRenderedRoot(root.id);
-            const htmlDom = processSSRHtml(htmlString);
-            if(isNodeHTMLElement(htmlDom) && allowOutlet) {
-                const outlet = htmlDom.querySelector('sig-outlet');
-                if(outlet) {
-                    render(children, outlet as HTMLElement);
-                    const domChildren = Array.from(outlet.childNodes);
-                    outlet.replaceWith(...domChildren);                   
-                }
-            }
-            if(fallbackDom) {
-                if(fallbackDom.parentElement !== container) {
-                    container.appendChild(htmlDom);
-                } else {
-                    container.replaceChild(htmlDom, fallbackDom);
-                }
-            } else {
-                container.replaceChild(htmlDom, placeholderElm);
-            }
-        })
-        .catch((error) => {
-            setRenderedRoot(root.id);
-            if(onError) {
-                onError(error);
-            }
-            if(!errorElement) {
-                return;
-            }
-            const errorDom = render(errorElement);
-            if(fallbackDom) {
-                if(fallbackDom.parentElement !== container) {
-                    container.appendChild(errorDom);
-                } else {
-                    container.replaceChild(errorDom, fallbackDom);
-                }
-            } else {
-                container.replaceChild(errorDom, placeholderElm);
-            }
-        });
-    return fallbackDom || placeholderElm;
 
-}
-
-async function provideHtml(url: string, fetchHandler?: () => Promise<string>): Promise<string> {
-    try {
-        if(fetchHandler) {
-            return await fetchHandler();
+    function injectResolvedDom(dom: HTMLElement | Text) {
+        if(fallbackDom) {
+            if(fallbackDom.parentElement !== container) {
+                container.appendChild(dom);
+            } else {
+                container.replaceChild(dom, fallbackDom);
+            }
+        } else {
+            container.replaceChild(dom, placeholderElm);
         }
-        return await fetchSSRHtml(url);
-    } catch (error) {
-        throw new Error(`Failed to fetch SSR HTML: ${(<Error>error)?.message}`);
     }
+
+    if(typeof urlOrHandlerOrFetchConfig === 'string') {
+        asyncRenderSSR(
+            fetchHtml(urlOrHandlerOrFetchConfig, root),
+            root,
+            render,
+            children,
+            errorElement,
+            onError,
+            allowOutlet,
+            injectResolvedDom
+        );
+    } else if(typeof urlOrHandlerOrFetchConfig === 'function') {
+        asyncRenderSSR(
+            urlOrHandlerOrFetchConfig() as Promise<string>,
+            root,
+            render,
+            children,
+            errorElement,
+            onError,
+            allowOutlet,
+            injectResolvedDom
+        );   
+    } else if(isSignal(urlOrHandlerOrFetchConfig)) {
+        const renderListener = () => {
+                const url = getSignalValue(urlOrHandlerOrFetchConfig) as string;
+                asyncRenderSSR(
+                    fetchHtml(url, root),
+                    root,
+                    render,
+                    children,
+                    errorElement,
+                    onError,
+                    allowOutlet,
+                    injectResolvedDom
+                );
+            };
+        listen(renderListener, [urlOrHandlerOrFetchConfig]);
+        renderListener();
+    } else {
+        const signalFields = Object.values(urlOrHandlerOrFetchConfig).filter(isSignal) as Signal<unknown>[];
+        const renderListener = () => {
+            const nonSignalFetchOptions: SSRFetchOptions = {
+                url: getSignalValue(urlOrHandlerOrFetchConfig.url),
+                query: getSignalValue(urlOrHandlerOrFetchConfig.query),
+                params: getSignalValue(urlOrHandlerOrFetchConfig.params),
+                config: getSignalValue(urlOrHandlerOrFetchConfig.config),
+            };
+            asyncRenderSSR(
+                fetchHtml(nonSignalFetchOptions, root),
+                root,
+                render,
+                children,
+                errorElement,
+                onError,
+                allowOutlet,
+                injectResolvedDom
+            );
+        };
+        listen(renderListener, signalFields);
+        renderListener();
+    }   
+    return fallbackDom || placeholderElm;
 }
-async function fetchSSRHtml(url: string): Promise<string> {
-    const res = await fetch(url);
-    return await res.text();
+
+
+function asyncRenderSSR(
+    provideHtmlPromise: Promise<string>, 
+    root: RootElementWithMetadata, 
+    render: RenderFunction,
+    children: VirtualElement[],
+    errorElement: VirtualElement | undefined,
+    onError: ((error: Error) => void) | undefined,
+    allowOutlet: boolean,
+    injectResolvedDom: (dom: HTMLElement | Text) => void,
+) {
+    return provideHtmlPromise.then((htmlString) => {
+        setRenderedRoot(root.id);
+        const htmlDom = parseHtml(htmlString);
+        if(isNodeHTMLElement(htmlDom) && allowOutlet) {
+            const outlet = htmlDom.querySelector('sig-outlet');
+            if(outlet) {
+                render(children, outlet as HTMLElement);
+                const domChildren = Array.from(outlet.childNodes);
+                outlet.replaceWith(...domChildren);                   
+            }
+        }
+        injectResolvedDom(htmlDom);
+    })
+    .catch((error) => {
+        setRenderedRoot(root.id);
+        onError?.(error);
+        if(!errorElement) {
+            return;
+        }
+        const errorDom = render(errorElement);
+        injectResolvedDom(errorDom);
+    });
 }
-function processSSRHtml(html: string): HTMLElement | Text {
-    const dom = new DOMParser().parseFromString(html, 'text/html');
-    const processedDom = dom.body.firstChild;
-    if(!processedDom) {
-        throw new Error('Invalid SSR HTML');
-    }
-    if(isNodeHTMLElement(processedDom) || isNodeText(processedDom)){
-        return processedDom;
-    }
-    throw new Error('Processed SSR HTML is not a valid node');
-}
+
 
 export type { SSRProps };
 export { SSR, renderSSR };
+

@@ -1,6 +1,12 @@
-import { VirtualElement } from "../../types";
-import { setRenderedRoot, getGlobal, addRoot  } from "../global";
+import { setRenderedRoot, getGlobal, addRoot } from "../global";
 import { render } from "./render";
+import { type VirtualElement } from "../../types";
+import { type RootSSRMetadata } from "../ssr/ssr.types";
+
+
+interface CreateRootOptions {
+    ssr?: RootSSRMetadata;
+}
 
 interface RootElement {
     render: (element: VirtualElement) => void;
@@ -9,9 +15,10 @@ interface RootElement {
 
 interface RootElementWithMetadata extends RootElement {
     id: string;
+    ssr?: RootSSRMetadata
 }
 
-function createRoot(domElement?: HTMLElement | null): RootElement {
+function createRoot(domElement?: HTMLElement | null, options?: CreateRootOptions): RootElement {
     if(!domElement) {
         throw new Error('No root element found');
     }
@@ -25,11 +32,12 @@ function createRoot(domElement?: HTMLElement | null): RootElement {
             }
             setRenderedRoot(root.id);
             render(element, domElement);
-        }
+        },
+        ssr: options?.ssr
     };
     addRoot(root);
     return root;
 }
 
-export type { RootElement, RootElementWithMetadata };
+export type { RootElement, RootElementWithMetadata, CreateRootOptions };
 export { createRoot };

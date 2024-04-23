@@ -1,12 +1,13 @@
 
 
-import { SSR, createRef } from "sig";
+import { SSR, createRef, createSignal } from "sig";
 import { Store } from "sig/store";
 
 const fromState = new Store({
     name: '',
     email: '',
     message: '',
+    color: ''
 });
 
 export function setName(name: string) {
@@ -22,8 +23,11 @@ export function setMessage(message: string) {
 }
 
 export function App() {
+    const color$ = fromState.select(state => state.color);
+    const [query$] = createSignal<Record<string, string>>({ color: undefined });
+    query$.link(color$, (color) => ({ color }));
     return (
-        <SSR url="http://localhost:3000/layout" fallback={<p>Loading</p>}>
+        <SSR fetch={ { url: '/layout', config: {}, query: query$ } }fallback={<p>Loading</p>}>
             <Form />
         </SSR>
     );
@@ -35,6 +39,7 @@ function Form() {
     const message$ = fromState.select(state => state.message);
     const formRef = createRef<HTMLFormElement>();
     const submit = () => {
+        fromState.setState(state => ({ ...state, color: 'red'}));
         if(formRef.current?.checkValidity() === false) {
             alert('From is invalid');
             return;
