@@ -2,16 +2,67 @@
 
 type Listener<T = unknown> = (value: T) => void;
 
-interface Signal<T = unknown> {
-    (): T;
+
+interface CoreSignalCapabilities<T> {
     id: string;
     value: T;
     setValue(value: T | ((value: T) => T)): void;
     emit(value: T): void;
     subscribe(listener: Listener<T>): () => void;
-    link<L = T>(signal: Signal<L>, pipe?: (value: L) => T): () => void;
     readonly listeners: Listener<T>[];
+    disconnect(): void;
 }
+
+interface EnhancedSignalCapabilities<T> {
+    /**
+     * Derive a new signal from the current signal
+     * @param pipe A function that transforms the value of the current signal
+     * @returns A new signal with the transformed value
+     * @example
+     * const numberSignal = signal(1);
+     * const stringSignal = numberSignal.derive(value => String(value));
+     * stringSignal.subscribe(value => console.log(value)); // '1'
+     * numberSignal.setValue(2); // '2'
+     */ 
+    derive<L = T>(pipe: (value: T) => L): Signal<L>;
+    /**
+     * Link the current signal to another signal
+     * @param signal The signal to link to
+     * @param pipe A function that transforms the value of the linked signal
+     * @returns A function that unlinks the signals
+     * @example
+     * const counter = signal(0);
+     * const doubledCounter = signal(0);
+     * counter.link(doubledCounter, value => value * 2);
+     * counter.subscribe(value => console.log(value));
+     * doubledCounter.subscribe(value => console.log(value)); 
+     * counter.setValue(1);
+     * // console logs:
+     * // > 1
+     * // > 2
+     */
+    link<L = T>(signal: Signal<L>, pipe?: (value: L) => T): () => void;
+    readonly linkedSubscriptions: (() => void)[];
+}
+
+interface CallableSignal<T> {
+    (): T;
+}
+
+interface Signal<T = unknown> extends CoreSignalCapabilities<T>, EnhancedSignalCapabilities<T>, CallableSignal<T> {
+}
+
+// interface Signal<T = unknown> {
+//     (): T;
+//     id: string;
+//     value: T;
+//     setValue(value: T | ((value: T) => T)): void;
+//     emit(value: T): void;
+//     subscribe(listener: Listener<T>): () => void;
+//     readonly listeners: Listener<T>[];
+//     disconnect(): void;
+
+// }
 
 // ***** Utility types *****
 
@@ -50,4 +101,13 @@ type Unsignalize<T> = T extends object ? {
     [P in keyof T]: T[P] extends Signal<infer U> ? U : T[P];
 } : T extends Signal<infer U> ? U : T;
 
-export type { Signal, Listener, ExtractSignalType, Signalize, Unsignalize };
+export type { 
+    Signal, 
+    CoreSignalCapabilities,
+    EnhancedSignalCapabilities,
+    CallableSignal,
+    Listener, 
+    ExtractSignalType, 
+    Signalize, 
+    Unsignalize 
+};
