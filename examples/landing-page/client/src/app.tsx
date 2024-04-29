@@ -1,45 +1,80 @@
 
-
-import { SSR, createRef, createSignal } from "sig";
+import { If, SSR, createRef, createSignal } from "sig";
 import { Store } from "sig/store";
 
-const fromState = new Store({
+const formState = new Store({
     name: '',
     email: '',
     message: '',
-    color: ''
+    color: '',
+    count: 0
 });
 
 export function setName(name: string) {
-    fromState.setState(state => ({ ...state, name }));
+    formState.setState(state => ({ ...state, name }));
 }
 
 export function setEmail(email: string) {
-    fromState.setState(state => ({ ...state, email }));
+    formState.setState(state => ({ ...state, email }));
 }
 
 export function setMessage(message: string) {
-    fromState.setState(state => ({ ...state, message }));
+    formState.setState(state => ({ ...state, message }));
 }
 
 export function App() {
-    const color$ = fromState.select(state => state.color);
+    const color$ = formState.select(state => state.color);
     const [query$] = createSignal<Record<string, string>>({ color: undefined });
     query$.link(color$, (color) => ({ color }));
     return (
         <SSR fetch={ { url: '/layout', config: {}, query: query$ } }fallback={<p>Loading</p>}>
-            <Form />
+            <InteractivePage />
         </SSR>
     );
 }
 
+function InteractivePage() {
+    const count$ = formState.select(state => state.count);
+    const isEven$ = count$.derive(count => count % 2 === 0);
+    const submit = () => {
+        formState.setState(state => ({ ...state, color: 'red'}));
+    };
+    return (
+        <div className="bg-gray-100 w-1/2 flex flex-col items-start justify-center gap-2">
+            <div className="flex flex-row">
+                <button onClick={
+                    () => formState.setState(state => ({ 
+                        ...state, 
+                        count: state.count + 1 
+                    }))} 
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-8 rounded">
+                        Increment
+                </button>
+                <If 
+                    condition={isEven$} 
+                    then={<p>the Number {count$} is even !!!!</p>}
+                    fallback={<p>the Number {count$} is so odd and really not even !!!!</p>}>
+                </If>
+            </div>
+            <div className="flex items-center  justify-start">
+                <button 
+                    type="button" 
+                    onClick={submit}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mx-8 rounded">
+                    Submit
+                </button>
+            </div>
+        </div>
+    );
+}
+
 function Form() {
-    const name$ = fromState.select(state => state.name);
-    const email$ = fromState.select(state => state.email);
-    const message$ = fromState.select(state => state.message);
+    const name$ = formState.select(state => state.name);
+    const email$ = formState.select(state => state.email);
+    const message$ = formState.select(state => state.message);
     const formRef = createRef<HTMLFormElement>();
     const submit = () => {
-        fromState.setState(state => ({ ...state, color: 'red'}));
+        formState.setState(state => ({ ...state, color: 'red'}));
         if(formRef.current?.checkValidity() === false) {
             alert('From is invalid');
             return;
@@ -66,7 +101,7 @@ function Form() {
                 <label for="email" className="sr-only">Email</label>
                 <input 
                     onInput={(e) => setEmail(e.target.value)}
-                    value={email$ as unknown as string}
+                    value={email$ as unknown as  string}
                     id="email"
                     name="email"
                     type="email"

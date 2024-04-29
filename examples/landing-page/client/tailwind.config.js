@@ -10,7 +10,7 @@ module.exports = {
   safelist: [
     "flex", "flex-col", "min-h-screen", "bg-gray-100",
     "bg-white", "shadow", "max-w-7xl", "mx-auto", "py-6", "px-4",
-    "sm:px-6", "lg:px-8", "items-center", "justify-between", "flex-shrink-0",
+    "sm:px-6", "lg:px-8", "items-center", "items-start", "justify-between", "flex-shrink-0",
     "h-8", "w-8", "md:ml-auto", "flex-wrap", "text-base", "justify-center",
     "mr-5", "hover:text-gray-900", "flex-1", "flex-row", "w-2/5", "h-1/2", "gap-4",
     "py-6", "justify-start", "items-end", "gap-2", "h-2", "w-2", "bg-slate-400/20",
