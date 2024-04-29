@@ -2,6 +2,7 @@ import { setRenderedRoot, getGlobal, addRoot } from "../global";
 import { render } from "./render";
 import { type VirtualElement } from "../../types";
 import { type RootSSRMetadata } from "../ssr/ssr.types";
+import { observeRoot } from "../global/global-hook-executioner";
 
 
 interface CreateRootOptions {
@@ -36,6 +37,7 @@ function createRoot(domElement?: HTMLElement | null, options?: CreateRootOptions
         ssr: options?.ssr
     };
     addRoot(root);
+    observeRoot(domElement);
     return root;
 }
 

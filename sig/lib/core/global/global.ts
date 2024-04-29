@@ -1,15 +1,9 @@
 
-const SigSymbol = Symbol('[SIG]');
-const RenderedRootSymbol = Symbol('[RR]');
-import type { RootElementWithMetadata } from './dom-render/create-root';
+import { RenderedRootSymbol, SigSymbol } from '@/symbols';
+import type { RootElementWithMetadata } from '../dom-render/create-root';
+import { SigGlobal } from './global.types';
 
-type SigGlobal = Readonly<{
-    signals: Record<string, unknown>;
-    roots: Record<string, RootElementWithMetadata>;
-    [RenderedRootSymbol]: {
-        rootId?: string;
-    }
-}>;
+
 
 function getRenderedRoot() {
     const rootId = getGlobal()[RenderedRootSymbol].rootId;
@@ -55,7 +49,6 @@ function addGlobal() {
 addGlobal();
 
 
-export type { SigGlobal };
 export {
     getGlobal,
     getRenderedRoot,

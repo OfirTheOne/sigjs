@@ -1,5 +1,6 @@
 import { ElementRef } from "@/types";
 import { isSignal, Signal, subscribeSignal } from "../signal";
+import { registerSignalSubscription } from "../global/global-hook-executioner";
 
 function attachPropertyToElement(dom: HTMLElement, name: string, value: unknown): unknown {
     if (name === 'children') {
@@ -50,9 +51,11 @@ function attachSignalToElement<T = unknown>(
     property: string
 ): unknown {
     element.setAttribute(`sid:${property}`, signal.id);
-    return subscribeSignal(signal, (value: unknown) => {
+    const unsubscribe = subscribeSignal(signal, (value: unknown) => {
         attachPropertyToElement(element, property, value);
     });
+    registerSignalSubscription(element, unsubscribe);
+    return unsubscribe;
 }
 
 export {

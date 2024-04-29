@@ -1,6 +1,7 @@
 import { VirtualElement, VirtualElementChild, ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/types";
 import { isSignal, Signal, subscribeSignal } from "@/core/signal";
 import { ForControlFlow } from "@/symbols";
+import { registerSignalSubscription } from "@/core/global/global-hook-executioner";
 
 type RenderFunction = (
     element: VirtualElement,
@@ -53,7 +54,7 @@ function renderFor(
     } else {
         const listSignal = list;
         placeholderDom.setAttribute('signal', listSignal.id);
-        subscribeSignal(listSignal, (list) => {
+        const unsubscribe = subscribeSignal(listSignal, (list) => {
             while (placeholderDom.lastChild) {
                 placeholderDom.lastChild.remove();
             }
@@ -72,6 +73,8 @@ function renderFor(
                 placeholderDom.appendChild(elementDom);
             });
         });
+
+        registerSignalSubscription(placeholderDom, unsubscribe);
     }
     return placeholderDom;
 }
