@@ -10,11 +10,11 @@ export function onDisconnect(cb: OnDisconnectHook)  {
     if(!context) {
         throw new Error('No active context');
     }
-    context.hooks.disconnected.push(cb);
+    context.hooks.disconnect.push(cb);
 }
 
 export function runOnDisconnectHooks(context: ComponentContext) {
-    context.hooks.disconnected.forEach(cb => {
+    context.hooks.disconnect.forEach(cb => {
         try {
             cb();
         } catch (error) {

@@ -1,20 +1,20 @@
 import { getActiveContext } from "../component-context";
 import type { ComponentContext } from "../component-context";
 
-export interface OnConnectHook {
+export interface OnCreateHook {
     (): void
 }
 
-export function onConnect(cb: OnConnectHook)  {
+export function onCreate(cb: OnCreateHook)  {
     const context = getActiveContext();
     if(!context) {
         throw new Error('No active context');
     }
-    context.hooks.connect.push(cb);
+    context.hooks.create.push(cb);
 }
 
-export function runOnConnectHooks(context: ComponentContext) {
-    context.hooks.connect.forEach(cb => {
+export function runOnCreateHooks(context: ComponentContext) {
+    context.hooks.create.forEach(cb => {
         try {
             cb();
         } catch (error) { 

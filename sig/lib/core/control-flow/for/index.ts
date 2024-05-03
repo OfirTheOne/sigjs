@@ -1,12 +1,11 @@
+import type { RenderFunction } from "@/core/dom-render/render";
 import { VirtualElement, VirtualElementChild, ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/types";
 import { isSignal, Signal, subscribeSignal } from "@/core/signal";
 import { ForControlFlow } from "@/symbols";
 import { registerSignalSubscription } from "@/core/global/global-hook-executioner";
+import { KeyBuilder } from "@/common/key-builder/key-builder";
+import { DOM } from "@/core/html";
 
-type RenderFunction = (
-    element: VirtualElement,
-    container: HTMLElement,
-) => HTMLElement | Text;
 
 interface ForProps<T = unknown> {
     list: Array<T> | Signal<Array<T>>;
@@ -32,25 +31,26 @@ customElements.define('for-ph', class extends HTMLElement { });
 function renderFor(
     element: VirtualElement,
     _container: HTMLElement,
-    render: RenderFunction
+    render: RenderFunction,
+    key: KeyBuilder
 ): HTMLElement | Text {
     const { list, factory, index } = (element.props as unknown as ForProps);
-    const placeholderDom = document.createElement('for-ph');
+    const currentKey = key.clone().push(element.props.controlTag as string);
+    const placeholderDom = DOM.createElement('for-ph', currentKey);
     const factoryFn = typeof factory === 'function' ? factory : () => factory;
     const indexFn = typeof index === 'function' ? index : ((item: unknown, i: number) => {
         if (typeof index === 'undefined') return String(i);
         return item?.[index as string] as string;
-
     });
     const indexItems = new Map<string, {
         dom: HTMLElement | Text;
-    }>()
+    }>();
     while (placeholderDom.lastChild) {
         placeholderDom.lastChild.remove();
     }
     if (!isSignal<Array<unknown>>(list)) {
         const childElements = list.map(factoryFn);
-        childElements.forEach(childElement => render(childElement, placeholderDom));
+        childElements.forEach(childElement => render(childElement, placeholderDom, key));
     } else {
         const listSignal = list;
         placeholderDom.setAttribute('signal', listSignal.id);
@@ -64,8 +64,9 @@ function renderFor(
                 if (indexItem) {
                     return indexItem.dom;
                 }
+                const childKey = key.clone().pushIndex(i);
                 const element = factoryFn(item);
-                const elementDom = render(element, placeholderDom);
+                const elementDom = render(element, placeholderDom, childKey);
                 indexItems.set(indexValue, { dom: elementDom });
                 return elementDom;
             });

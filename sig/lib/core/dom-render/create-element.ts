@@ -1,7 +1,8 @@
-import { isRawElement } from "@/common/is-raw-element";
-import { Signal, isSignal } from "@/core/signal";
-import { ELEMENT_TYPE } from "@/types";
 import type { VirtualElementChild, VirtualElement, ComponentFunction, AsyncComponentFunction, Props } from "@/types";
+import type { Signal } from "@/core/signal";
+import { isRawElement } from "@/common/is-raw-element";
+import { isSignal } from "@/core/signal/signal.utils";
+import { ELEMENT_TYPE } from "@/types";
 
 function createTextElement(text: string): VirtualElement {
     return {

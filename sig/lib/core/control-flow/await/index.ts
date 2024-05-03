@@ -1,12 +1,9 @@
 
+import { KeyBuilder } from "@/common/key-builder/key-builder";
+import type { RenderFunction } from "@/core/dom-render/render";
 import { getRenderedRoot, setRenderedRoot } from "@/core/global";
 import { AwaitControlFlow } from "@/symbols";
 import { AsyncComponentFunction, CONTROL_FLOW_TAG, ELEMENT_TYPE, VirtualElement } from "@/types";
-
-type RenderFunction = (
-    element: VirtualElement,
-    container: HTMLElement,
-) => HTMLElement | Text;
 
 interface AwaitProps {
     fallback: VirtualElement,
@@ -28,23 +25,25 @@ Await['$$type'] = AwaitControlFlow;
 
 
 function renderAwait(
-    element: VirtualElement, 
-    container: HTMLElement, 
-    render: RenderFunction
+    element: VirtualElement,
+    container: HTMLElement,
+    render: RenderFunction,
+    key: KeyBuilder
 ): HTMLElement | Text {
     const root = getRenderedRoot();
     const component = element.props.component as AsyncComponentFunction;
     if (typeof component !== 'function') {
         throw new Error(`Invalid component type: ${component}`);
     }
+    const currentKey = key.clone().push(element.props.controlTag as string);
     const { fallback } = (element.props as unknown as AwaitProps);
-    const fallbackDom = render(fallback, container);
+    const fallbackDom = render(fallback, container, currentKey);
     container.appendChild(fallbackDom);
     Promise.resolve(component())
         .then((componentElement) => {
             setRenderedRoot(root.id);
-            const componentElementDom = render(componentElement, container);
-            if(fallbackDom.parentElement !== container) {
+            const componentElementDom = render(componentElement, container, currentKey);
+            if (fallbackDom.parentElement !== container) {
                 container.appendChild(componentElementDom);
             } else {
                 container.replaceChild(componentElementDom, fallbackDom);

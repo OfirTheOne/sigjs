@@ -1,7 +1,9 @@
 import { VirtualElement, VirtualElementChild, ELEMENT_TYPE } from "@/types";
-import { SSRSymbol } from "@/symbols";
+import { ElementKeySymbol, SSRSymbol } from "@/symbols";
 import { getRenderedRoot, setRenderedRoot } from "@/core/global";
 import { isNodeHTMLElement } from "@/core/utils";
+import { KeyBuilder } from "@/common/key-builder/key-builder";
+import { DOM } from "../html/html";
 import { parseHtml } from "./parse-html";
 import { fetchHtml } from "./fetch-html";
 import { getSignalValue, listen, isSignal } from "../signal/signal.utils";
@@ -37,7 +39,8 @@ SSR['$$type'] = SSRSymbol;
 function renderSSR(
     element: VirtualElement,
     container: HTMLElement,
-    render: RenderFunction
+    render: RenderFunction,
+    key: KeyBuilder
 ): HTMLElement | Text {
     const {
         fetch: urlOrHandlerOrFetchConfig,
@@ -48,13 +51,14 @@ function renderSSR(
         onError
     } = (element.props as unknown as SSRProps & { children: VirtualElement[] });
     const root = getRenderedRoot();
+    const currentKey = key.clone().push(element.type);
     let fallbackDom: HTMLElement | Text | null = null;
     let prevSSRDom: HTMLElement | Text | null = null;
     let prevChildrenDom: ChildNode[] | null = null;
-    const placeholderElm = document.createElement('ssr-ph');
-
+    const placeholderElm = DOM.createElement('ssr-ph', currentKey);
     if (fallback) {
-        fallbackDom = render(fallback, container);
+        const fallbackKey = currentKey.clone().push('ssr-fallback');
+        fallbackDom = render(fallback, container, fallbackKey);
         container.appendChild(fallbackDom);
     } else {
         container.appendChild(placeholderElm);
@@ -72,8 +76,9 @@ function renderSSR(
         }
     }
     function renderChildren(): ChildNode[] {
-        const outlet = document.createElement('outlet');
-        render(children, outlet);
+        const outletKey =  currentKey.clone().push('outlet')
+        const outlet = DOM.createElement('sig-outlet', outletKey);
+        render(children, outlet, outletKey);
         return Array.from(outlet.childNodes);
     }
 
@@ -88,6 +93,7 @@ function renderSSR(
             renderChildren,
             { errorElement, onError, allowOutlet },
             injectResolvedDom,
+            currentKey
         );
     } else {
         const renderListener = () => {
@@ -118,7 +124,8 @@ function renderSSR(
                         injectResolvedDom(dom);
                     }
                     prevSSRDom = dom;
-                }
+                },
+                currentKey
             );
         };
         const signals = isSignal(urlOrHandlerOrFetchConfig) ? [urlOrHandlerOrFetchConfig] :
@@ -137,6 +144,7 @@ function asyncRenderSSR(
     renderChildren: () => ChildNode[],
     props: Omit<SSRProps, 'fetch'>,
     injectResolvedDom: (dom: HTMLElement | Text) => void,
+    key: KeyBuilder
 ) {
     const { errorElement, onError, allowOutlet } = props;
     return provideHtmlPromise.then((htmlString) => {
@@ -145,7 +153,11 @@ function asyncRenderSSR(
         if (isNodeHTMLElement(htmlDom) && allowOutlet) {
             const outlet = htmlDom.querySelector('sig-outlet');
             if (outlet) {
+                const outletKey = key.clone().push('ssr-outlet');
                 const domChildren = renderChildren();
+                domChildren.forEach((node, i) => {
+                    node[ElementKeySymbol] = outletKey.clone().pushIndex(i);
+                });
                 outlet.replaceWith(...domChildren);
             }
         }
@@ -156,7 +168,7 @@ function asyncRenderSSR(
         if (!errorElement) {
             return;
         }
-        const errorDom = render(errorElement);
+        const errorDom = render(errorElement, undefined, key);
         injectResolvedDom(errorDom);
     });
 }
