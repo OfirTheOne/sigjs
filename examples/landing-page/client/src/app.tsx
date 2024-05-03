@@ -1,5 +1,5 @@
 
-import { If, SSR, createRef, createSignal } from "sig";
+import { If, SSR, createRef, createSignal, onConnect, onCreate } from "sig";
 import { Store } from "sig/store";
 
 const formState = new Store({
@@ -27,18 +27,28 @@ export function App() {
     const [query$] = createSignal<Record<string, string>>({ color: undefined });
     query$.link(color$, (color) => ({ color }));
     return (
-        <SSR fetch={ { url: '/layout', config: {}, query: query$ } }fallback={<p>Loading</p>}>
+        <SSR fetch={ { url: '/layout', config: {}, query: query$ } } fallback={<p>Loading</p>}>
             <InteractivePage />
         </SSR>
     );
 }
 
 function InteractivePage() {
+
     const count$ = formState.select(state => state.count);
     const isEven$ = count$.derive(count => count % 2 === 0);
     const submit = () => {
         formState.setState(state => ({ ...state, color: 'red'}));
     };
+
+    onCreate(() => {
+        console.log('InteractivePage created');
+    });
+
+    onConnect(() => {
+        console.log('InteractivePage connected');
+    });
+
     return (
         <div className="bg-gray-100 w-1/2 flex flex-col items-start justify-center gap-2">
             <div className="flex flex-row">
@@ -52,8 +62,8 @@ function InteractivePage() {
                 </button>
                 <If 
                     condition={isEven$} 
-                    then={<p>the Number {count$} is even !!!!</p>}
-                    fallback={<p>the Number {count$} is so odd and really not even !!!!</p>}>
+                    then={<p> the Number <span>{count$}</span> is even !!!!</p>}
+                    fallback={<p>the Number <span>{count$}</span> is so odd and really not even !!!!</p>}>
                 </If>
             </div>
             <div className="flex items-center  justify-start">
