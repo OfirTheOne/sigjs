@@ -8,9 +8,6 @@ export async function fetchHtml(
     rootOptions?: CreateRootOptions
 ): Promise<string> {
     try {
-        // if(typeof ssrFetch === 'function') {
-        //     return await ssrFetch();
-        // } else 
         if(typeof ssrFetch === 'string') {
             const margeUrl = concatUrl(ssrFetch, rootOptions?.ssr?.baseUrl);
             return await fetchSSRHtml(margeUrl);

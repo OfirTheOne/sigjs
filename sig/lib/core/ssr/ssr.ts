@@ -39,8 +39,8 @@ SSR['$$type'] = SSRSymbol;
 function renderSSR(
     element: VirtualElement,
     container: HTMLElement,
+    key: KeyBuilder,
     render: RenderFunction,
-    key: KeyBuilder
 ): HTMLElement | Text {
     const {
         fetch: urlOrHandlerOrFetchConfig,
