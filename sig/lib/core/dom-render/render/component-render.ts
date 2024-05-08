@@ -4,6 +4,7 @@ import { VirtualElement, ComponentFunctionWithMeta } from "@/types";
 import { createComponentContext, setActiveContext, removeActiveContext, addComponentContext } from "../component-context/component-context";
 import { runOnCreateHooks } from "../component-context/hooks/on-create";
 import { RenderFunction } from "./render.types";
+import { ElementKeySymbol } from "@/symbols";
 
 export function componentRender(
     componentElement: VirtualElement,
@@ -24,8 +25,8 @@ export function componentRender(
     
     const domElement = render(element, container, currentKey);
     context.element = domElement as Element; 
-    console.log('renderComponent', componentFunction.name, currentKey.toString());
-    addComponentContext(currentKey.toString(), context);
+    context.elementKey = domElement[ElementKeySymbol];
+    addComponentContext(context.elementKey || context.key, context);
     runOnCreateHooks(context);
     
     return domElement;

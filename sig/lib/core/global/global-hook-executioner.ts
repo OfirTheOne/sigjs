@@ -28,16 +28,15 @@ function createHookExecutioner() {
         observer: new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
                 mutation.addedNodes.forEach((node) => {
-                    console.log('*****************************************************************');
-                    console.log(node.nodeName);
                     const elementKey = node[ElementKeySymbol];
+                    console.log('createHookExecutioner ', elementKey, node.nodeName);
+
                     if(elementKey) {
                         const contexts = getAllSubContexts(elementKey);
                         contexts.forEach(context => {
-                            console.log('Element was added from the DOM');
+                            console.log(context.elementKey, 'Element was added to the DOM');
                             if (context) {
                                 runOnConnectHooks(context);
-                                console.log('*****************************************************************');
                             }
                         });
                     }
@@ -48,7 +47,7 @@ function createHookExecutioner() {
                     if(elementKey) {
                         const contexts = getAllSubContexts(elementKey);
                         contexts.forEach(context => {
-                            console.log('Element was removed from the DOM');
+                            console.log(context.elementKey, 'Element was removed from the DOM');
                             if (context) {
                                 runOnDisconnectHooks(context);
                             }
@@ -63,7 +62,6 @@ function createHookExecutioner() {
                             }
                         });
                     }
-
                 });
             });
         }),

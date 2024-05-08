@@ -64,24 +64,6 @@ function renderSSR(
         container.appendChild(placeholderElm);
     }
 
-    function injectResolvedDom(dom: HTMLElement | Text) {
-        if (fallbackDom) {
-            if (fallbackDom.parentElement !== container) {
-                container.appendChild(dom);
-            } else {
-                container.replaceChild(dom, fallbackDom);
-            }
-        } else {
-            container.replaceChild(dom, placeholderElm);
-        }
-    }
-    function renderChildren(): ChildNode[] {
-        const outletKey =  currentKey.clone().push('outlet')
-        const outlet = DOM.createElement('sig-outlet', outletKey);
-        render(children, outlet, outletKey);
-        return Array.from(outlet.childNodes);
-    }
-
     if (typeof urlOrHandlerOrFetchConfig === 'string' || (!isSignal(urlOrHandlerOrFetchConfig) && typeof urlOrHandlerOrFetchConfig === 'function')) {
         const fetchHtmlPromise = typeof urlOrHandlerOrFetchConfig === 'string'
             ? fetchHtml(urlOrHandlerOrFetchConfig, root)
@@ -135,6 +117,26 @@ function renderSSR(
         renderListener();
     }
     return fallbackDom || placeholderElm;
+
+    function injectResolvedDom(dom: HTMLElement | Text) {
+        if (fallbackDom) {
+            if (fallbackDom.parentElement !== container) {
+                container.appendChild(dom);
+            } else {
+                container.replaceChild(dom, fallbackDom);
+            }
+        } else {
+            container.replaceChild(dom, placeholderElm);
+        }
+    }
+    
+    function renderChildren(): ChildNode[] {
+        const outletKey =  currentKey.clone().push('outlet')
+        const outlet = DOM.createElement('sig-outlet', outletKey);
+        render(children, outlet, outletKey);
+        return Array.from(outlet.childNodes);
+    }
+
 }
 
 function asyncRenderSSR(
@@ -150,6 +152,9 @@ function asyncRenderSSR(
     return provideHtmlPromise.then((htmlString) => {
         setRenderedRoot(root.id);
         const htmlDom = parseHtml(htmlString);
+        const ssrKey = 'tagName' in htmlDom ? 
+            key.clone().push(htmlDom.tagName.toLowerCase()) : key.clone();
+        htmlDom[ElementKeySymbol] = ssrKey.toString();
         if (isNodeHTMLElement(htmlDom) && allowOutlet) {
             const outlet = htmlDom.querySelector('sig-outlet');
             if (outlet) {

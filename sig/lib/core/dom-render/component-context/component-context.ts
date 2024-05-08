@@ -12,6 +12,7 @@ export interface ComponentContext {
     key: string;
     container: Element | null;
     element?: Element; 
+    elementKey?: string;
     root: RootElementWithMetadata;
     component: (...args: unknown[]) => unknown;
 }

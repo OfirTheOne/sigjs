@@ -23,6 +23,7 @@ function createRoot(domElement?: HTMLElement | null, options?: CreateRootOptions
     if(!domElement) {
         throw new Error('No root element found');
     }
+    observeRoot(domElement);
     const rootId = `[[r-${Object.keys(getGlobal().roots).length}]]`;
     const root: RootElementWithMetadata = {
         id: rootId,
@@ -37,7 +38,6 @@ function createRoot(domElement?: HTMLElement | null, options?: CreateRootOptions
         ssr: options?.ssr
     };
     addRoot(root);
-    observeRoot(domElement);
     return root;
 }
 

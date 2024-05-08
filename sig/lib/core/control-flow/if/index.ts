@@ -52,7 +52,7 @@ function renderIf(
                     placeholder.appendChild(thenElementDom);
                     return;
                 }
-                const thenKey = currentKey.clone().push('then');
+                const thenKey = currentKey.clone().push('if-then');
                 thenElementDom = render(then, placeholder, thenKey);
                 placeholder.appendChild(thenElementDom);
             } else if (fallback) {
@@ -60,7 +60,7 @@ function renderIf(
                     placeholder.appendChild(fallbackElementDom);
                     return;
                 }
-                const fallbackKey = currentKey.clone().push('fallback');
+                const fallbackKey = currentKey.clone().push('if-fallback');
                 fallbackElementDom = render(fallback, placeholder, fallbackKey);
                 placeholder.appendChild(fallbackElementDom);
             } else {
