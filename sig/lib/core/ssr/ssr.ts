@@ -1,7 +1,7 @@
 import { VirtualElement, VirtualElementChild, ELEMENT_TYPE } from "@/types";
 import { ElementKeySymbol, SSRSymbol } from "@/symbols";
 import { getRenderedRoot, setRenderedRoot } from "@/core/global";
-import { isNodeHTMLElement } from "@/core/utils";
+import { isNodeElement } from "@/core/utils";
 import { KeyBuilder } from "@/common/key-builder/key-builder";
 import { DOM } from "../html/html";
 import { parseHtml } from "./parse-html";
@@ -53,15 +53,15 @@ function renderSSR(
     const root = getRenderedRoot();
     const currentKey = key.clone().push(element.type);
     let fallbackDom: HTMLElement | Text | null = null;
-    let prevSSRDom: HTMLElement | Text | null = null;
+    let prevSSRDom: Element | Text | null = null;
     let prevChildrenDom: ChildNode[] | null = null;
     const placeholderElm = DOM.createElement('ssr-ph', currentKey);
     if (fallback) {
         const fallbackKey = currentKey.clone().push('ssr-fallback');
         fallbackDom = render(fallback, container, fallbackKey);
-        container.appendChild(fallbackDom);
+        DOM.appendChild(container, fallbackDom);
     } else {
-        container.appendChild(placeholderElm);
+        DOM.appendChild(container, placeholderElm);
     }
 
     if (typeof urlOrHandlerOrFetchConfig === 'string' || (!isSignal(urlOrHandlerOrFetchConfig) && typeof urlOrHandlerOrFetchConfig === 'function')) {
@@ -99,7 +99,7 @@ function renderSSR(
                     return prevChildrenDom;
                 },
                 { errorElement, onError, allowOutlet },
-                (dom: HTMLElement | Text) => {
+                (dom: Element | Text) => {
                     if (prevSSRDom) {
                         container.replaceChild(dom, prevSSRDom);
                     } else {
@@ -118,10 +118,10 @@ function renderSSR(
     }
     return fallbackDom || placeholderElm;
 
-    function injectResolvedDom(dom: HTMLElement | Text) {
+    function injectResolvedDom(dom: Element | Text) {
         if (fallbackDom) {
             if (fallbackDom.parentElement !== container) {
-                container.appendChild(dom);
+                DOM.appendChild(container, dom);
             } else {
                 container.replaceChild(dom, fallbackDom);
             }
@@ -145,7 +145,7 @@ function asyncRenderSSR(
     render: RenderFunction,
     renderChildren: () => ChildNode[],
     props: Omit<SSRProps, 'fetch'>,
-    injectResolvedDom: (dom: HTMLElement | Text) => void,
+    injectResolvedDom: (dom: Element | Text) => void,
     key: KeyBuilder
 ) {
     const { errorElement, onError, allowOutlet } = props;
@@ -155,7 +155,7 @@ function asyncRenderSSR(
         const ssrKey = 'tagName' in htmlDom ? 
             key.clone().push(htmlDom.tagName.toLowerCase()) : key.clone();
         htmlDom[ElementKeySymbol] = ssrKey.toString();
-        if (isNodeHTMLElement(htmlDom) && allowOutlet) {
+        if (isNodeElement(htmlDom) && allowOutlet) {
             const outlet = htmlDom.querySelector('sig-outlet');
             if (outlet) {
                 const outletKey = key.clone().push('ssr-outlet');

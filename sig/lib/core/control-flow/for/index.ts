@@ -1,16 +1,19 @@
+import { createElement } from "@/jsx";
 import type { RenderFunction } from "@/core/dom-render/render";
 import { VirtualElement, VirtualElementChild, ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/types";
 import { isSignal, Signal, subscribeSignal } from "@/core/signal";
 import { ForControlFlow } from "@/symbols";
 import { registerSignalSubscription } from "@/core/global/global-hook-executioner";
-import { KeyBuilder } from "@/common/key-builder/key-builder";
 import { DOM } from "@/core/html";
+import { KeyBuilder } from "@/common/key-builder/key-builder";
 
 
 interface ForProps<T = unknown> {
     list: Array<T> | Signal<Array<T>>;
     factory: VirtualElementChild | ((item: T) => VirtualElementChild);
     index?: string | ((item: T, i: number) => string);
+    as?: string;
+    asProps?: { [key: string]: unknown };
 }
 
 function For<T = unknown>(props: ForProps<T>): VirtualElement {
@@ -34,9 +37,12 @@ function renderFor(
     render: RenderFunction,
     key: KeyBuilder
 ): HTMLElement | Text {
-    const { list, factory, index } = (element.props as unknown as ForProps);
+    const { list, factory, index, as, asProps = {} } = (element.props as unknown as ForProps);
     const currentKey = key.clone().push(element.props.controlTag as string);
-    const placeholderDom = DOM.createElement('for-ph', currentKey);
+    const placeholderDom = (as ? 
+        render(createElement(as, { ...asProps, role: 'for-ph' }), undefined, key) :
+        DOM.createElement('for-ph', currentKey)) as HTMLElement;
+    
     const factoryFn = typeof factory === 'function' ? factory : () => factory;
     const indexFn = typeof index === 'function' ? index : ((item: unknown, i: number) => {
         if (typeof index === 'undefined') return String(i);
@@ -48,7 +54,7 @@ function renderFor(
     while (placeholderDom.lastChild) {
         placeholderDom.lastChild.remove();
     }
-    if (!isSignal<Array<unknown>>(list)) {
+    if (!isSignal<Array<unknown>>(list)) {  
         const childElements = list.map(factoryFn);
         childElements.forEach(childElement => render(childElement, placeholderDom, key));
     } else {

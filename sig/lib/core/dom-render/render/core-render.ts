@@ -8,6 +8,7 @@ import { Signal } from "@/core/signal";
 import { componentRender } from "./component-render";
 import { renderSSR } from "@/core/ssr";
 import { controlFlowRender } from "./control-flow-render";
+import { rawRender } from "./raw-render";
 
 
 function render(element: VirtualElement[], container: HTMLElement, key: KeyBuilder): HTMLElement | Text;
@@ -32,8 +33,9 @@ function render(element: VirtualElement | VirtualElement[], container: HTMLEleme
             ELEMENT_TYPE.RAW:
             if (!element.props.rawElement)
                 throw new Error('Invalid raw element for raw rendering');
-            key.push((element.props.rawElement as HTMLElement).tagName);
-            return element.props.rawElement as HTMLElement;
+            // key.push((element.props.rawElement as HTMLElement).tagName);
+            return rawRender(element, key, render);
+            // return element.props.rawElement as HTMLElement;
 
         case /* edge node */
             ELEMENT_TYPE.EMPTY:

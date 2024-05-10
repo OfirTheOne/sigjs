@@ -7,5 +7,11 @@ export const DOM = {
         const element = document.createElement(tagName, options);
         element[ElementKeySymbol] = key.toString();
         return element;
+    },
+
+    appendChild(parent: HTMLElement, child: Node): void {
+        if (child.parentElement !== parent) {
+            parent.appendChild(child);
+        }
     }
 }

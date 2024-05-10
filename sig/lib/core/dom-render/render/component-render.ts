@@ -12,7 +12,7 @@ export function componentRender(
     key: KeyBuilder,
     render: RenderFunction
 ): HTMLElement | Text {
-    const { component, ...props } = componentElement.props;
+    const { component, children = [], ...props } = componentElement.props;
     if (typeof component !== 'function') {
         throw new Error('Component must be a function');
     }
@@ -20,7 +20,7 @@ export function componentRender(
     const currentKey = key.clone().push(componentFunction.name);
     const context = createComponentContext(componentFunction, container, getRenderedRoot(), currentKey.toString());
     setActiveContext(context);
-    const element = componentFunction(props);
+    const element = componentFunction(props, children as VirtualElement[]);
     removeActiveContext();
     
     const domElement = render(element, container, currentKey);

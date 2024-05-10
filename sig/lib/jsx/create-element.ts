@@ -2,16 +2,17 @@
 
 import { createElement as renderCreateElement } from "../core/dom-render/create-element";
 import * as elements from "@/convenient/element";
+import { isNodeElement, isNodeText } from "@/core/utils";
 import { ELEMENT_TYPE } from "@/types";
 import type { VirtualElementChild, VirtualElement, ComponentFunction } from "@/types";
 
 export function createElement(
-    tag: string | ComponentFunction,
+    tag: string | ComponentFunction | Text | Element,
     props: { [key: string]: unknown },
-    ...children: VirtualElementChild[]
+    ...children: (VirtualElementChild | Text | Element)[]
 ) {
-    children = children.map(child => {
-        if (child instanceof HTMLElement) {
+    const virtualChildren = children.map((child) => {
+        if (isNodeElement(child) || isNodeText(child)) {
             return (<VirtualElement>{
                 type: ELEMENT_TYPE.RAW,
                 props: {
@@ -24,9 +25,9 @@ export function createElement(
     });
 
     if(typeof tag === 'string' && tag in elements) {
-       return elements[tag](props, ...children);
+       return elements[tag](props, ...virtualChildren);
     }
 
 
-    return renderCreateElement(tag, props, ...children);
+    return renderCreateElement(tag, props, ...virtualChildren);
 }

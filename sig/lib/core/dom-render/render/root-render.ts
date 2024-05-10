@@ -1,6 +1,7 @@
 import { keyBuilder } from "@/common/key-builder/key-builder";
 import { VirtualElement } from "@/types";
 import { render } from "./core-render";
+import { DOM } from "@/core/html";
 
 export function rootRender(
     element: VirtualElement,
@@ -9,7 +10,7 @@ export function rootRender(
     const key = keyBuilder().pushRoot();
     const dom = render(element, container, key);
     if (dom.parentElement !== container) {
-        container.appendChild(dom);
+        DOM.appendChild(container, dom);
     }
     return dom;
 }

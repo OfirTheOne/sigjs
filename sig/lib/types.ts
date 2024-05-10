@@ -2,6 +2,7 @@ import type { Signal } from "./core/signal";
 
 interface ComponentFunction<T = any /* Record<string, unknown> */> {
     (props?: T): VirtualElement;
+    (props: T, children: VirtualElement[]): VirtualElement;
 }
 
 interface AsyncComponentFunction<T = any /* Record<string, unknown> */> {

@@ -1,11 +1,23 @@
 import { VirtualElement } from "@/types";
 
-export function isNodeHTMLElement(node: Node): node is HTMLElement {
-  return node && node.nodeType === Node.ELEMENT_NODE;
+export function isNodeElement(node: unknown): node is Element {
+  return !!node && (node as Node)?.nodeType === Node.ELEMENT_NODE;
 }
 
-export function isNodeText(node: Node): node is Text {
-  return node && node.nodeType === Node.TEXT_NODE;
+export function isNodeText(node: unknown): node is Text {
+  return !!node && (node as Node)?.nodeType === Node.TEXT_NODE;
+}
+
+export function isHTMLElement(value: any): value is HTMLElement {
+  return value instanceof HTMLElement;
+}
+
+export function isSVGElement(value: any): value is SVGElement {
+  return value instanceof SVGElement;
+}
+
+export function isRawElement(value: any): value is Element | Text {
+  return isNodeElement(value) || isSVGElement(value) || isNodeText(value);
 }
 
 

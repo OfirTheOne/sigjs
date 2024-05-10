@@ -1,9 +1,11 @@
 import { isPromise } from "@/common/is-promise";
 import { uniqueId } from "@/common/unique-id";
-import { element, render } from '@/core';
+import { render } from '@/core';
 import { getRenderedRoot } from "@/core/global";
 import type { RootElementWithMetadata } from "@/core/dom-render/create-root";
 import type { AsyncComponentFunction, ComponentFunction, VirtualElement } from "@/types";
+import { createElement } from "@/jsx";
+import { DOM } from "@/core/html";
 
 const routersStore: Record<string, Router> = {};
 
@@ -27,11 +29,12 @@ type RouterConfig = {
     routes: RouteConfig[];
     base?: string;
     onNoMatch?: () => void;
+    layout?: ComponentFunction;
 };
 
 type Router = {
     rootId: string;
-    routerElement: HTMLElement;
+    container: HTMLElement;
     navigate: (path: string) => void;
     state: Record<string, unknown>;
     push: (path: string | URL, state?: Record<string, unknown>) => void
@@ -73,7 +76,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
 
     const router: Router = {
         rootId: renderedRoot.id,
-        routerElement,
+        container: routerElement,
         push,
         navigate,
         get state() { return window.history.state; },
@@ -107,40 +110,40 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
             // Show loading component
             if (routeAsync.loading) {
                 const loadingComponent = routeAsync.loading();
-                const loadingDom = render(loadingComponent, routerElement);
-                routerElement.appendChild(loadingDom);
+                const loadingDom = render(loadingComponent, router.container);
+                DOM.appendChild(router.container, loadingDom);
                 if(routeAsync.onEnter) routeAsync.onEnter();
             }
             if(!memoRenderedRoute[routeAsyncId]) {
                 componentElementOrPromise.then(componentElement => {
                     // Remove loading component
-                    routerElement.innerHTML = '';
-                    const componentDom = render(componentElement, routerElement);
+                    router.container.innerHTML = '';
+                    const componentDom = render(componentElement, router.container);
                     memoRenderedRoute[routeAsyncId] = componentDom;
-                    routerElement.appendChild(componentDom); 
+                    DOM.appendChild(router.container, componentDom); 
                 }).catch(() => {
                     // If loading the component fails, load the fallback component if it exists
                     if (routeAsync.fallback) {
                         // Render the fallback component
                         const fallbackComponent = routeAsync.fallback();
-                        const fallbackDom = render(fallbackComponent, routerElement);
-                        routerElement.appendChild(fallbackDom);
+                        const fallbackDom = render(fallbackComponent, router.container);
+                        DOM.appendChild(router.container, fallbackDom);
                     }
                 });
             } else {
-                routerElement.appendChild(memoRenderedRoute[routeAsyncId]);
+                DOM.appendChild(router.container, memoRenderedRoute[routeAsyncId]);
             }
         } else {
-            routerElement.innerHTML = '';
+            router.container.innerHTML = '';
             const routeSync = route as RouteCommonConfig & RouteSyncConfig;
             const routeSyncId = routeSync.id as string;
             if(!memoRenderedRoute[routeSyncId]) {
                 const componentElement = routeSync.component();
-                const componentDom = render(componentElement, routerElement);
+                const componentDom = render(componentElement, router.container);
                 memoRenderedRoute[routeSyncId] = componentDom;
-                routerElement.appendChild(componentDom);
+                DOM.appendChild(router.container, componentDom);
             } else {
-                routerElement.appendChild(memoRenderedRoute[routeSyncId]);
+                DOM.appendChild(router.container, memoRenderedRoute[routeSyncId]);
             }
             if(routeSync.onEnter) routeSync.onEnter();
         }   
@@ -152,14 +155,15 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
 }
 
 function createRouter(config: RouterConfig): VirtualElement {
-    return element(() => { 
-        const renderedRoot = getRenderedRoot();
-        if (!renderedRoot) {
-            throw new Error('Out of a root context');
-        }
-        const router = buildRouter(config, renderedRoot);
-        return element(router.routerElement)
-    });
+    const renderedRoot = getRenderedRoot();
+    if (!renderedRoot) {
+        throw new Error('Out of a root context');
+    }
+    const router = buildRouter(config, renderedRoot);
+    if(config.layout) {
+        return createElement(config.layout, {}, router.container);
+    }
+    return createElement(router.container, {});
 }
 
 export { createRouter, getRouter };

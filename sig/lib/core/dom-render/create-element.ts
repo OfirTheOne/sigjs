@@ -1,6 +1,6 @@
 import type { VirtualElementChild, VirtualElement, ComponentFunction, AsyncComponentFunction, Props } from "@/types";
 import type { Signal } from "@/core/signal";
-import { isRawElement } from "@/common/is-raw-element";
+import { isRawElement } from "@/core/utils";
 import { isSignal } from "@/core/signal/signal.utils";
 import { ELEMENT_TYPE } from "@/types";
 
@@ -44,10 +44,32 @@ function createComponentElement(component: ComponentFunction | AsyncComponentFun
     };
 }
 
-function createElement(type: string | ComponentFunction | HTMLElement): VirtualElement;
-function createElement<T = Record<string, unknown>>(type: string | ComponentFunction | HTMLElement, props: Props<T>, ...children: VirtualElementChild[]): VirtualElement
+function createRawElement(rawElement: HTMLElement | Element | Text, props: Props, ...children: VirtualElementChild[]): VirtualElement {
+    return {
+        type: ELEMENT_TYPE.RAW,
+        props: {
+            ...props,
+            rawElement,
+            children
+        }
+    };
+}
+
+function createDomElement(tagName: string, props: Props, ...children: VirtualElementChild[]): VirtualElement {
+    return {
+        type: ELEMENT_TYPE.DOM,
+        props: {
+            ...props,
+            tagName,
+            children: children.map(adaptVirtualElementChild)
+        }
+    };
+}
+
+function createElement(type: string | ComponentFunction | HTMLElement | Element | Text,): VirtualElement;
+function createElement<T = Record<string, unknown>>(type: string | ComponentFunction<T> | HTMLElement | Element | Text, props: Props<T>, ...children: VirtualElementChild[]): VirtualElement
 function createElement(
-    type: string | ComponentFunction | HTMLElement,
+    type: string | ComponentFunction | HTMLElement | Element | Text,
     props: Props | undefined = {},
     ...children: VirtualElementChild[]
 ): VirtualElement {
@@ -55,21 +77,8 @@ function createElement(
     return typeof type === 'function'
         ? createComponentElement(type, props, ...flatChildren)
         : isRawElement(type)
-            ? {
-                type: ELEMENT_TYPE.RAW,
-                props: {
-                    ...props,
-                    rawElement: type,
-                    children: []
-                }
-            } : {
-                type: ELEMENT_TYPE.DOM,
-                props: {
-                    ...props,
-                    tagName: type,
-                    children: flatChildren.map(adaptVirtualElementChild)
-                }
-            };
+            ? createRawElement(type,  props, ...flatChildren) :
+            createDomElement(type, props, ...flatChildren);
 }
 
 function adaptVirtualElementChild(child: VirtualElementChild): VirtualElement {

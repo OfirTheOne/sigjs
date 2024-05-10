@@ -2,6 +2,7 @@
 import { KeyBuilder } from "@/common/key-builder/key-builder";
 import type { RenderFunction } from "@/core/dom-render/render";
 import { getRenderedRoot, setRenderedRoot } from "@/core/global";
+import { DOM } from "@/core/html";
 import { AwaitControlFlow } from "@/symbols";
 import { AsyncComponentFunction, CONTROL_FLOW_TAG, ELEMENT_TYPE, VirtualElement } from "@/types";
 
@@ -38,13 +39,13 @@ function renderAwait(
     const currentKey = key.clone().push(element.props.controlTag as string);
     const { fallback } = (element.props as unknown as AwaitProps);
     const fallbackDom = render(fallback, container, currentKey);
-    container.appendChild(fallbackDom);
+    DOM.appendChild(container, fallbackDom);
     Promise.resolve(component())
         .then((componentElement) => {
             setRenderedRoot(root.id);
             const componentElementDom = render(componentElement, container, currentKey);
             if (fallbackDom.parentElement !== container) {
-                container.appendChild(componentElementDom);
+                DOM.appendChild(container, componentElementDom);
             } else {
                 container.replaceChild(componentElementDom, fallbackDom);
             }

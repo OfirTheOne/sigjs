@@ -42,27 +42,27 @@ function renderIf(
     let fallbackElementDom: HTMLElement | Text;
     if (isSignal(condition)) {
         const conditionSignal = condition;
-        container.appendChild(placeholder);
+        DOM.appendChild(container, placeholder);
         placeholder.setAttribute('signal', conditionSignal.id);
 
         const unsubscribe = subscribeSignal(conditionSignal, (conditionValue) => {
             placeholder.childNodes.forEach(child => child.remove());
             if (conditionValue) {
                 if(memo && thenElementDom) {
-                    placeholder.appendChild(thenElementDom);
+                    DOM.appendChild(placeholder, thenElementDom);
                     return;
                 }
                 const thenKey = currentKey.clone().push('if-then');
                 thenElementDom = render(then, placeholder, thenKey);
-                placeholder.appendChild(thenElementDom);
+                DOM.appendChild(placeholder, thenElementDom);
             } else if (fallback) {
                 if(memo && fallbackElementDom) {
-                    placeholder.appendChild(fallbackElementDom);
+                    DOM.appendChild(placeholder, fallbackElementDom);
                     return;
                 }
                 const fallbackKey = currentKey.clone().push('if-fallback');
                 fallbackElementDom = render(fallback, placeholder, fallbackKey);
-                placeholder.appendChild(fallbackElementDom);
+                DOM.appendChild(placeholder, fallbackElementDom);
             } else {
                 return container;
             }
