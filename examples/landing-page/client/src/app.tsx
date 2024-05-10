@@ -1,5 +1,5 @@
 
-import { If, SSR, createRef, createSignal, onConnect, onCreate } from "sig";
+import { If, SSR, Signal, createRef, createSignal, onConnect, onCreate } from "sig";
 import { Store } from "sig/store";
 
 const formState = new Store({
@@ -62,8 +62,8 @@ function InteractivePage() {
                 </button>
                 <If 
                     condition={isEven$} 
-                    then={<p> the Number <span>{count$}</span> is even !!!!</p>}
-                    fallback={<p>the Number <span>{count$}</span> is so odd and really not even !!!!</p>}>
+                    then={<Then count$={count$} />}
+                    fallback={<Else count$={count$} />}>
                 </If>
             </div>
             <div className="flex items-center  justify-start">
@@ -76,6 +76,26 @@ function InteractivePage() {
             </div>
         </div>
     );
+}
+
+function Then({ count$ }: { count$: Signal<number> }) {
+    onCreate(() => {
+        console.log('Then created');
+    });
+    onConnect(() => {
+        console.log('Then connected');
+    });
+    return (<p> the Number <span>{count$}</span> is even !!!!</p>);
+}
+
+function Else({ count$ }: { count$: Signal<number> }) {
+    onCreate(() => {
+        console.log('Else created');
+    });
+    onConnect(() => {
+        console.log('Else connected');
+    });
+    return (<p>the Number <span>{count$}</span> is so odd and really not even !!!!</p>);
 }
 
 function Form() {
