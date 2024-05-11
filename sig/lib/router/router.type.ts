@@ -4,6 +4,7 @@ export type RouteCommonConfig = {
     path: string;
     id?: string;
     onEnter?: () => void;
+    onLeave?: (params: Record<string, string>) => void;
 };
 export type RouteAsyncConfig = {
     component: AsyncComponentFunction;

@@ -45,7 +45,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
     });
     const routerElement = document.createElement('app-router');
 
-    const memoRenderedRoute: Record<string, HTMLElement | Text> = {};
+    const memoRenderedRoute: Record<string, ChildNode[]> = {};
 
     // Listen for changes in the URL
     window.addEventListener('popstate', (event) => {
@@ -81,7 +81,18 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
 
         const { route, params } = matchResult;
         const routeId = route.id + params ? JSON.stringify(params) : '';
+
         if(router.matchedRouteId === routeId) return;
+        // Route is about to change
+        if(router.navigationMatchMetadata) {
+            const { route: prevRoute, params: prevParams = {} } = router.navigationMatchMetadata;
+            if(prevRoute.onLeave) prevRoute.onLeave(prevParams);
+
+            const preNavigateRouteElement = Array.from(router.container.childNodes);  
+            memoRenderedRoute[router.matchedRouteId] = preNavigateRouteElement;
+
+        }
+
         router.navigationMatchMetadata = {
             path,
             route,
@@ -105,7 +116,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
                     // Remove loading component
                     router.container.innerHTML = '';
                     const componentDom = render(componentElement, router.container);
-                    memoRenderedRoute[routeAsyncId] = componentDom;
+                    // memoRenderedRoute[routeAsyncId] = componentDom;
                     DOM.appendChild(router.container, componentDom); 
                 }).catch(() => {
                     // If loading the component fails, load the fallback component if it exists
@@ -126,7 +137,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
             if(!memoRenderedRoute[routeSyncId]) {
                 const componentElement = routeSync.component();
                 const componentDom = render(componentElement, router.container);
-                memoRenderedRoute[routeSyncId] = componentDom;
+                // memoRenderedRoute[routeSyncId] = componentDom;
                 DOM.appendChild(router.container, componentDom);
             } else {
                 DOM.appendChild(router.container, memoRenderedRoute[routeSyncId]);

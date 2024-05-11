@@ -11,6 +11,7 @@ import type { SSRFetch } from "./ssr.types";
 import type { RenderFunction } from "../dom-render/render";
 import type { RootElementWithMetadata } from "../dom-render/create-root";
 import type { Signal } from "../signal/signal.types";
+import logger from "@/common/logger/logger";
 
 customElements.define('ssr-ph', class extends HTMLElement { });
 customElements.define('sig-outlet', class extends HTMLElement { });
@@ -120,13 +121,15 @@ function renderSSR(
 
     function injectResolvedDom(dom: Element | Text) {
         if (fallbackDom) {
-            if (fallbackDom.parentElement !== container) {
-                DOM.appendChild(container, dom);
-            } else {
+            if (fallbackDom.isConnected) {
                 container.replaceChild(dom, fallbackDom);
+            } else {
+                logger.warn('Fallback element is not connected to the DOM');
             }
         } else {
-            container.replaceChild(dom, placeholderElm);
+            if(placeholderElm.isConnected) {
+                container.replaceChild(dom, placeholderElm);
+            }
         }
     }
     

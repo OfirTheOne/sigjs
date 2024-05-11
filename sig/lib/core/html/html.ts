@@ -9,9 +9,17 @@ export const DOM = {
         return element;
     },
 
-    appendChild(parent: HTMLElement, child: Node): void {
-        if (child.parentElement !== parent) {
-            parent.appendChild(child);
+    appendChild(parent: HTMLElement, child: Node | Node[]): void {
+        if(!Array.isArray(child)) {
+            if (child.parentElement !== parent) {
+                parent.appendChild(child);
+            }
+        } else { 
+            child.forEach((c) => {
+                if (c.parentElement !== parent) {
+                    parent.appendChild(c);
+                }
+            });
         }
     }
 }
