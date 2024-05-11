@@ -3,43 +3,13 @@ import { uniqueId } from "@/common/unique-id";
 import { render } from '@/core';
 import { getRenderedRoot } from "@/core/global";
 import type { RootElementWithMetadata } from "@/core/dom-render/create-root";
-import type { AsyncComponentFunction, ComponentFunction, VirtualElement } from "@/types";
+import type { VirtualElement } from "@/types";
 import { createElement } from "@/jsx";
 import { DOM } from "@/core/html";
+import { Router, RouterConfig, RouteCommonConfig, RouteAsyncConfig, RouteSyncConfig } from "./router.type";
+import { matchRoute } from "./match-route";
 
 const routersStore: Record<string, Router> = {};
-
-type RouteCommonConfig = {
-    path: string;
-    id?: string;
-    onEnter?: () => void;
-};
-type RouteAsyncConfig = {
-    component: AsyncComponentFunction;
-    fallback?: ComponentFunction;
-    loading?: ComponentFunction;
-};
-type RouteSyncConfig = {
-    component: ComponentFunction;
-};
-
-type RouteConfig = RouteCommonConfig & (RouteAsyncConfig | RouteSyncConfig);
-
-type RouterConfig = {
-    routes: RouteConfig[];
-    base?: string;
-    onNoMatch?: () => void;
-    layout?: ComponentFunction;
-};
-
-type Router = {
-    rootId: string;
-    container: HTMLElement;
-    navigate: (path: string) => void;
-    state: Record<string, unknown>;
-    push: (path: string | URL, state?: Record<string, unknown>) => void
-    matchedRouteId: string;
-};
 
 customElements.define('app-router', class extends HTMLElement {})
 
@@ -54,6 +24,15 @@ function getRouter(): Router {
         throw new Error('No router found');
     }
     return router;
+}
+
+function getParams(): Record<string, string> {
+    const router = getRouter();
+    if(router.navigationMatchMetadata) {
+        return router.navigationMatchMetadata.params || {};
+    }
+    return {};
+
 }
 
 function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata): Router {
@@ -91,22 +70,29 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
 
     function navigate(path: string) {
         // Find the route that matches the path
-        const route = routesWithId.find(route => base + route.path === path);
-
-        if (!route) {
+        const matchResult = matchRoute(path, routesWithId, base);
+        if (!matchResult) {
             if(onNoMatch) {
                 onNoMatch();
             }
             console.error(`No route found for path ${path}`);
             return;
         }
-        if(router.matchedRouteId === route.id) return;
-        router.matchedRouteId = route.id;
+
+        const { route, params } = matchResult;
+        const routeId = route.id + params ? JSON.stringify(params) : '';
+        if(router.matchedRouteId === routeId) return;
+        router.navigationMatchMetadata = {
+            path,
+            route,
+            params
+        };
+        router.matchedRouteId = routeId;
 
         const componentElementOrPromise = route.component();
         if(isPromise(componentElementOrPromise)) {
             const routeAsync = route as RouteCommonConfig & RouteAsyncConfig;
-            const routeAsyncId = routeAsync.id as string;
+            const routeAsyncId = routeId;
             // Show loading component
             if (routeAsync.loading) {
                 const loadingComponent = routeAsync.loading();
@@ -136,7 +122,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         } else {
             router.container.innerHTML = '';
             const routeSync = route as RouteCommonConfig & RouteSyncConfig;
-            const routeSyncId = routeSync.id as string;
+            const routeSyncId = routeId;
             if(!memoRenderedRoute[routeSyncId]) {
                 const componentElement = routeSync.component();
                 const componentDom = render(componentElement, router.container);
@@ -166,4 +152,4 @@ function createRouter(config: RouterConfig): VirtualElement {
     return createElement(router.container, {});
 }
 
-export { createRouter, getRouter };
+export { createRouter, getRouter, getParams };
