@@ -1,6 +1,7 @@
 import type * as CSS from 'csstype';
 import type { VirtualElement } from "sig/types";
 import type * as HEA from "sig/convenient";
+import type { Signalize } from "sig/core";
 
 declare global {
   export namespace JSX {
@@ -75,7 +76,7 @@ declare global {
       svg: HEA.HTMLElementAttributes;
       math: HEA.HTMLElementAttributes;
       del: HEA.HTMLElementAttributes;
-      img: HEA.ImgElementAttributes;
+      img: Signalize<HEA.ImgElementAttributes>;
       ins: HEA.HTMLElementAttributes;
       caption: HEA.HTMLElementAttributes;
       col: HEA.HTMLElementAttributes;

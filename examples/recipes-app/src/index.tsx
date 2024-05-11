@@ -3,7 +3,7 @@ import { App } from './app';
 
 createRoot(document.getElementById('root'), {
     ssr: {
-        baseUrl: 'http://localhost:3000'
+        baseUrl: 'http://localhost:3030'
     }
 })
     .render(<App />);

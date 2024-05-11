@@ -1,41 +1,47 @@
 
-import { ComponentFunction, For, Signal } from 'sig';
+import { ComponentFunction, For, SSR, Signal } from 'sig';
 import { Store } from 'sig/store';
 import Facebook from './../assets/icons/facebook_icon.svg';
 import TwitterIcon from './../assets/icons/twitter_icon.svg';
 import YoutubeIcon from './../assets/icons/youtube_icon.svg';
 import ShoppingBag from './../assets/icons/shopping-bag.svg';
-import { createRouter, getRouter } from 'sig/router';
+import { createRouter, getParams, getRouter } from 'sig/router';
 
 const store = new Store({
     recipes: [
         {
             title: 'Recipe 1',
+            id: '1',
             image: 'https://via.placeholder.com/180x220',
             description: 'Description 1'
         },
         {
             title: 'Recipe 2',
+            id: '2',
             image: 'https://via.placeholder.com/180x220',
             description: 'Description 2'
         },
         {
             title: 'Recipe 3',
+            id: '3',
             image: 'https://via.placeholder.com/180x220',
             description: 'Description 3'
         },
         {
             title: 'Recipe 4',
+            id: '4',
             image: 'https://via.placeholder.com/180x220',
             description: 'Description 4'
         },
         {
             title: 'Recipe 5',
+            id: '5',
             image: 'https://via.placeholder.com/180x220',
             description: 'Description 5'
         },
         {
             title: 'Recipe 6',
+            id: '6',
             image: 'https://via.placeholder.com/180x220',
             description: 'Description 6'
         },
@@ -43,6 +49,7 @@ const store = new Store({
 });
 
 interface Recipe {
+    id: string, 
     title: string,
     image: string,
     description: string,
@@ -56,6 +63,7 @@ export function App() {
             { path: '/about', component: () => <div>About</div> },
             { path: '/contact', component: () => <div>Contact</div> },
             { path: '/recipes', component: () => <RecipesGrid recipes$={recipes$} /> },
+            { path: '/recipes/:id', component: () => <RecipePage /> },
             { path: '/videos', component: () => <div>Videos</div> },
             { path: '/cookbook', component: () => <div>Cookbook</div> },
             { path: '/press', component: () => <div>Press</div> },
@@ -63,9 +71,6 @@ export function App() {
         layout: Layout
     });
 }
-
-
-
 
 
 const Layout = ((_props, children) => {
@@ -117,9 +122,25 @@ function RecipesGrid({recipes$}: { recipes$: Signal<Recipe[]>}) {
 }
 
 function RecipeCard(props: Recipe) {
-    return (<div className='flex flex-col'>
+    const { push } = getRouter();
+
+    return (<div 
+        className='flex flex-col' 
+        onClick={() => push(`/recipes/${props.id}`)}>
         <img src={props.image} alt={props.title} />
         <h3>{props.title}</h3>
         <p>{props.description}</p>
     </div>);
+}
+
+
+function RecipePage() {
+    const params = getParams();
+    const recipeId = params.id;
+    const recipe$ = store.select(state => state.recipes.find(recipe => recipe.id === recipeId));
+    if(recipe$.value === undefined) {
+        return <p>Recipe not found</p>
+    }
+    return <SSR fetch={`/recipes/${recipeId}`} fallback={<p>Loading</p>} />
+
 }
