@@ -18,11 +18,16 @@ customElements.define('sig-outlet', class extends HTMLElement { });
 
 interface SSRProps {
     fetch: SSRFetch;
-    allowOutlet?: boolean;
     fallback?: VirtualElement;
+    allowOutlet?: boolean;
+    memo?: boolean | { key: string };
+
+    rerun?: Signal<unknown>;
+    rerunFallback?: VirtualElement;
+
+
     errorElement?: VirtualElement;
     onError?: (error: Error) => void;
-    memo?: boolean | { key: string };
 }
 
 function SSR(props: SSRProps, children: VirtualElementChild[]): VirtualElement {
@@ -49,7 +54,8 @@ function renderSSR(
         fallback,
         children = [],
         errorElement,
-        onError
+        onError,
+        rerun
     } = (element.props as unknown as SSRProps & { children: VirtualElement[] });
     const root = getRenderedRoot();
     const currentKey = key.clone().push(element.type);
@@ -57,6 +63,7 @@ function renderSSR(
     let prevSSRDom: Element | Text | null = null;
     let prevChildrenDom: ChildNode[] | null = null;
     const placeholderElm = DOM.createElement('ssr-ph', currentKey);
+
     if (fallback) {
         const fallbackKey = currentKey.clone().push('ssr-fallback');
         fallbackDom = render(fallback, container, fallbackKey);
@@ -65,22 +72,26 @@ function renderSSR(
         DOM.appendChild(container, placeholderElm);
     }
 
-    if (typeof urlOrHandlerOrFetchConfig === 'string' || (!isSignal(urlOrHandlerOrFetchConfig) && typeof urlOrHandlerOrFetchConfig === 'function')) {
-        const fetchHtmlPromise = typeof urlOrHandlerOrFetchConfig === 'string'
-            ? fetchHtml(urlOrHandlerOrFetchConfig, root)
-            : urlOrHandlerOrFetchConfig() as Promise<string>;
-        asyncRenderSSR(
-            fetchHtmlPromise,
-            root,
-            render,
-            renderChildren,
-            { errorElement, onError, allowOutlet },
-            injectResolvedDom,
-            currentKey
+    const signals: Signal<unknown>[] = [];
+    const isArgumentSignaled = (typeof urlOrHandlerOrFetchConfig === 'string' || (!isSignal(urlOrHandlerOrFetchConfig) && typeof urlOrHandlerOrFetchConfig === 'function'));
+    if (isArgumentSignaled) {
+        signals.push(
+            ...(isSignal(urlOrHandlerOrFetchConfig) ?
+                [urlOrHandlerOrFetchConfig] :
+                Object.values(urlOrHandlerOrFetchConfig).filter(isSignal) as Signal<unknown>[])
         );
-    } else {
-        const renderListener = () => {
-            const fetchHtmlPromise = isSignal(urlOrHandlerOrFetchConfig) ?
+    }
+    if (rerun && isSignal(rerun)) {
+        signals.push(rerun);
+    }
+    const renderListener = () => {
+        let fetchHtmlPromise: Promise<string>;
+        if (isArgumentSignaled) {
+            fetchHtmlPromise = typeof urlOrHandlerOrFetchConfig === 'string'
+                ? fetchHtml(urlOrHandlerOrFetchConfig, root)
+                : urlOrHandlerOrFetchConfig() as Promise<string>;
+        } else {
+            fetchHtmlPromise = isSignal(urlOrHandlerOrFetchConfig) ?
                 fetchHtml(getSignalValue(urlOrHandlerOrFetchConfig) as string, root) :
                 fetchHtml({
                     url: getSignalValue(urlOrHandlerOrFetchConfig.url),
@@ -88,35 +99,37 @@ function renderSSR(
                     params: getSignalValue(urlOrHandlerOrFetchConfig.params),
                     config: getSignalValue(urlOrHandlerOrFetchConfig.config),
                 }, root);
-            asyncRenderSSR(
-                fetchHtmlPromise,
-                root,
-                render,
-                () => {
-                    if (prevChildrenDom) {
-                        return prevChildrenDom;
-                    }
-                    prevChildrenDom = renderChildren();
-                    return prevChildrenDom;
-                },
-                { errorElement, onError, allowOutlet },
-                (dom: Element | Text) => {
-                    if (prevSSRDom) {
-                        container.replaceChild(dom, prevSSRDom);
-                    } else {
-                        injectResolvedDom(dom);
-                    }
-                    prevSSRDom = dom;
-                },
-                currentKey
-            );
-        };
-        const signals = isSignal(urlOrHandlerOrFetchConfig) ? [urlOrHandlerOrFetchConfig] :
-            Object.values(urlOrHandlerOrFetchConfig).filter(isSignal) as Signal<unknown>[];
 
+
+        }
+
+        asyncRenderSSR(
+            fetchHtmlPromise,
+            root,
+            render,
+            () => {
+                if (prevChildrenDom) {
+                    return prevChildrenDom;
+                }
+                prevChildrenDom = renderChildren();
+                return prevChildrenDom;
+            },
+            { errorElement, onError, allowOutlet },
+            (dom: Element | Text) => {
+                if (prevSSRDom) {
+                    container.replaceChild(dom, prevSSRDom);
+                } else {
+                    injectResolvedDom(dom);
+                }
+                prevSSRDom = dom;
+            },
+            currentKey
+        );
+    };
+    if (signals.length) {
         listen(renderListener, signals);
-        renderListener();
     }
+    renderListener();
     return fallbackDom || placeholderElm;
 
     function injectResolvedDom(dom: Element | Text) {
@@ -127,19 +140,18 @@ function renderSSR(
                 logger.warn('Fallback element is not connected to the DOM');
             }
         } else {
-            if(placeholderElm.isConnected) {
+            if (placeholderElm.isConnected) {
                 container.replaceChild(dom, placeholderElm);
             }
         }
     }
-    
+
     function renderChildren(): ChildNode[] {
-        const outletKey =  currentKey.clone().push('outlet')
+        const outletKey = currentKey.clone().push('outlet')
         const outlet = DOM.createElement('sig-outlet', outletKey);
         render(children, outlet, outletKey);
         return Array.from(outlet.childNodes);
     }
-
 }
 
 function asyncRenderSSR(
@@ -155,7 +167,7 @@ function asyncRenderSSR(
     return provideHtmlPromise.then((htmlString) => {
         setRenderedRoot(root.id);
         const htmlDom = parseHtml(htmlString);
-        const ssrKey = 'tagName' in htmlDom ? 
+        const ssrKey = 'tagName' in htmlDom ?
             key.clone().push(htmlDom.tagName.toLowerCase()) : key.clone();
         htmlDom[ElementKeySymbol] = ssrKey.toString();
         if (isNodeElement(htmlDom) && allowOutlet) {
@@ -183,4 +195,3 @@ function asyncRenderSSR(
 
 export type { SSRProps };
 export { SSR, renderSSR };
-

@@ -3,6 +3,10 @@ import { AsyncComponentFunction, ComponentFunction } from "../types";
 export type RouteCommonConfig = {
     path: string;
     id?: string;
+    memo?: boolean;
+    shouldEnter?: (
+        params: Record<string, string>,
+        state?: Record<string, unknown>,) => boolean;
     onEnter?: () => void;
     onLeave?: (params: Record<string, string>) => void;
 };

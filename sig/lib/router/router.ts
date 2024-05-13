@@ -8,11 +8,13 @@ import { createElement } from "@/jsx";
 import { DOM } from "@/core/html";
 import { Router, RouterConfig, RouteCommonConfig, RouteAsyncConfig, RouteSyncConfig } from "./router.type";
 import { matchRoute } from "./match-route";
+import logger from "@/common/logger/logger";
 
 const routersStore: Record<string, Router> = {};
 
 customElements.define('app-router', class extends HTMLElement {})
 
+const history = window.history;
 
 function getRouter(): Router {
     const renderedRootId = getRenderedRoot();
@@ -58,13 +60,14 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         container: routerElement,
         push,
         navigate,
-        get state() { return window.history.state; },
+        get state() { return history.state; },
         matchedRouteId: '',
     };
     routersStore[router.rootId] = router;
 
     function push(path: string | URL, state?: Record<string, unknown>) {
-        window.history.pushState(state, "", path);
+        history.pushState(state, "", path);
+        
         navigate(window.location.pathname);
     }
 
@@ -75,11 +78,24 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
             if(onNoMatch) {
                 onNoMatch();
             }
-            console.error(`No route found for path ${path}`);
+            logger.warn(`No route found for path ${path}`);
             return;
         }
 
         const { route, params } = matchResult;
+        if(route.shouldEnter) {
+            let shouldEnterResult = false;
+            try {
+                shouldEnterResult = route.shouldEnter(params, history.state);
+            } catch (error) {
+                shouldEnterResult = false;
+            }
+            if(!shouldEnterResult) {
+                logger.warn(`Route ${route.path} should not enter`);
+                return;
+            }
+        }
+        
         const routeId = route.id + params ? JSON.stringify(params) : '';
 
         if(router.matchedRouteId === routeId) return;
@@ -87,10 +103,8 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         if(router.navigationMatchMetadata) {
             const { route: prevRoute, params: prevParams = {} } = router.navigationMatchMetadata;
             if(prevRoute.onLeave) prevRoute.onLeave(prevParams);
-
             const preNavigateRouteElement = Array.from(router.container.childNodes);  
             memoRenderedRoute[router.matchedRouteId] = preNavigateRouteElement;
-
         }
 
         router.navigationMatchMetadata = {
@@ -137,7 +151,6 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
             if(!memoRenderedRoute[routeSyncId]) {
                 const componentElement = routeSync.component();
                 const componentDom = render(componentElement, router.container);
-                // memoRenderedRoute[routeSyncId] = componentDom;
                 DOM.appendChild(router.container, componentDom);
             } else {
                 DOM.appendChild(router.container, memoRenderedRoute[routeSyncId]);

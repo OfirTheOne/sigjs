@@ -6,12 +6,14 @@ import { ForControlFlow } from "@/symbols";
 import { registerSignalSubscription } from "@/core/global/global-hook-executioner";
 import { DOM } from "@/core/html";
 import { KeyBuilder } from "@/common/key-builder/key-builder";
+import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
 
 
 interface ForProps<T = unknown> {
     list: Array<T> | Signal<Array<T>>;
     factory: VirtualElementChild | ((item: T) => VirtualElementChild);
     index?: string | ((item: T, i: number) => string);
+    empty?: VirtualElementChild;
     as?: string;
     asProps?: { [key: string]: unknown };
 }
@@ -37,7 +39,7 @@ function renderFor(
     render: RenderFunction,
     key: KeyBuilder
 ): HTMLElement | Text {
-    const { list, factory, index, as, asProps = {} } = (element.props as unknown as ForProps);
+    const { list, factory, index, as, asProps = {}, empty } = (element.props as unknown as ForProps);
     const currentKey = key.clone().push(element.props.controlTag as string);
     const placeholderDom = (as ? 
         render(createElement(as, { ...asProps, role: 'for-ph' }), undefined, key) :
@@ -55,12 +57,17 @@ function renderFor(
         placeholderDom.lastChild.remove();
     }
     if (!isSignal<Array<unknown>>(list)) {  
-        const childElements = list.map(factoryFn);
+        const childElements = list.map(factoryFn).map(adaptVirtualElementChild);
         childElements.forEach(childElement => render(childElement, placeholderDom, key));
     } else {
         const listSignal = list;
         placeholderDom.setAttribute('signal', listSignal.id);
         const unsubscribe = subscribeSignal(listSignal, (list) => {
+            if(list.length === 0) {
+                if(empty !== undefined) {
+                    render(adaptVirtualElementChild(empty), placeholderDom, key);
+                }
+            }
             while (placeholderDom.lastChild) {
                 placeholderDom.lastChild.remove();
             }
@@ -71,7 +78,7 @@ function renderFor(
                     return indexItem.dom;
                 }
                 const childKey = key.clone().pushIndex(i);
-                const element = factoryFn(item);
+                const element = adaptVirtualElementChild(factoryFn(item));
                 const elementDom = render(element, placeholderDom, childKey);
                 indexItems.set(indexValue, { dom: elementDom });
                 return elementDom;

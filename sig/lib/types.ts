@@ -1,4 +1,3 @@
-import type { Signal } from "./core/signal";
 
 interface ComponentFunction<T = any /* Record<string, unknown> */> {
     (props?: T): VirtualElement;
@@ -14,7 +13,7 @@ interface ComponentFunctionWithMeta extends ComponentFunction {
     __name: string;
 }
 
-type VirtualElementChild = VirtualElement | Signal<any> | string | number | boolean | null | undefined ;
+type VirtualElementChild = VirtualElement | string | number | boolean | null | undefined;
 
 interface VirtualElement {
     type: string;
