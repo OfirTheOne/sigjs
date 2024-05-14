@@ -3,6 +3,7 @@ import { ElementKeySymbol, SSRSymbol } from "@/symbols";
 import { getRenderedRoot, setRenderedRoot } from "@/core/global";
 import { isNodeElement } from "@/core/utils";
 import { KeyBuilder } from "@/common/key-builder/key-builder";
+import logger from "@/common/logger/logger";
 import { DOM } from "../html/html";
 import { parseHtml } from "./parse-html";
 import { fetchHtml } from "./fetch-html";
@@ -11,7 +12,6 @@ import type { SSRFetch } from "./ssr.types";
 import type { RenderFunction } from "../dom-render/render";
 import type { RootElementWithMetadata } from "../dom-render/create-root";
 import type { Signal } from "../signal/signal.types";
-import logger from "@/common/logger/logger";
 
 customElements.define('ssr-ph', class extends HTMLElement { });
 customElements.define('sig-outlet', class extends HTMLElement { });
@@ -20,12 +20,10 @@ interface SSRProps {
     fetch: SSRFetch;
     fallback?: VirtualElement;
     allowOutlet?: boolean;
+    selector?: string;
     memo?: boolean | { key: string };
-
     rerun?: Signal<unknown>;
     rerunFallback?: VirtualElement;
-
-
     errorElement?: VirtualElement;
     onError?: (error: Error) => void;
 }
@@ -63,6 +61,8 @@ function renderSSR(
     let prevSSRDom: Element | Text | null = null;
     let prevChildrenDom: ChildNode[] | null = null;
     const placeholderElm = DOM.createElement('ssr-ph', currentKey);
+    const signals: Signal<unknown>[] = [];
+    const isArgumentSignaled = (typeof urlOrHandlerOrFetchConfig === 'string' || (!isSignal(urlOrHandlerOrFetchConfig) && typeof urlOrHandlerOrFetchConfig === 'function'));
 
     if (fallback) {
         const fallbackKey = currentKey.clone().push('ssr-fallback');
@@ -72,8 +72,6 @@ function renderSSR(
         DOM.appendChild(container, placeholderElm);
     }
 
-    const signals: Signal<unknown>[] = [];
-    const isArgumentSignaled = (typeof urlOrHandlerOrFetchConfig === 'string' || (!isSignal(urlOrHandlerOrFetchConfig) && typeof urlOrHandlerOrFetchConfig === 'function'));
     if (isArgumentSignaled) {
         signals.push(
             ...(isSignal(urlOrHandlerOrFetchConfig) ?
@@ -99,21 +97,13 @@ function renderSSR(
                     params: getSignalValue(urlOrHandlerOrFetchConfig.params),
                     config: getSignalValue(urlOrHandlerOrFetchConfig.config),
                 }, root);
-
-
         }
 
         asyncRenderSSR(
             fetchHtmlPromise,
             root,
             render,
-            () => {
-                if (prevChildrenDom) {
-                    return prevChildrenDom;
-                }
-                prevChildrenDom = renderChildren();
-                return prevChildrenDom;
-            },
+            renderChildren,
             { errorElement, onError, allowOutlet },
             (dom: Element | Text) => {
                 if (prevSSRDom) {
@@ -147,10 +137,14 @@ function renderSSR(
     }
 
     function renderChildren(): ChildNode[] {
+        if (prevChildrenDom) {
+            return prevChildrenDom;
+        }
         const outletKey = currentKey.clone().push('outlet')
         const outlet = DOM.createElement('sig-outlet', outletKey);
         render(children, outlet, outletKey);
-        return Array.from(outlet.childNodes);
+        prevChildrenDom = Array.from(outlet.childNodes);
+        return prevChildrenDom;
     }
 }
 
@@ -166,7 +160,8 @@ function asyncRenderSSR(
     const { errorElement, onError, allowOutlet } = props;
     return provideHtmlPromise.then((htmlString) => {
         setRenderedRoot(root.id);
-        const htmlDom = parseHtml(htmlString);
+        const htmlDom = applySelector(parseHtml(htmlString));
+        if (!htmlDom) return;
         const ssrKey = 'tagName' in htmlDom ?
             key.clone().push(htmlDom.tagName.toLowerCase()) : key.clone();
         htmlDom[ElementKeySymbol] = ssrKey.toString();
@@ -185,12 +180,17 @@ function asyncRenderSSR(
     }).catch((error) => {
         setRenderedRoot(root.id);
         onError?.(error);
-        if (!errorElement) {
-            return;
-        }
+        if (!errorElement) return;
         const errorDom = render(errorElement, undefined, key);
         injectResolvedDom(errorDom);
     });
+}
+
+function applySelector(dom: Element | Text, selector?: string): Element | Text | null {
+    if (dom instanceof Text || !selector) {
+        return dom;
+    }
+    return dom.querySelector(selector);
 }
 
 export type { SSRProps };
