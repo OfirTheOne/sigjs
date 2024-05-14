@@ -12,6 +12,8 @@ import type { SSRFetch } from "./ssr.types";
 import type { RenderFunction } from "../dom-render/render";
 import type { RootElementWithMetadata } from "../dom-render/create-root";
 import type { Signal } from "../signal/signal.types";
+import { adaptVirtualElementChild } from "../dom-render/create-element/adapt-virtual-element-child";
+import { groupBy } from "@/common/group-by";
 
 customElements.define('ssr-ph', class extends HTMLElement { });
 customElements.define('sig-outlet', class extends HTMLElement { });
@@ -59,7 +61,8 @@ function renderSSR(
     const currentKey = key.clone().push(element.type);
     let fallbackDom: HTMLElement | Text | null = null;
     let prevSSRDom: Element | Text | null = null;
-    let prevChildrenDom: ChildNode[] | null = null;
+    const memoChildrenDom: Record<string, ChildNode[] | null> = {};
+
     const placeholderElm = DOM.createElement('ssr-ph', currentKey);
     const signals: Signal<unknown>[] = [];
     const isArgumentSignaled = (typeof urlOrHandlerOrFetchConfig === 'string' || (!isSignal(urlOrHandlerOrFetchConfig) && typeof urlOrHandlerOrFetchConfig === 'function'));
@@ -103,7 +106,8 @@ function renderSSR(
             fetchHtmlPromise,
             root,
             render,
-            renderChildren,
+            children,
+            memoChildrenDom,
             { errorElement, onError, allowOutlet },
             (dom: Element | Text) => {
                 if (prevSSRDom) {
@@ -135,24 +139,14 @@ function renderSSR(
             }
         }
     }
-
-    function renderChildren(): ChildNode[] {
-        if (prevChildrenDom) {
-            return prevChildrenDom;
-        }
-        const outletKey = currentKey.clone().push('outlet')
-        const outlet = DOM.createElement('sig-outlet', outletKey);
-        render(children, outlet, outletKey);
-        prevChildrenDom = Array.from(outlet.childNodes);
-        return prevChildrenDom;
-    }
 }
 
 function asyncRenderSSR(
     provideHtmlPromise: Promise<string>,
     root: RootElementWithMetadata,
     render: RenderFunction,
-    renderChildren: () => ChildNode[],
+    children: VirtualElementChild[],
+    memoChildrenRecord: Record<string, ChildNode[] | null>,
     props: Omit<SSRProps, 'fetch'>,
     injectResolvedDom: (dom: Element | Text) => void,
     key: KeyBuilder
@@ -166,14 +160,28 @@ function asyncRenderSSR(
             key.clone().push(htmlDom.tagName.toLowerCase()) : key.clone();
         htmlDom[ElementKeySymbol] = ssrKey.toString();
         if (isNodeElement(htmlDom) && allowOutlet) {
-            const outlet = htmlDom.querySelector('sig-outlet');
-            if (outlet) {
-                const outletKey = key.clone().push('ssr-outlet');
-                const domChildren = renderChildren();
+            const virtualElementChildren = children.map(adaptVirtualElementChild);
+            const unnamedChildren = virtualElementChildren.filter((child) => !child.props.name);
+            if (unnamedChildren.length) {
+                logger.warn('Unnamed children are not supported in SSR');
+            }
+            const namedChildren = groupBy(virtualElementChildren, (child) => (child.props.name || '') as string);
+            
+            for (const [outletName, child] of Object.entries(namedChildren)){ 
+                const domOutlet = htmlDom.querySelector(`sig-outlet[name="${outletName}"]`);
+                if(!domOutlet) continue;
+                if(memoChildrenRecord[outletName]) {
+                    const memoChildren = memoChildrenRecord[outletName] || [];
+                    domOutlet.replaceChildren(...memoChildren);
+                    continue;
+                }
+                const outletKey = key.clone().push('ssr-outlet').push(outletName);
+                render(child, domOutlet as HTMLElement, outletKey);
+                const domChildren = Array.from(domOutlet.childNodes);
+                memoChildrenRecord[outletName] = domChildren;
                 domChildren.forEach((node, i) => {
                     node[ElementKeySymbol] = outletKey.clone().pushIndex(i);
                 });
-                outlet.replaceWith(...domChildren);
             }
         }
         injectResolvedDom(htmlDom);

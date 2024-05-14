@@ -66,7 +66,6 @@ function RecipeCard(props: Recipe) {
         onClick={() => push(`/recipes/${props.id}`)}>
         <img src={props.image} alt={props.title} className={'w-60 h-80'} />
         <h3>{props.title}</h3>
-        {/* <p>{props.description}</p> */}
     </div>);
 }
 
@@ -77,29 +76,18 @@ export function RecipePage() {
     return (
         <SSR fetch={`/recipes/${recipeId}`} fallback={<p>Loading</p>} rerun={renderOnCommentSubmit$} > 
             <SubmitCommentSection  
+                name = 'submit-comment'
                 onSubmit$={renderOnCommentSubmit$}
                 recipeId={recipeId} />
         </SSR>
     );
 }
 
-
-export function CommentListSection(comments: { author: string, comment: string }[]) {
-    return (<div>
-        <h3>Comments</h3>
-        <div>
-            {comments.map(comment => <div>
-                <p>{comment.author}</p>
-                <p>{comment.comment}</p>
-            </div>)}
-        </div>
-    </div>);
-}
-
 export function SubmitCommentSection({
     onSubmit$,
     recipeId
 } : { 
+    name: string
     onSubmit$: Signal<unknown>,
     recipeId: string 
 }) {

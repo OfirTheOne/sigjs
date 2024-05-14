@@ -1,7 +1,7 @@
 
 import { onConnect } from 'sig';
 import { store } from './store';
-import { createAppRouter } from './router/router';
+import { AppRouter } from './router/router';
 
 
 export function App() {
@@ -13,7 +13,7 @@ export function App() {
             store.setState((state) =>({ ...state, recipes }));
         });
     });
-    return createAppRouter();
+    return <AppRouter />;
 }
 
 

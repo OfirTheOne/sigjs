@@ -63,32 +63,6 @@ const recipes = [
         }
       ]
   },
-  /*
-  {
-      title: 'Recipe 3',
-      id: '3',
-      image: 'https://via.placeholder.com/180x220',
-      description: 'Description 3'
-  },
-  {
-      title: 'Recipe 4',
-      id: '4',
-      image: 'https://via.placeholder.com/180x220',
-      description: 'Description 4'
-  },
-  {
-      title: 'Recipe 5',
-      id: '5',
-      image: 'https://via.placeholder.com/180x220',
-      description: 'Description 5'
-  },
-  {
-      title: 'Recipe 6',
-      id: '6',
-      image: 'https://via.placeholder.com/180x220',
-      description: 'Description 6'
-  },
-  */
 ];
 
 
@@ -191,7 +165,7 @@ app.get('/recipes/:id', async (req, res) => {
     </div>
 
     <div class="flex flex-col gap-4 p-8">
-      <sig-outlet></sig-outlet>
+      <sig-outlet name="submit-comment"></sig-outlet>
     </div>
 
   </div>`);
