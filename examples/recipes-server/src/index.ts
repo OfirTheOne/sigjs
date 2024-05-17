@@ -9,6 +9,8 @@ app.use(cors());
 const recipes = [
   {
     id: '1',
+    popularity: 3,
+    timestamp: '2021-09-01T12:00:00',
     title: 'Maca Chocolate Smoothie',
     image: 'https://static.wixstatic.com/media/827c6d_ed58ad4a55174a35b6f0d34465e02289~mv2.jpg/v1/fill/w_520,h_650,al_c,lg_1,q_80,enc_auto/827c6d_ed58ad4a55174a35b6f0d34465e02289~mv2.jpg',
     category: 'beverages',
@@ -36,6 +38,8 @@ const recipes = [
   {
     title: 'Coconut Almond Milk',
     id: '2',
+    popularity: 5,
+    timestamp: '2021-09-01T12:30:00',
     image: 'https://static.wixstatic.com/media/827c6d_7cb8d36c0d284e34a726d84fc70e4a16~mv2.jpg/v1/fill/w_650,h_720,al_c,lg_1,q_85,enc_auto/827c6d_7cb8d36c0d284e34a726d84fc70e4a16~mv2.jpg',
     directions: [
       'Rinse almonds and add to blender.',
@@ -66,6 +70,8 @@ const recipes = [
   {
     title: 'Cucumber Spinach Smoothie',
     id: '3',
+    popularity: 2,
+    timestamp: '2021-09-01T10:00:00',
     image: 'https://static.wixstatic.com/media/827c6d_89ad7bd2eb364e41a1c5cf96a6df2f1f~mv2.jpg/v1/fill/w_720,h_396,al_c,lg_1,q_80,enc_auto/827c6d_89ad7bd2eb364e41a1c5cf96a6df2f1f~mv2.jpg',
     directions: [
       'Peel all the skin off the cucumber.',
@@ -95,6 +101,8 @@ const recipes = [
   {
     "id": '4',
     "title": "Sopa Paraguaya",
+    popularity: 7,
+    timestamp: '2021-09-01T11:00:00',
     "image": "https://www.kingarthurbaking.com/sites/default/files/styles/featured_image_2x/public/recipe_legacy/1084-3-large.jpg?itok=d-lPpFdW",
     "description": "A traditional Paraguayan dish, Sopa Paraguaya is a cornbread made with cornmeal, cheese, and onions.",
     "category": "Bread",
@@ -126,6 +134,8 @@ const recipes = [
   {
     "id": '5',
     "title": "Pancake",
+    popularity: 10,
+    timestamp: '2021-09-01T14:00:00',
     "image": "https://ichef.bbci.co.uk/food/ic/food_16x9_832/recipes/fluffyamericanpancak_74828_16x9.jpg",
     "description": "Classic American pancakes are fluffy, soft, and easy to make. Perfect for a hearty breakfast.",
     "category": "Breakfast",
@@ -159,6 +169,8 @@ const recipes = [
   {
     "id": '6',
     "title": "Mbejú",
+    popularity: 14,
+    timestamp: '2021-09-01T15:00:00',
     "image": "https://cdn0.recetasgratis.net/es/posts/0/1/4/mbeju_o_mbeyu_9410_orig.jpg",
     "description": "Mbejú is a traditional Paraguayan starch cake made with cassava flour, cheese, and milk.",
     "category": "Snack",
@@ -179,42 +191,46 @@ const recipes = [
   {
     "id": "7",
     "title": "Chicken Parmesan",
+    popularity: 12,
+    timestamp: '2021-09-01T16:00:00',
     image: 'https://assets.bonappetit.com/photos/5ea8f0df16738800085ad5d2/1:1/w_2240,c_limit/Chicken-Parmesean-Recipe-Lede.jpg',
     "category": "Italian",
     "directions": [
-        "Preheat oven to 400°F (200°C).",
-        "Season chicken with salt and pepper.",
-        "Dip chicken in beaten eggs, then coat with bread crumbs.",
-        "Fry chicken in oil until golden brown.",
-        "Place fried chicken in a baking dish, top with marinara sauce and mozzarella cheese.",
-        "Bake in the preheated oven until cheese is melted and bubbly."
+      "Preheat oven to 400°F (200°C).",
+      "Season chicken with salt and pepper.",
+      "Dip chicken in beaten eggs, then coat with bread crumbs.",
+      "Fry chicken in oil until golden brown.",
+      "Place fried chicken in a baking dish, top with marinara sauce and mozzarella cheese.",
+      "Bake in the preheated oven until cheese is melted and bubbly."
     ],
     "ingredients": [
-        "2 chicken breasts",
-        "1 cup bread crumbs",
-        "2 cups marinara sauce",
-        "1 cup mozzarella cheese",
-        "2 eggs",
-        "Salt and pepper to taste",
-        "Olive oil for frying"
+      "2 chicken breasts",
+      "1 cup bread crumbs",
+      "2 cups marinara sauce",
+      "1 cup mozzarella cheese",
+      "2 eggs",
+      "Salt and pepper to taste",
+      "Olive oil for frying"
     ],
     "comments": [
-        {
-            "author": "JohnD",
-            "comment": "Loved this recipe! Easy to follow and delicious."
-        },
-        {
-            "author": "Foodie123",
-            "comment": "I added some Parmesan cheese to the bread crumbs for extra flavor."
-        }
+      {
+        "author": "JohnD",
+        "comment": "Loved this recipe! Easy to follow and delicious."
+      },
+      {
+        "author": "Foodie123",
+        "comment": "I added some Parmesan cheese to the bread crumbs for extra flavor."
+      }
     ]
-},
-{
-  id: '8',
-  title: 'Chocolate Chip Cookies',
-  image: 'https://sallysbakingaddiction.com/wp-content/uploads/2013/05/classic-chocolate-chip-cookies.jpg',
-  "category": "Dessert",
-  "directions": [
+  },
+  {
+    id: '8',
+    title: 'Chocolate Chip Cookies',
+    popularity: 8,
+    timestamp: '2021-09-01T17:00:00',
+    image: 'https://sallysbakingaddiction.com/wp-content/uploads/2013/05/classic-chocolate-chip-cookies.jpg',
+    "category": "Dessert",
+    "directions": [
       "Preheat oven to 350°F (175°C).",
       "Cream together the butter, white sugar, and brown sugar.",
       "Beat in the eggs one at a time, then stir in the vanilla.",
@@ -222,8 +238,8 @@ const recipes = [
       "Stir in flour and chocolate chips.",
       "Drop by large spoonfuls onto ungreased pans.",
       "Bake for about 10 minutes or until edges are nicely browned."
-  ],
-  "ingredients": [
+    ],
+    "ingredients": [
       "1 cup butter, softened",
       "1 cup white sugar",
       "1 cup packed brown sugar",
@@ -234,29 +250,31 @@ const recipes = [
       "2 teaspoons hot water",
       "1/2 teaspoon salt",
       "2 cups semisweet chocolate chips"
-  ],
-  "comments": [
+    ],
+    "comments": [
       {
-          "author": "BakerMom",
-          "comment": "Perfect texture! Crispy edges and chewy center."
+        "author": "BakerMom",
+        "comment": "Perfect texture! Crispy edges and chewy center."
       },
       {
-          "author": "SweetTooth",
-          "comment": "I used dark chocolate chips and they were amazing."
+        "author": "SweetTooth",
+        "comment": "I used dark chocolate chips and they were amazing."
       }
-  ]
-},
-{
-  id: '8',
-  title: 'Caesar Salad',
-  image: 'https://natashaskitchen.com/wp-content/uploads/2019/01/Caesar-Salad-Recipe-3.jpg', 
-  "category": "Salad",
-  "directions": [
+    ]
+  },
+  {
+    id: '8',
+    title: 'Caesar Salad',
+    popularity: 6,
+    timestamp: '2021-09-01T18:00:00',
+    image: 'https://natashaskitchen.com/wp-content/uploads/2019/01/Caesar-Salad-Recipe-3.jpg',
+    "category": "Salad",
+    "directions": [
       "In a large bowl, whisk together garlic, anchovy paste, lemon juice, Dijon mustard, and Worcestershire sauce.",
       "Add the mayonnaise, Parmigiano-Reggiano, salt, and pepper and whisk until well combined.",
       "Toss the romaine lettuce with the dressing, then sprinkle with croutons and additional Parmigiano-Reggiano."
-  ],
-  "ingredients": [
+    ],
+    "ingredients": [
       "1 clove garlic, minced",
       "1 teaspoon anchovy paste",
       "2 tablespoons lemon juice",
@@ -267,24 +285,26 @@ const recipes = [
       "Salt and pepper to taste",
       "4 cups romaine lettuce, torn into bite-size pieces",
       "1 cup croutons"
-  ],
-  "comments": [
+    ],
+    "comments": [
       {
-          "author": "HealthyEater",
-          "comment": "Great recipe! I added grilled chicken for a complete meal."
+        "author": "HealthyEater",
+        "comment": "Great recipe! I added grilled chicken for a complete meal."
       },
       {
-          "author": "SaladLover",
-          "comment": "Easy to make and very tasty. The dressing is spot on."
+        "author": "SaladLover",
+        "comment": "Easy to make and very tasty. The dressing is spot on."
       }
-  ]
-},
-{
-  id: '9',
-  title: 'Beef Stroganoff',
-  image: 'https://saltedmint.com/wp-content/uploads/2024/01/Beef-stroganoff-with-rice-1.jpg',
-  "category": "Russian",
-  "directions": [
+    ]
+  },
+  {
+    id: '9',
+    title: 'Beef Stroganoff',
+    popularity: 9,
+    timestamp: '2021-09-01T19:00:00',
+    image: 'https://saltedmint.com/wp-content/uploads/2024/01/Beef-stroganoff-with-rice-1.jpg',
+    "category": "Russian",
+    "directions": [
       "In a large skillet, cook the onions and mushrooms in butter until tender.",
       "Add the beef and cook until browned.",
       "Stir in the flour until well blended.",
@@ -292,8 +312,8 @@ const recipes = [
       "Reduce heat and simmer for about 10 minutes.",
       "Stir in the sour cream and heat through, but do not boil.",
       "Serve over egg noodles or rice."
-  ],
-  "ingredients": [
+    ],
+    "ingredients": [
       "1 pound beef sirloin, cut into strips",
       "1 cup sliced mushrooms",
       "1 onion, chopped",
@@ -304,18 +324,18 @@ const recipes = [
       "1 cup sour cream",
       "Salt and pepper to taste",
       "Egg noodles or rice for serving"
-  ],
-  "comments": [
+    ],
+    "comments": [
       {
-          "author": "HomeCook",
-          "comment": "Comfort food at its best. I used Greek yogurt instead of sour cream."
+        "author": "HomeCook",
+        "comment": "Comfort food at its best. I used Greek yogurt instead of sour cream."
       },
       {
-          "author": "MeatLover",
-          "comment": "Delicious and easy to prepare. My family loved it!"
+        "author": "MeatLover",
+        "comment": "Delicious and easy to prepare. My family loved it!"
       }
-  ]
-}
+    ]
+  }
 
 
 ];
@@ -436,8 +456,8 @@ app.post('/recipes/:id/comments', (req, res) => {
 });
 
 app.post('/recipes', (req, res) => {
-  const { title, category, directions, ingredients, id, image } = req.body;
-  const recipe = { title, category, directions, ingredients, id, image, comments: [] }
+  const { title, category, directions, ingredients, id, image, popularity = 0, timestamp = (new Date()).toISOString() } = req.body;
+  const recipe = { title, category, directions, ingredients, id, image, comments: [], popularity, timestamp };
   recipes.push(recipe);
   res.json(recipe);
 });
