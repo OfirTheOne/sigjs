@@ -38,20 +38,17 @@ export function listen(
     return () => unsubscribe.forEach(unsubscribe => unsubscribe());
 }
 
-export function combineLatest<T>(signals: Signal<T>[]): Signal<T[]> {
-    // Create an array to hold the latest values from each signal
+export function combineLatest<T0, T1 = T0, T2 = T1, T3 = T2, T4 = T3, T5 = T4>(signals: [Signal<T0>, Signal<T1>, Signal<T2>, Signal<T3>, Signal<T4>, Signal<T5>]): Signal<[T0, T1, T2, T3, T4, T5]>;
+export function combineLatest<T0, T1 = T0, T2 = T1, T3 = T2, T4 = T3>(signals: [Signal<T0>, Signal<T1>, Signal<T2>, Signal<T3>, Signal<T4>]): Signal<[T0, T1, T2, T3, T4]>;
+export function combineLatest<T0, T1 = T0, T2 = T1, T3 = T2>(signals: [Signal<T0>, Signal<T1>, Signal<T2>, Signal<T3>]): Signal<[T0, T1, T2, T3]>;
+export function combineLatest<T0, T1 = T0, T2 = T1>(signals: [Signal<T0>, Signal<T1>, Signal<T2>]): Signal<[T0, T1, T2]>;
+export function combineLatest<T0, T1 = T0>(signals: [Signal<T0>, Signal<T1>]): Signal<[T0, T1]>;
+export function combineLatest<T>(signals: Signal<T>[]): Signal<any> {
     const latestValues: T[] = signals.map(signal => signal.value);
-
-    // Create a new signal that will emit the latest values
     const combinedSignal = signal<T[]>(latestValues);
-
-    // Subscribe to each signal
     signals.forEach((signal, index) => {
         signal.subscribe(value => {
-            // Update the latest value for this signal
             latestValues[index] = value;
-
-            // Emit the latest values
             combinedSignal.emit([...latestValues]);
         });
     });
