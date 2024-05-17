@@ -1,12 +1,13 @@
 import { createElement } from "@/jsx";
-import type { RenderFunction } from "@/core/dom-render/render";
-import { VirtualElement, VirtualElementChild, ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/types";
+import { ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/constants";
 import { isSignal, Signal, subscribeSignal } from "@/core/signal";
 import { ForControlFlow } from "@/symbols";
 import { registerSignalSubscription } from "@/core/global/global-hook-executioner";
 import { DOM } from "@/core/html";
 import { KeyBuilder } from "@/common/key-builder/key-builder";
 import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
+import type { RenderFunction } from "@/core/dom-render/render";
+import type { VirtualElement, VirtualElementChild } from "@/types";
 
 
 interface ForProps<T = unknown> {

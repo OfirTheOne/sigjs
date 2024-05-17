@@ -1,19 +1,20 @@
-import { VirtualElement, VirtualElementChild, ELEMENT_TYPE } from "@/types";
+import { ELEMENT_TYPE } from "@/constants";
 import { ElementKeySymbol, SSRSymbol } from "@/symbols";
 import { getRenderedRoot, setRenderedRoot } from "@/core/global";
 import { isNodeElement } from "@/core/utils";
 import { KeyBuilder } from "@/common/key-builder/key-builder";
+import { groupBy } from "@/common/group-by";
 import logger from "@/common/logger/logger";
 import { DOM } from "../html/html";
 import { parseHtml } from "./parse-html";
 import { fetchHtml } from "./fetch-html";
 import { getSignalValue, listen, isSignal } from "../signal/signal.utils";
+import { adaptVirtualElementChild } from "../dom-render/create-element/adapt-virtual-element-child";
+import type { VirtualElement, VirtualElementChild } from "@/types";
 import type { SSRFetch } from "./ssr.types";
 import type { RenderFunction } from "../dom-render/render";
 import type { RootElementWithMetadata } from "../dom-render/create-root";
 import type { Signal } from "../signal/signal.types";
-import { adaptVirtualElementChild } from "../dom-render/create-element/adapt-virtual-element-child";
-import { groupBy } from "@/common/group-by";
 
 customElements.define('ssr-ph', class extends HTMLElement { });
 customElements.define('sig-outlet', class extends HTMLElement { });
@@ -55,7 +56,8 @@ function renderSSR(
         children = [],
         errorElement,
         onError,
-        rerun
+        rerun,
+        selector
     } = (element.props as unknown as SSRProps & { children: VirtualElement[] });
     const root = getRenderedRoot();
     const currentKey = key.clone().push(element.type);
@@ -108,7 +110,7 @@ function renderSSR(
             render,
             children,
             memoChildrenDom,
-            { errorElement, onError, allowOutlet },
+            { errorElement, onError, allowOutlet, selector },
             (dom: Element | Text) => {
                 if (prevSSRDom) {
                     container.replaceChild(dom, prevSSRDom);
@@ -154,7 +156,7 @@ function asyncRenderSSR(
     const { errorElement, onError, allowOutlet } = props;
     return provideHtmlPromise.then((htmlString) => {
         setRenderedRoot(root.id);
-        const htmlDom = applySelector(parseHtml(htmlString));
+        const htmlDom = applySelector(parseHtml(htmlString), props.selector);
         if (!htmlDom) return;
         const ssrKey = 'tagName' in htmlDom ?
             key.clone().push(htmlDom.tagName.toLowerCase()) : key.clone();

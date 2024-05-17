@@ -1,10 +1,11 @@
 import { KeyBuilder } from "@/common/key-builder/key-builder";
-import type { RenderFunction } from "@/core/dom-render/render";
 import { registerSignalSubscription } from "@/core/global/global-hook-executioner";
 import { DOM } from "@/core/html";
 import { Signal, isSignal, subscribeSignal } from "@/core/signal";
 import { IfControlFlow } from "@/symbols";
-import { VirtualElement, ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/types";
+import { ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/constants";
+import type { VirtualElement } from "@/types";
+import type { RenderFunction } from "@/core/dom-render/render";
 
 
 interface IfProps {

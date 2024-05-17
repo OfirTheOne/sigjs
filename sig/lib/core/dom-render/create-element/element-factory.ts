@@ -1,6 +1,6 @@
 import type { VirtualElementChild, VirtualElement, ComponentFunction, AsyncComponentFunction, Props } from "@/types";
 import type { Signal } from "@/core/signal";
-import { ELEMENT_TYPE } from "@/types";
+import { ELEMENT_TYPE } from "@/constants";
 
 export function createTextElement(text: string): VirtualElement {
     return {

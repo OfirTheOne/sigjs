@@ -67,7 +67,6 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
 
     function push(path: string | URL, state?: Record<string, unknown>) {
         history.pushState(state, "", path);
-        
         navigate(window.location.pathname);
     }
 
@@ -96,7 +95,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
             }
         }
         
-        const routeId = route.id + params ? JSON.stringify(params) : '';
+        const routeId = route.id + (params ? JSON.stringify(params) : '');
 
         if(router.matchedRouteId === routeId) return;
         // Route is about to change
@@ -170,10 +169,31 @@ function createRouter(config: RouterConfig): VirtualElement {
         throw new Error('Out of a root context');
     }
     const router = buildRouter(config, renderedRoot);
-    if(config.layout) {
-        return createElement(config.layout, {}, router.container);
+    let rootRouterElement: VirtualElement;
+    if(!config.ignoreRouterLink) {
+        overrideNativeNavigation(router.container, router);
     }
-    return createElement(router.container, {});
+    if(config.layout) {
+        rootRouterElement = createElement(config.layout, {}, router.container);
+    } else {
+        rootRouterElement = createElement(router.container, {});
+    }
+    return rootRouterElement;
+}
+
+
+function overrideNativeNavigation(rootRouterElement: HTMLElement, router: Router) {
+    rootRouterElement.addEventListener('click', (event) => {
+        const target = (event.target as HTMLElement).closest('a');
+        if(target && target.tagName === 'A' && target.hasAttribute('href') && target.hasAttribute('router-link'))  {
+            event.preventDefault();
+            const href = target.getAttribute('href');   
+            if(href) {
+                router.push(href);
+            }
+        }
+    });
 }
 
 export { createRouter, getRouter, getParams };
+

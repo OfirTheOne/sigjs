@@ -44,6 +44,11 @@
       "import": "./dist/convenient/index.js",
       "require": "./dist/convenient/index.umd.cjs",
       "types": "./dist/convenient/index.d.ts"
+    },
+    "./constants": {
+      "import": "./dist/constants/index.js",
+      "require": "./dist/constants/index.umd.cjs",
+      "types": "./dist/constants/index.d.ts"
     }
   },
   "scripts": {

@@ -1,10 +1,11 @@
 
 import { KeyBuilder } from "@/common/key-builder/key-builder";
-import type { RenderFunction } from "@/core/dom-render/render";
 import { getRenderedRoot, setRenderedRoot } from "@/core/global";
 import { DOM } from "@/core/html";
 import { AwaitControlFlow } from "@/symbols";
-import { AsyncComponentFunction, CONTROL_FLOW_TAG, ELEMENT_TYPE, VirtualElement } from "@/types";
+import { CONTROL_FLOW_TAG, ELEMENT_TYPE } from "@/constants";
+import type { RenderFunction } from "@/core/dom-render/render";
+import type { AsyncComponentFunction, VirtualElement } from "@/types";
 
 interface AwaitProps {
     fallback: VirtualElement,

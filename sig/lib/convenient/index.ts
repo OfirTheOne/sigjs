@@ -1,3 +1,3 @@
 
 export * from './element';
-export * from './element/types';
+export type * from './element/types';

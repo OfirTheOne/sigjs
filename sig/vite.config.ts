@@ -14,7 +14,8 @@ export default defineConfig({
         store: './lib/store/index.ts',
         jsx: './lib/jsx/index.ts',
         router: './lib/router/index.ts',
-        convenient: './lib/convenient/index.ts'
+        convenient: './lib/convenient/index.ts',
+        constants: './lib/constants/constants.ts',
       },
       formats: ['es', 'cjs'],
       fileName: (format, entryName: string) => {

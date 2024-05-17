@@ -1,3 +1,4 @@
+import { CONTROL_FLOW_TAG, ELEMENT_TYPE } from "./constants/constants";
 
 interface ComponentFunction<T = any /* Record<string, unknown> */> {
     (props?: T): VirtualElement;
@@ -27,19 +28,6 @@ interface ElementRef<T = HTMLElement> {
     current?: T;
 }
 
-
-
-const ELEMENT_TYPE = {
-    RAW: 'RAW_ELEMENT',
-    DOM: 'DOM_ELEMENT',
-    TEXT: 'TEXT_ELEMENT',
-    SIGNAL: 'SIGNAL_ELEMENT',
-    EMPTY: 'EMPTY_ELEMENT',
-    COMPONENT: 'COMPONENT_ELEMENT',
-    CONTROL_FLOW: 'CONTROL_FLOW_ELEMENT',
-    SSR: 'SSR_ELEMENT',
-} as const;
-
 type ElementType = typeof ELEMENT_TYPE[keyof typeof ELEMENT_TYPE];
 
 type CommonProps = {
@@ -48,13 +36,6 @@ type CommonProps = {
 };
 
 type Props<T = Record<string, unknown>> = T & CommonProps;
-
-
-const CONTROL_FLOW_TAG = {
-    IF: 'IF',
-    FOR: 'FOR',
-    AWAIT: 'AWAIT'
-} as const;
 
 type ControlFlowTag = typeof CONTROL_FLOW_TAG[keyof typeof CONTROL_FLOW_TAG];
 
@@ -70,4 +51,4 @@ export type {
     ComponentFunctionWithMeta, 
     AsyncComponentFunction 
 };
-export { ELEMENT_TYPE, CONTROL_FLOW_TAG };
+// export { ELEMENT_TYPE, CONTROL_FLOW_TAG };

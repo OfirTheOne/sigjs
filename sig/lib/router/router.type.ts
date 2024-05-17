@@ -26,6 +26,7 @@ export type RouterConfig = {
     base?: string;
     onNoMatch?: () => void;
     layout?: ComponentFunction;
+    ignoreRouterLink?: boolean;
 };
 
 export type Router = {

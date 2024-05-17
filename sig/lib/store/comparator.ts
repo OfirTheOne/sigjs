@@ -4,8 +4,6 @@ export interface Comparator<T> {
     (prev: T, next: T): boolean;
 }
 
-
-
 export function lengthEqual(a: any[], b: any[]): boolean {
     return a.length === b.length;
 }

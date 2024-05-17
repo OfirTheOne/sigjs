@@ -1,5 +1,5 @@
 import { KeyBuilder } from "@/common/key-builder/key-builder";
-import { ELEMENT_TYPE, ElementType, VirtualElement } from "@/types";
+import { ELEMENT_TYPE } from "@/constants";
 import { elementRender } from "./element-render";
 import { textRender } from "./text-render";
 import { childrenRender } from "./children-render";
@@ -9,7 +9,7 @@ import { componentRender } from "./component-render";
 import { renderSSR } from "@/core/ssr";
 import { controlFlowRender } from "./control-flow-render";
 import { rawRender } from "./raw-render";
-
+import type { ElementType, VirtualElement } from "@/types";
 
 function render(element: VirtualElement[], container: HTMLElement, key: KeyBuilder): HTMLElement | Text;
 function render(element: VirtualElement, container: HTMLElement | undefined, key: KeyBuilder): HTMLElement | Text;
