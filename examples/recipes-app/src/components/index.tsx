@@ -1,5 +1,6 @@
 
 import { ComponentFunction, For, SSR, Signal, createRef, createSignal } from 'sig';
+import { combineLatest } from 'sig/core';
 import { getParams, getRouter } from 'sig/router';
 import { store } from '../store';
 import { Recipe } from '../types';
@@ -37,7 +38,7 @@ function SecondaryNavBar() {
             <div onClick={() => push('/recipes')} className='flex'>Recipes</div>
             <div onClick={() => push('/videos')} className='flex'>Videos</div>
         </div>
-        <div className='flex justify-center text-4xl text-center w-1/5'>Title</div>
+        <div className='flex justify-center text-4xl text-center w-1/5'>Recipes App</div>
         <div className='flex justify-around w-1/4'>
             <div onClick={() => push('/cookbook')} className='flex'>Cookbook</div>
             <div onClick={() => push('/press')} className='flex'>Press</div>
@@ -46,27 +47,57 @@ function SecondaryNavBar() {
     </nav>);
 }
 
-export function RecipesGrid() {
-    const recipes$ = store.select(state => state.recipes);
+export function RecipesPage() {
+    const storeRecipes$ = store.select(state => state.recipes);
+    const [filter$, ] = createSignal('');
+    const filteredRecipes$ = combineLatest([storeRecipes$, filter$])
+        .derive(([recipes, filter]) => recipes
+            .filter(recipe => !filter ? true : recipe.title.toLowerCase()
+                .includes(filter.toLowerCase())));
+    return (
+        <div className="flex flex-col gap-4 px-20">
+            <FilterSection filter$={filter$} />
+            <RecipesGrid recipes$={filteredRecipes$} />
+        </div>
+    );
+
+}
+
+function FilterSection({ filter$ }: { filter$: Signal<string> }) {
+    return (
+        <div className="flex flex-col justify-center w-1/3 gap-2 m-auto">
+            <h3 className="text-xl font-semibold">Filter</h3>
+            <input
+                type="text"
+                className="border border-l-blue-200 rounded-md"
+                placeholder="Search"
+                onInput={(e: Event) => filter$.setValue((e.target as HTMLInputElement).value)}
+            />
+        </div>
+    );
+}
+
+export function RecipesGrid({ recipes$ }: { recipes$: Signal<Recipe[]> }) {
     return (
         <For 
             as = 'div'
             asProps={{ className: 'flex flex-wrap justify-around gap-4' }}
             list={recipes$} 
+            index={(recipe) => recipe.id}
             factory={(recipe) => <RecipeCard {...recipe} />}
         />
     );
 }
 
 function RecipeCard(props: Recipe) {
-    const { push } = getRouter();
-
-    return (<div 
+    return (<a 
+        router-link={true}
         className='flex flex-col uppercase' 
-        onClick={() => push(`/recipes/${props.id}`)}>
+        href={`/recipes/${props.id}`}
+    >
         <img src={props.image} alt={props.title} className={'w-60 h-80'} />
         <h3>{props.title}</h3>
-    </div>);
+    </a>);
 }
 
 export function RecipePage() {
@@ -74,7 +105,10 @@ export function RecipePage() {
     const params = getParams();
     const recipeId = params.id;
     return (
-        <SSR fetch={`/recipes/${recipeId}`} fallback={<p>Loading</p>} rerun={renderOnCommentSubmit$} > 
+        <SSR 
+            fetch={`/recipes/${recipeId}`} 
+            fallback={<p>Loading</p>} 
+            rerun={renderOnCommentSubmit$} > 
             <SubmitCommentSection  
                 name = 'submit-comment'
                 onSubmit$={renderOnCommentSubmit$}
@@ -83,7 +117,7 @@ export function RecipePage() {
     );
 }
 
-export function SubmitCommentSection({
+function SubmitCommentSection({
     onSubmit$,
     recipeId
 } : { 
@@ -99,7 +133,7 @@ export function SubmitCommentSection({
             method: 'POST',
             body: JSON.stringify({ author: 'Joni', comment }),
             headers: { 'Content-Type': 'application/json' }
-        }).then(() => onSubmit$.emit(0));
+        }).then(() => onSubmit$.emit(void 0));
     }
 
     return (<div className='flex flex-col w-1/2 gap-2'>

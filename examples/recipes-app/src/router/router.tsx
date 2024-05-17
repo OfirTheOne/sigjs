@@ -1,21 +1,16 @@
 
 
 import { createRouter } from 'sig/router';
-import { Layout, RecipePage, RecipesGrid } from '../components';
-// import { store } from '../store';
+import { Layout, RecipePage, RecipesPage } from '../components';
 
 export function AppRouter() {
     return createRouter({
         routes: [
-            { path: '/', component: () => <RecipesGrid /> },
+            { path: '/', component: () => <RecipesPage /> },
             { path: '/about', component: () => <div>About</div> },
             { path: '/contact', component: () => <div>Contact</div> },
-            { path: '/recipes', component: () => <RecipesGrid /> },
-            { 
-                path: '/recipes/:id', 
-                // shouldEnter: recipePageGuard , 
-                component: () => <RecipePage /> 
-            },
+            { path: '/recipes', component: () => <RecipesPage /> },
+            { path: '/recipes/:id', component: () => <RecipePage /> },
             { path: '/videos', component: () => <div>Videos</div> },
             { path: '/cookbook', component: () => <div>Cookbook</div> },
             { path: '/press', component: () => <div>Press</div> },
