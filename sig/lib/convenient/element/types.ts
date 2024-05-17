@@ -277,16 +277,16 @@ export interface DlElementAttributes extends HTMLElementAttributes {
 }
 
 export interface EmbedElementAttributes extends HTMLElementAttributes {
-    height: string;
-    src: string;
-    type: string;
-    width: string;
+    height?: string;
+    src?: string;
+    type?: string;
+    width?: string;
 }
 
 export interface FieldsetElementAttributes extends HTMLElementAttributes {
-    disabled: boolean;
-    form: string;
-    name: string;
+    disabled?: boolean;
+    form?: string;
+    name?: string;
 }
 
 export interface FontElementAttributes extends HTMLElementAttributes {
