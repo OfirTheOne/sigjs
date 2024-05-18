@@ -1,11 +1,8 @@
 import type { Signalize } from '@/core';
 import type * as CSS from 'csstype';
 import type * as HEA from "sig/convenient";
-// import type { Trackable } from "@sigjs/signal";
-
 
 declare global {
-
   module '*.svg' {
     const factory = () => SVGElement;
     export default factory;
@@ -16,8 +13,8 @@ declare global {
 
   export namespace Sig {
     export type ClassList = Array<Trackable<unknown> | string | string[] | Record<string, boolean | Trackable<unknown>>>;
-
   }
+
   export namespace JSX {
 
     type NativeElement = globalThis.Element;
@@ -948,14 +945,8 @@ declare global {
     }
 
     export type Element
-      = IntrinsicElements
-      | string
-      | number
-      | boolean
-      | null
-      | undefined
-      | VirtualElement
-      | (() => (Element | Element[]));
+      = Renderable;
   }
 }
+
 export { };

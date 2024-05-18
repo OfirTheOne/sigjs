@@ -2,14 +2,14 @@
 import { uniqueId } from "@/common/unique-id";
 import { render } from '@/core';
 import { getRenderedRoot } from "@/core/global";
-import type { RootElementWithMetadata } from "@/core/dom-render/create-root";
-import type { VirtualElement } from "@/types";
 import { createElement } from "@/jsx";
 import { DOM } from "@/core/html";
-import { Router, RouterConfig, RouteCommonConfig, RouteSyncConfig } from "./router.type";
 import { matchRoute } from "./match-route";
-import logger from "@/common/logger/logger";
 import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
+import logger from "@/common/logger/logger";
+import type { Router, RouterConfig, RouteCommonConfig, RouteSyncConfig } from "./router.type";
+import type { RootElementWithMetadata } from "@/core/dom-render/create-root";
+import type { VirtualElement } from "@/types";
 
 const routersStore: Record<string, Router> = {};
 
@@ -39,7 +39,7 @@ function getParams(): Record<string, string> {
 }
 
 function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata): Router {
-    const { routes, base = '', onNoMatch } = config;
+    const { routes, base = '', onNoMatch, useViewTransition = true } = config;
     const routesWithId = routes.map(route => {
         return {
             ...route,
@@ -114,6 +114,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         };
         router.matchedRouteId = routeId;
 
+        function updateDom() {
         // const componentElementOrPromise = route.component();
         /*
         if(isPromise(componentElementOrPromise)) {
@@ -160,6 +161,17 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
             }
             if(routeSync.onEnter) routeSync.onEnter();
         // }   
+        }
+
+        if(!useViewTransition) {
+            updateDom();
+        } else if('startViewTransition' in document) {
+            if(!document.startViewTransition) {
+                updateDom();
+            } else if(typeof document.startViewTransition === 'function') {
+                document.startViewTransition(() => updateDom());
+            }
+        } 
     }
 
     // Navigate to the initial route
