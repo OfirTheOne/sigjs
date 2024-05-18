@@ -1,7 +1,9 @@
 
 
 import { createRouter } from 'sig/router';
-import { Layout, RecipePage, RecipesPage } from '../components';
+import { RecipePage } from '../components/pages/recipe.page';
+import { RecipesPage } from '../components/pages/recipes.page';
+import { Layout } from '../components/layout/layout';
 
 export function AppRouter() {
     return createRouter({

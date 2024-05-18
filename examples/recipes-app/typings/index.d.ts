@@ -1,6 +1,6 @@
 import { Signalize } from '@/core';
 import type * as CSS from 'csstype';
-import { VirtualElement } from 'sig';
+import { VirtualElement, Renderable } from 'sig';
 import type * as HEA from "sig/convenient";
 // import type { Trackable } from "@sigjs/signal";
 
@@ -1072,14 +1072,8 @@ declare global {
     // }
 
     export type Element
-      = IntrinsicElements
-      | string
-      | number
-      | boolean
-      | null
-      | undefined
-      | VirtualElement
-      | (() => (Element | Element[]));
+      = Renderable;
+      // | (() => (Element | Element[]));
 
   }
 }

@@ -9,9 +9,7 @@ export function App() {
         console.log('App connected');
         fetch('http://localhost:3030/recipes')
             .then(res => res.json())
-            .then(recipes => {
-            store.setState((state) =>({ ...state, recipes }));
-        });
+            .then(recipes => store.setState((state) =>({ ...state, recipes })) );
     });
     return <AppRouter />;
 }
