@@ -9,7 +9,6 @@ export type RouteCommonConfig = {
         state?: Record<string, unknown>,) => boolean;
     onEnter?: () => void;
     onLeave?: (params: Record<string, string>) => void;
-    useViewTransition?: boolean;
 };
 // export type RouteAsyncConfig = {
 //     component: AsyncComponentFunction;
@@ -28,6 +27,7 @@ export type RouterConfig = {
     onNoMatch?: () => void;
     layout?: ComponentFunction;
     ignoreRouterLink?: boolean;
+    useViewTransition?: boolean;
 };
 
 export type Router = {

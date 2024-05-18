@@ -36,64 +36,76 @@ function FilterSection({ search$, filter$ }: {
     filter$: Signal<{ mostPopular: boolean, newest: boolean }>
 }) {
     return (
-        <div className='m-auto w-60 flex flex-col gap-4'>
-            <div className="flex flex-col justify-center ">
-                <h3 className="text-lg font-semibold">Search</h3>
-                <input
-                    type="text"
-                    className="border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:outline-none px-3 py-2"
-                    placeholder="e.g smoothie"
-                    onInput={(e: Event) => search$.setValue((e.target as HTMLInputElement).value)}
-                />
-            </div>
-
-            <div className="flex flex-col justify-center">
-                <div className=''>
-                    <h3 className="text-lg font-semibold">Filter</h3>
-
+        <div className='m-auto flex flex-row gap-4'>
+            <div className='w-60 flex flex-col gap-4'>
+                <div className="flex flex-col justify-center ">
+                    <h3 className="text-lg font-semibold">Search</h3>
+                    <input
+                        type="text"
+                        value={search$}
+                        className="border border-gray-300 rounded-md shadow-sm focus:border-blue-300 focus:ring-blue-200 focus:outline-none px-3 py-2"
+                        placeholder="e.g smoothie"
+                        onInput={(e: Event) => search$.setValue((e.target as HTMLInputElement).value)}
+                    />
                 </div>
-                <fieldset className='flex flex-row gap-4'>
-                    <div className="flex flex-row gap-2 items-center">
-                        <input
-                            type="radio"
-                            id="most_popular"
-                            className="form-radio text-blue-600"
-                            name="sortBy"
-                            onChange={(e: Event) => {
-                                filter$.setValue({
-                                    mostPopular: (e.target as HTMLInputElement).checked,
-                                    newest: false
-                                });
-                            }}
-                        />
-                        <label
-                            for="most_popular"
-                            className="text-md mr-2 font-semibold">Most Popular
-                        </label>
+
+                <div className="flex flex-col justify-center">
+                    <div className=''>
+                        <h3 className="text-lg font-semibold">Filter</h3>
                     </div>
-                    <div className="flex flex-row gap-2 items-center">
-                        <input
-                            type="radio"
-                            className="form-radio text-blue-600"
-                            name="sortBy"
-                            id="newest"
-                            onChange={
-                                (e: Event) => {
+                    <fieldset className='flex flex-row gap-4'>
+                        <div className="flex flex-row gap-2 items-center">
+                            <input
+                                type="radio"
+                                id="most_popular"
+                                className="form-radio text-blue-600"
+                                checked={filter$.derive(filter => filter.mostPopular)}
+                                name="sortBy"
+                                onChange={(e: Event) => {
                                     filter$.setValue({
-                                        mostPopular: false,
-                                        newest: (e.target as HTMLInputElement).checked
+                                        mostPopular: (e.target as HTMLInputElement).checked,
+                                        newest: false
                                     });
+                                }}
+                            />
+                            <label
+                                for="most_popular"
+                                className="text-md mr-2 font-semibold">Most Popular
+                            </label>
+                        </div>
+                        <div className="flex flex-row gap-2 items-center">
+                            <input
+                                type="radio"
+                                className="form-radio text-blue-600"
+                                checked={filter$.derive(filter => filter.newest)}
+                                name="sortBy"
+                                id="newest"
+                                onChange={
+                                    (e: Event) => {
+                                        filter$.setValue({
+                                            mostPopular: false,
+                                            newest: (e.target as HTMLInputElement).checked
+                                        });
+                                    }
                                 }
-                            }
-                        />
-                        <label
-                            for="newest"
-                            className="text-md mr-2 font-semibold">Newest
-                        </label>
+                            />
+                            <label
+                                for="newest"
+                                className="text-md mr-2 font-semibold">Newest
+                            </label>
 
-                    </div>
+                        </div>
 
-                </fieldset>
+                    </fieldset>
+                </div>
+            </div>
+            <div className='w-60 flex flex-col gap-4'>
+                <button className='font-bold py-2 px-4' onClick={() => {
+                    search$.setValue('');
+                    filter$.setValue({ mostPopular: false, newest: false });
+                }}>
+                    Clear Filters
+                </button>
             </div>
 
         </div>

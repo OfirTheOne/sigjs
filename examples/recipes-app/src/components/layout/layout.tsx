@@ -30,15 +30,15 @@ function SecondaryNavBar() {
     const { push } = getRouter();
     return (<nav className='flex flex-row justify-around items-center bg-yellow-100/10 h-20 px-14'>
         <div className='flex justify-around w-1/4'>
-            <div onClick={() => push('/about')} className='flex'>About</div>
-            <div onClick={() => push('/recipes')} className='flex'>Recipes</div>
-            <div onClick={() => push('/videos')} className='flex'>Videos</div>
+            <div onClick={() => push('/about')} className='flex text-neutral-700 hover:text-neutral-500'>About</div>
+            <div onClick={() => push('/recipes')} className='flex text-neutral-700 hover:text-neutral-500'>Recipes</div>
+            <div onClick={() => push('/videos')} className='flex text-neutral-700 hover:text-neutral-500'>Videos</div>
         </div>
         <div className='flex justify-center text-4xl text-center w-1/5'>Recipes App</div>
         <div className='flex justify-around w-1/4'>
-            <div onClick={() => push('/cookbook')} className='flex'>Cookbook</div>
-            <div onClick={() => push('/press')} className='flex'>Press</div>
-            <div onClick={() => push('/contact')} className='flex'>Contact</div>
+            <div onClick={() => push('/cookbook')} className='flex text-neutral-700 hover:text-neutral-500'>Cookbook</div>
+            <div onClick={() => push('/press')} className='flex text-neutral-700 hover:text-neutral-500'>Press</div>
+            <div onClick={() => push('/contact')} className='flex text-neutral-700 hover:text-neutral-500'>Contact</div>
         </div>
     </nav>);
 }

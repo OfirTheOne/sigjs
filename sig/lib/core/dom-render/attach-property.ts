@@ -30,11 +30,12 @@ function attachPropertyToElement(dom: HTMLElement, name: string, value: unknown)
 }
 
 function attachAttributeToElement(dom: HTMLElement, name: string, value: unknown): void {
-    if (value) {
+    if (value !== undefined && value !== null && value !== false) {
         dom.setAttribute(name, value as string);
     } else {
         dom.removeAttribute(name);
     }
+    dom[name] = (value as string);
 }
 
 function attachEventToElement(dom: HTMLElement, name: string, value: unknown): void {
