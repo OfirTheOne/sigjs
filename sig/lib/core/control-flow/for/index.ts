@@ -7,14 +7,14 @@ import { DOM } from "@/core/html";
 import { KeyBuilder } from "@/common/key-builder/key-builder";
 import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
 import type { RenderFunction } from "@/core/dom-render/render";
-import type { VirtualElement, VirtualElementChild } from "@/types";
+import type { VirtualElement, Renderable } from "@/types";
 
 
 interface ForProps<T = unknown> {
     list: Array<T> | Signal<Array<T>>;
-    factory: VirtualElementChild | ((item: T) => VirtualElementChild);
+    factory: Renderable | ((item: T) => Renderable);
     index?: string | ((item: T, i: number) => string);
-    empty?: VirtualElementChild;
+    empty?: Renderable;
     as?: string;
     asProps?: { [key: string]: unknown };
 }

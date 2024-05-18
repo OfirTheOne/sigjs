@@ -5,6 +5,7 @@ import { createComponentContext, setActiveContext, removeActiveContext, addCompo
 import { runOnCreateHooks } from "../component-context/hooks/on-create";
 import { RenderFunction } from "./render.types";
 import { ElementKeySymbol } from "@/symbols";
+import { adaptVirtualElementChild } from "../create-element/adapt-virtual-element-child";
 
 export function componentRender(
     componentElement: VirtualElement,
@@ -23,7 +24,7 @@ export function componentRender(
     const element = componentFunction(props, children as VirtualElement[]);
     removeActiveContext();
     
-    const domElement = render(element, container, currentKey);
+    const domElement = render(adaptVirtualElementChild(element), container, currentKey);
     context.element = domElement as Element; 
     context.elementKey = domElement[ElementKeySymbol];
     addComponentContext(context.elementKey || context.key, context);

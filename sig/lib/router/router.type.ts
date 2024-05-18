@@ -1,4 +1,4 @@
-import { AsyncComponentFunction, ComponentFunction } from "../types";
+import { ComponentFunction } from "../types";
 
 export type RouteCommonConfig = {
     path: string;
@@ -10,16 +10,16 @@ export type RouteCommonConfig = {
     onEnter?: () => void;
     onLeave?: (params: Record<string, string>) => void;
 };
-export type RouteAsyncConfig = {
-    component: AsyncComponentFunction;
-    fallback?: ComponentFunction;
-    loading?: ComponentFunction;
-};
+// export type RouteAsyncConfig = {
+//     component: AsyncComponentFunction;
+//     fallback?: ComponentFunction;
+//     loading?: ComponentFunction;
+// };
 export type RouteSyncConfig = {
     component: ComponentFunction;
 };
 
-export type RouteConfig = RouteCommonConfig & (RouteAsyncConfig | RouteSyncConfig);
+export type RouteConfig = RouteCommonConfig & RouteSyncConfig; // (RouteAsyncConfig | RouteSyncConfig);
 
 export type RouterConfig = {
     routes: RouteConfig[];

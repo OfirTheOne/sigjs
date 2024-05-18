@@ -21,9 +21,9 @@
       "types": "./dist/store/index.d.ts"
     },
     "./types": {
-      "import": "./dist/types.js",
-      "require": "./dist/types.umd.cjs",
-      "types": "./dist/types.d.ts"
+      "import": "./dist/types/index.js",
+      "require": "./dist/types/index.umd.cjs",
+      "types": "./dist/types/index.d.ts"
     },
     "./core": {
       "import": "./dist/core/index.js",

@@ -6,6 +6,7 @@ import { AwaitControlFlow } from "@/symbols";
 import { CONTROL_FLOW_TAG, ELEMENT_TYPE } from "@/constants";
 import type { RenderFunction } from "@/core/dom-render/render";
 import type { AsyncComponentFunction, VirtualElement } from "@/types";
+import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
 
 interface AwaitProps {
     fallback: VirtualElement,
@@ -44,7 +45,7 @@ function renderAwait(
     Promise.resolve(component())
         .then((componentElement) => {
             setRenderedRoot(root.id);
-            const componentElementDom = render(componentElement, container, currentKey);
+            const componentElementDom = render(adaptVirtualElementChild(componentElement), container, currentKey);
             if (fallbackDom.parentElement !== container) {
                 DOM.appendChild(container, componentElementDom);
             } else {

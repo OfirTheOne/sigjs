@@ -1,7 +1,16 @@
-import { Signalize } from '@/core';
+import type { Signalize } from '@/core';
 import type * as CSS from 'csstype';
 import type * as HEA from "sig/convenient";
 // import type { Trackable } from "@sigjs/signal";
+
+
+declare global {
+
+  module '*.svg' {
+    const factory = () => SVGElement;
+    export default factory;
+  }
+}
 
 declare global {
 
@@ -250,8 +259,6 @@ declare global {
       onDOMNodeRemovedFromDocumentCapture?: SigEventHandler<T>;
 
     }
-
-
 
     export interface AriaAttributes {
       /** Identifies the currently active element when DOM focus is on a composite widget, textbox, group, or application. */
@@ -940,126 +947,6 @@ declare global {
       // [elemName: string]: any;
     }
 
-    // export interface IntrinsicElements {
-    //   a: HTMLAttributes<HTMLAnchorElement>;
-    //   abbr: HTMLAttributes<unknown>;
-    //   address: HTMLAttributes<unknown>;
-    //   area: HTMLAttributes<unknown>;
-    //   article: HTMLAttributes<unknown>;
-    //   aside: HTMLAttributes<unknown>;
-    //   audio: HTMLAttributes<unknown>;
-    //   b: HTMLAttributes<unknown>;
-    //   base: HTMLAttributes<unknown>;
-    //   bdi: HTMLAttributes<unknown>;
-    //   bdo: HTMLAttributes<unknown>;
-    //   big: HTMLAttributes<unknown>;
-    //   blockquote: HTMLAttributes<unknown>;
-    //   body: HTMLAttributes<unknown>;
-    //   br: HTMLAttributes<unknown>;
-    //   button: HTMLAttributes<HTMLButtonElement>;
-    //   canvas: HTMLAttributes<unknown>;
-    //   caption: HTMLAttributes<unknown>;
-    //   cite: HTMLAttributes<unknown>;
-    //   code: HTMLAttributes<unknown>;
-    //   col: HTMLAttributes<unknown>;
-    //   colgroup: HTMLAttributes<unknown>;
-    //   data: HTMLAttributes<unknown>;
-    //   datalist: HTMLAttributes<unknown>;
-    //   dd: HTMLAttributes<unknown>;
-    //   del: HTMLAttributes<unknown>;
-    //   details: HTMLAttributes<unknown>;
-    //   dfn: HTMLAttributes<unknown>;
-    //   dialog: HTMLAttributes<unknown>;
-    //   div: HTMLAttributes<HTMLDivElement>;
-    //   dl: HTMLAttributes<unknown>;
-    //   dt: HTMLAttributes<unknown>;
-    //   em: HTMLAttributes<unknown>;
-    //   embed: HTMLAttributes<unknown>;
-    //   fieldset: HTMLAttributes<unknown>;
-    //   figcaption: HTMLAttributes<unknown>;
-    //   figure: HTMLAttributes<unknown>;
-    //   footer: HTMLAttributes<unknown>;
-    //   form: HTMLAttributes<HTMLFormElement>;
-    //   h1: HTMLAttributes<HTMLHeadingElement>;
-    //   h2: HTMLAttributes<HTMLHeadingElement>;
-    //   h3: HTMLAttributes<HTMLHeadingElement>;
-    //   h4: HTMLAttributes<HTMLHeadingElement>;
-    //   h5: HTMLAttributes<HTMLHeadingElement>;
-    //   h6: HTMLAttributes<HTMLHeadingElement>;
-    //   head: HTMLAttributes<unknown>;
-    //   header: HTMLAttributes<unknown>;
-    //   hgroup: HTMLAttributes<unknown>;
-    //   hr: HTMLAttributes<unknown>;
-    //   html: HTMLAttributes<unknown>;
-    //   i: HTMLAttributes<unknown>;
-    //   iframe: HTMLAttributes<unknown>;
-    //   img: Signalize<HTMLAttributes<unknown>>;
-    //   input:Signalize<HTMLAttributes<HTMLInputElement>>;
-    //   ins: HTMLAttributes<unknown>;
-    //   kbd: HTMLAttributes<unknown>;
-    //   keygen: HTMLAttributes<unknown>;
-    //   label: HTMLAttributes<HTMLLabelElement>;
-    //   legend: HTMLAttributes<unknown>;
-    //   li: HTMLAttributes<unknown>;
-    //   link: HTMLAttributes<HTMLLinkElement>;
-    //   main: HTMLAttributes<unknown>;
-    //   map: HTMLAttributes<unknown>;
-    //   mark: HTMLAttributes<unknown>;
-    //   menu: HTMLAttributes<unknown>;
-    //   menuitem: HTMLAttributes<unknown>;
-    //   meta: HTMLAttributes<unknown>;
-    //   meter: HTMLAttributes<unknown>;
-    //   nav: HTMLAttributes<unknown>;
-    //   noscript: HTMLAttributes<unknown>;
-    //   object: HTMLAttributes<unknown>;
-    //   ol: HTMLAttributes<unknown>;
-    //   optgroup: HTMLAttributes<unknown>;
-    //   option: HTMLAttributes<HTMLOptionElement>;
-    //   output: HTMLAttributes<unknown>;
-    //   p: HTMLAttributes<HTMLParagraphElement>;
-    //   param: HTMLAttributes<unknown>;
-    //   picture: HTMLAttributes<unknown>;
-    //   pre: HTMLAttributes<unknown>;
-    //   progress: HTMLAttributes<unknown>;
-    //   q: HTMLAttributes<unknown>;
-    //   rp: HTMLAttributes<unknown>;
-    //   rt: HTMLAttributes<unknown>;
-    //   ruby: HTMLAttributes<unknown>;
-    //   s: HTMLAttributes<unknown>;
-    //   samp: HTMLAttributes<unknown>;
-    //   script: HTMLAttributes<unknown>;
-    //   section: HTMLAttributes<unknown>;
-    //   select: HTMLAttributes<HTMLSelectElement>;
-    //   small: HTMLAttributes<unknown>;
-    //   source: HTMLAttributes<unknown>;
-    //   span: HTMLAttributes<unknown>;
-    //   strong: HTMLAttributes<unknown>;
-    //   style: HTMLAttributes<unknown>;
-    //   svg: SVGAttributes<SVGSVGElement>;
-    //   path: SVGAttributes<SVGSVGElement>;
-    //   g: SVGAttributes<SVGSVGElement>;
-    //   sub: HTMLAttributes<unknown>;
-    //   summary: HTMLAttributes<unknown>;
-    //   sup: HTMLAttributes<unknown>;
-    //   table: HTMLAttributes<unknown>;
-    //   tbody: HTMLAttributes<unknown>;
-    //   td: HTMLAttributes<unknown>;
-    //   template: HTMLAttributes<unknown>;
-    //   textarea: HTMLAttributes<unknown>;
-    //   tfoot: HTMLAttributes<unknown>;
-    //   th: HTMLAttributes<unknown>;
-    //   thead: HTMLAttributes<unknown>;
-    //   time: HTMLAttributes<unknown>;
-    //   title: HTMLAttributes<unknown>;
-    //   tr: HTMLAttributes<unknown>;
-    //   track: HTMLAttributes<unknown>;
-    //   u: HTMLAttributes<unknown>;
-    //   ul: HTMLAttributes<unknown>;
-    //   var: HTMLAttributes<unknown>;
-    //   video: HTMLAttributes<unknown>;
-    //   wbr: HTMLAttributes<unknown>;
-    // }
-
     export type Element
       = IntrinsicElements
       | string
@@ -1069,7 +956,6 @@ declare global {
       | undefined
       | VirtualElement
       | (() => (Element | Element[]));
-
   }
 }
 export { };

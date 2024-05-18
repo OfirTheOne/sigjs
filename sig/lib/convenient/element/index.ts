@@ -1,11 +1,11 @@
 import { createElement } from "@/core/dom-render/create-element";
-import { VirtualElement, VirtualElementChild, Props } from "@/types";
+import { VirtualElement, Props } from "@/types";
 import * as HEA from "./types";
 import { debounce } from "@/common/debounce";
 import { throttle } from "@/common/throttle";
 
 function createWrapper<T>(tagName: string)   {
-    return function (props?: Props<T>, ...children: VirtualElementChild[]): VirtualElement {
+    return function (props?: Props<T>, ...children: VirtualElement[]): VirtualElement {
         const transformedProps = transformProps(props || {});
         return createElement(tagName, transformedProps, ...children);
     };

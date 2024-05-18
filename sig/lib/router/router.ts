@@ -1,4 +1,4 @@
-import { isPromise } from "@/common/is-promise";
+// import { isPromise } from "@/common/is-promise";
 import { uniqueId } from "@/common/unique-id";
 import { render } from '@/core';
 import { getRenderedRoot } from "@/core/global";
@@ -6,9 +6,10 @@ import type { RootElementWithMetadata } from "@/core/dom-render/create-root";
 import type { VirtualElement } from "@/types";
 import { createElement } from "@/jsx";
 import { DOM } from "@/core/html";
-import { Router, RouterConfig, RouteCommonConfig, RouteAsyncConfig, RouteSyncConfig } from "./router.type";
+import { Router, RouterConfig, RouteCommonConfig, RouteSyncConfig } from "./router.type";
 import { matchRoute } from "./match-route";
 import logger from "@/common/logger/logger";
+import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
 
 const routersStore: Record<string, Router> = {};
 
@@ -113,7 +114,8 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         };
         router.matchedRouteId = routeId;
 
-        const componentElementOrPromise = route.component();
+        // const componentElementOrPromise = route.component();
+        /*
         if(isPromise(componentElementOrPromise)) {
             const routeAsync = route as RouteCommonConfig & RouteAsyncConfig;
             const routeAsyncId = routeId;
@@ -144,18 +146,20 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
                 DOM.appendChild(router.container, memoRenderedRoute[routeAsyncId]);
             }
         } else {
+            */
             router.container.innerHTML = '';
             const routeSync = route as RouteCommonConfig & RouteSyncConfig;
             const routeSyncId = routeId;
             if(!memoRenderedRoute[routeSyncId]) {
                 const componentElement = routeSync.component();
-                const componentDom = render(componentElement, router.container);
+                
+                const componentDom = render(adaptVirtualElementChild(componentElement), router.container);
                 DOM.appendChild(router.container, componentDom);
             } else {
                 DOM.appendChild(router.container, memoRenderedRoute[routeSyncId]);
             }
             if(routeSync.onEnter) routeSync.onEnter();
-        }   
+        // }   
     }
 
     // Navigate to the initial route

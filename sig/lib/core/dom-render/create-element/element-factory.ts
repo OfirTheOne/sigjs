@@ -1,4 +1,4 @@
-import type { VirtualElementChild, VirtualElement, ComponentFunction, AsyncComponentFunction, Props } from "@/types";
+import type { Renderable, VirtualElement, ComponentFunction, AsyncComponentFunction, Props } from "@/types";
 import type { Signal } from "@/core/signal";
 import { ELEMENT_TYPE } from "@/constants";
 
@@ -31,7 +31,7 @@ export function createEmptyElement(): VirtualElement {
     };
 }
 
-export function createComponentElement(component: ComponentFunction | AsyncComponentFunction, props: object, ...children: VirtualElementChild[]): VirtualElement {
+export function createComponentElement(component: ComponentFunction | AsyncComponentFunction, props: object, ...children: Renderable[]): VirtualElement {
     return {
         type: ELEMENT_TYPE.COMPONENT,
         props: {
@@ -42,7 +42,7 @@ export function createComponentElement(component: ComponentFunction | AsyncCompo
     };
 }
 
-export function createRawElement(rawElement: HTMLElement | Element | Text, props: Props, ...children: VirtualElementChild[]): VirtualElement {
+export function createRawElement(rawElement: HTMLElement | Element | Text, props: Props, ...children: Renderable[]): VirtualElement {
     return {
         type: ELEMENT_TYPE.RAW,
         props: {
@@ -53,7 +53,7 @@ export function createRawElement(rawElement: HTMLElement | Element | Text, props
     };
 }
 
-export function createDomElement(tagName: string, props: Props, ...children: VirtualElementChild[]): VirtualElement {
+export function createDomElement(tagName: string, props: Props, ...children: Renderable[]): VirtualElement {
     return {
         type: ELEMENT_TYPE.DOM,
         props: {

@@ -1,10 +1,10 @@
 import { isSignal } from "@/core/signal";
-import { VirtualElementChild, VirtualElement } from "@/types";
+import { Renderable, VirtualElement } from "@/types";
 import { createSignalElement, createEmptyElement, createTextElement } from "../create-element";
 
 
 
-export function adaptVirtualElementChild(child: VirtualElementChild): VirtualElement {
+export function adaptVirtualElementChild(child: Renderable): VirtualElement {
     switch (true) {
         case isSignal(child):
             return createSignalElement(child);
@@ -13,7 +13,7 @@ export function adaptVirtualElementChild(child: VirtualElementChild): VirtualEle
         case child === false:
             return createEmptyElement();
         case typeof child === 'object':
-            return child;
+            return <VirtualElement>child ;
         case typeof child === 'string':
         case typeof child === 'number':
         case typeof child === 'boolean':

@@ -1,12 +1,12 @@
-import { CONTROL_FLOW_TAG, ELEMENT_TYPE } from "./constants/constants";
+import { CONTROL_FLOW_TAG, ELEMENT_TYPE } from "../constants/constants";
 
 interface ComponentFunction<T = any /* Record<string, unknown> */> {
-    (props?: T): VirtualElement;
-    (props: T, children: VirtualElement[]): VirtualElement;
+    (props?: T): Renderable;
+    (props: T, children: VirtualElement[]): Renderable;
 }
 
 interface AsyncComponentFunction<T = any /* Record<string, unknown> */> {
-    (props?: T): Promise<VirtualElement>;
+    (props?: T): Promise<Renderable>;
 }
 
 interface ComponentFunctionWithMeta extends ComponentFunction { 
@@ -14,13 +14,15 @@ interface ComponentFunctionWithMeta extends ComponentFunction {
     __name: string;
 }
 
-type VirtualElementChild = VirtualElement | string | number | boolean | null | undefined;
+type RenderablePrimitive = string | number | boolean | null | undefined;
+
+type Renderable = JSX.IntrinsicElements | VirtualElement | RenderablePrimitive;
 
 interface VirtualElement {
     type: string;
     props: {
         [key: string]: unknown;
-        children: VirtualElementChild[];
+        children: Renderable[];
     };
 }
 
@@ -41,7 +43,7 @@ type ControlFlowTag = typeof CONTROL_FLOW_TAG[keyof typeof CONTROL_FLOW_TAG];
 
 export type { 
     VirtualElement, 
-    VirtualElementChild, 
+    Renderable, 
     ElementRef,
     CommonProps,
     Props,
@@ -51,4 +53,3 @@ export type {
     ComponentFunctionWithMeta, 
     AsyncComponentFunction 
 };
-// export { ELEMENT_TYPE, CONTROL_FLOW_TAG };

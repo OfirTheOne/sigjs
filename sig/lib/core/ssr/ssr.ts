@@ -10,7 +10,7 @@ import { parseHtml } from "./parse-html";
 import { fetchHtml } from "./fetch-html";
 import { getSignalValue, listen, isSignal } from "../signal/signal.utils";
 import { adaptVirtualElementChild } from "../dom-render/create-element/adapt-virtual-element-child";
-import type { VirtualElement, VirtualElementChild } from "@/types";
+import type { VirtualElement, Renderable } from "@/types";
 import type { SSRFetch } from "./ssr.types";
 import type { RenderFunction } from "../dom-render/render";
 import type { RootElementWithMetadata } from "../dom-render/create-root";
@@ -21,17 +21,17 @@ customElements.define('sig-outlet', class extends HTMLElement { });
 
 interface SSRProps {
     fetch: SSRFetch;
-    fallback?: VirtualElement;
+    fallback?: Renderable;
     allowOutlet?: boolean;
     selector?: string;
     memo?: boolean | { key: string };
     rerun?: Signal<unknown>;
     rerunFallback?: VirtualElement;
-    errorElement?: VirtualElement;
+    errorElement?: Renderable;
     onError?: (error: Error) => void;
 }
 
-function SSR(props: SSRProps, children: VirtualElementChild[]): VirtualElement {
+function SSR(props: SSRProps, children: Renderable[]): VirtualElement {
     return {
         type: ELEMENT_TYPE.SSR,
         props: {
@@ -71,7 +71,7 @@ function renderSSR(
 
     if (fallback) {
         const fallbackKey = currentKey.clone().push('ssr-fallback');
-        fallbackDom = render(fallback, container, fallbackKey);
+        fallbackDom = render(adaptVirtualElementChild(fallback), container, fallbackKey);
         DOM.appendChild(container, fallbackDom);
     } else {
         DOM.appendChild(container, placeholderElm);
@@ -147,7 +147,7 @@ function asyncRenderSSR(
     provideHtmlPromise: Promise<string>,
     root: RootElementWithMetadata,
     render: RenderFunction,
-    children: VirtualElementChild[],
+    children: Renderable[],
     memoChildrenRecord: Record<string, ChildNode[] | null>,
     props: Omit<SSRProps, 'fetch'>,
     injectResolvedDom: (dom: Element | Text) => void,
@@ -191,7 +191,8 @@ function asyncRenderSSR(
         setRenderedRoot(root.id);
         onError?.(error);
         if (!errorElement) return;
-        const errorDom = render(errorElement, undefined, key);
+        
+        const errorDom = render(adaptVirtualElementChild(errorElement), undefined, key);
         injectResolvedDom(errorDom);
     });
 }
