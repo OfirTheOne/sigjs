@@ -1,10 +1,6 @@
-import { Signalize } from '@/core';
 import type * as CSS from 'csstype';
-import { VirtualElement, Renderable } from 'sig';
+import type { VirtualElement, Renderable, Signalize } from 'sig';
 import type * as HEA from "sig/convenient";
-// import type { Trackable } from "@sigjs/signal";
-
-
 
 declare global {
 

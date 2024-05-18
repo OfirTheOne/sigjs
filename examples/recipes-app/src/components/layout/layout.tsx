@@ -1,10 +1,10 @@
 
 import { getRouter } from 'sig/router';
+import { ComponentFunction } from 'sig';
 import Facebook from './../../../assets/icons/facebook_icon.svg';
 import TwitterIcon from './../../../assets/icons/twitter_icon.svg';
 import YoutubeIcon from './../../../assets/icons/youtube_icon.svg';
 import ShoppingBag from './../../../assets/icons/shopping-bag.svg';
-import { ComponentFunction } from 'sig';
 
 export const Layout = ((_props, children) => {
     return (<div>
@@ -13,7 +13,6 @@ export const Layout = ((_props, children) => {
         {children}
     </div>)
 }) as ComponentFunction;
-
 
 function NavBar() {
     return (<nav className='flex flex-row items-center h-14 bg-yellow-200/30 px-8'>

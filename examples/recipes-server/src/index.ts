@@ -336,10 +336,7 @@ const recipes = [
       }
     ]
   }
-
-
 ];
-
 
 app.get('/layout', async (req, res) => {
   const query = req.query;
@@ -388,7 +385,6 @@ app.get('/layout', async (req, res) => {
   </div>  
   `);
 });
-
 
 app.get('/recipes', async (_req, res) => {
   await delay(5000);
@@ -466,28 +462,8 @@ app.listen(3030, () => {
   console.log('Server is running on port 3030');
 });
 
-
 function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-
-
-
-// /**
-//  * @param {string} title
-//  * @param {string} content
-//  * @returns {string}
-//  */
-// function buildPost(title: string, content: string): string {
-//     return `<div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl m-3">
-//     <div class="md:flex">
-//       <div class="p-8">
-//         <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">${title}</div>
-//         <p class="mt-2 text-gray-500">${content}</p>
-//         <sig-outlet/>
-//       </div>
-//     </div>
-//   </div>`;
-// }
 
 export { }
