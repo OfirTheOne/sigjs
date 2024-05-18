@@ -3,6 +3,7 @@ import { For, Signal, createSignal } from 'sig';
 import { combineLatest } from 'sig/core';
 import { store } from '../../store';
 import { Recipe } from '../../types';
+import XIcon from '../../../assets/icons/x-icon.svg';
 
 export function RecipesPage() {
     const storeRecipes$ = store.select(state => state.recipes);
@@ -53,7 +54,7 @@ function FilterSection({ search$, filter$ }: {
                     <div className=''>
                         <h3 className="text-lg font-semibold">Filter</h3>
                     </div>
-                    <fieldset className='flex flex-row gap-4'>
+                    <fieldset className='flex flex-row gap-4  py-2'>
                         <div className="flex flex-row gap-2 items-center">
                             <input
                                 type="radio"
@@ -70,13 +71,13 @@ function FilterSection({ search$, filter$ }: {
                             />
                             <label
                                 for="most_popular"
-                                className="text-md mr-2 font-semibold">Most Popular
+                                className="text-md mr-2 font-thin">Most Popular
                             </label>
                         </div>
                         <div className="flex flex-row gap-2 items-center">
                             <input
                                 type="radio"
-                                className="form-radio text-blue-600"
+                                className="form-radio font-thin text-blue-600"
                                 checked={filter$.derive(filter => filter.newest)}
                                 name="sortBy"
                                 id="newest"
@@ -91,7 +92,7 @@ function FilterSection({ search$, filter$ }: {
                             />
                             <label
                                 for="newest"
-                                className="text-md mr-2 font-semibold">Newest
+                                className="text-md mr-2 font-thin">Newest
                             </label>
 
                         </div>
@@ -99,12 +100,13 @@ function FilterSection({ search$, filter$ }: {
                     </fieldset>
                 </div>
             </div>
-            <div className='w-60 flex flex-col gap-4'>
-                <button className='font-bold py-2 px-4' onClick={() => {
+            <div className='flex flex-col gap-4 self-end'>
+                <button className='font-bold py-2 px-4 flex items-center gap-2 hover:text-neutral-600' onClick={() => {
                     search$.setValue('');
                     filter$.setValue({ mostPopular: false, newest: false });
                 }}>
-                    Clear Filters
+                    <span className='font-thin'>Clear Filters</span>
+                    <span className='font-thin h-3 w-3'>{XIcon()}</span>
                 </button>
             </div>
 
