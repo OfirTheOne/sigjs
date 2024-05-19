@@ -39,7 +39,7 @@ function FilterSection({ search$, filter$ }: {
     return (
         <div className='m-auto flex flex-row gap-4'>
             <div className='w-60 flex flex-col gap-4'>
-                <div className="flex flex-col justify-center ">
+                <div className="flex flex-col justify-center">
                     <h3 className="text-lg font-semibold">Search</h3>
                     <input
                         type="text"
@@ -69,10 +69,7 @@ function FilterSection({ search$, filter$ }: {
                                     });
                                 }}
                             />
-                            <label
-                                for="most_popular"
-                                className="text-md mr-2 font-thin">Most Popular
-                            </label>
+                            <label for="most_popular" className="text-md mr-2 font-thin">Most Popular</label>
                         </div>
                         <div className="flex flex-row gap-2 items-center">
                             <input
@@ -90,13 +87,8 @@ function FilterSection({ search$, filter$ }: {
                                     }
                                 }
                             />
-                            <label
-                                for="newest"
-                                className="text-md mr-2 font-thin">Newest
-                            </label>
-
+                            <label for="newest" className="text-md mr-2 font-thin">Newest</label>
                         </div>
-
                     </fieldset>
                 </div>
             </div>
@@ -109,7 +101,6 @@ function FilterSection({ search$, filter$ }: {
                     <span className='font-thin h-3 w-3'>{XIcon()}</span>
                 </button>
             </div>
-
         </div>
     );
 }

@@ -1,8 +1,9 @@
 import { setRenderedRoot, getGlobal, addRoot } from "../global";
 import { render } from "./render";
-import { type VirtualElement } from "../../types";
-import { type RootSSRMetadata } from "../ssr/ssr.types";
+import { adaptVirtualElementChild } from "./create-element/adapt-virtual-element-child";
 import { observeRoot } from "../global/global-hook-executioner";
+import type { Renderable } from "../../types";
+import type { RootSSRMetadata } from "../ssr/ssr.types";
 
 
 interface CreateRootOptions {
@@ -10,7 +11,7 @@ interface CreateRootOptions {
 }
 
 interface RootElement {
-    render: (element: VirtualElement) => void;
+    render: (element: Renderable) => void;
     domElement?: HTMLElement;
 }
 
@@ -28,12 +29,12 @@ function createRoot(domElement?: HTMLElement | null, options?: CreateRootOptions
     const root: RootElementWithMetadata = {
         id: rootId,
         domElement,
-        render(element: VirtualElement) {
+        render(element: Renderable) {
             if (!domElement) {
                 throw new Error('No root element provided');
             }
             setRenderedRoot(root.id);
-            render(element, domElement);
+            render(adaptVirtualElementChild(element), domElement);
         },
         ssr: options?.ssr
     };
