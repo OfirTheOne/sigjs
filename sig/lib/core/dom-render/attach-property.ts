@@ -9,12 +9,18 @@ function attachPropertyToElement(dom: HTMLElement, name: string, value: unknown)
     if (name === 'className') {
         name = 'class';
     }
-    if(name === 'ref') {
-        if(typeof value === 'function') {
+    if (name === 'ref') {
+        if (typeof value === 'function') {
             value(dom);
             return;
-        } else if(typeof value === 'object') {
+        } else if (typeof value === 'object') {
             (value as ElementRef).current = dom;
+            return;
+        }
+    }
+    if (name === 'style') {
+        if (typeof value === 'object') {
+            attachStyleToElement(dom, value as Record<string, string | number | Signal<string | number>>);
             return;
         }
     }
@@ -29,6 +35,27 @@ function attachPropertyToElement(dom: HTMLElement, name: string, value: unknown)
     }
 }
 
+function attachStyleToElement(
+    dom: HTMLElement,
+    style: Record<
+        string,
+        string | number | Signal<string | number>
+    >): void {
+    for (const key in style) {
+        const value = style[key];
+        if (isSignal<string | number>(value)) {
+            attachSignalToElementStyle(value, dom, key);
+        } else {
+            attachStylePropertyToElement(dom, key, value);
+        }
+    }
+}
+
+function attachStylePropertyToElement(dom: HTMLElement, styleProperty: string, value: string | number): void { 
+    const validStyleKey = styleProperty.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
+    dom.style.setProperty(validStyleKey, value as string);
+}
+
 function attachAttributeToElement(dom: HTMLElement, name: string, value: unknown): void {
     if (value !== undefined && value !== null && value !== false) {
         dom.setAttribute(name, value as string);
@@ -39,7 +66,7 @@ function attachAttributeToElement(dom: HTMLElement, name: string, value: unknown
 }
 
 function attachEventToElement(dom: HTMLElement, name: string, value: unknown): void {
-    if(!name.startsWith('on')) {
+    if (!name.startsWith('on')) {
         throw new Error(`Event name must start with 'on'`);
     }
     const eventType = name.toLowerCase().substring(2);
@@ -47,8 +74,8 @@ function attachEventToElement(dom: HTMLElement, name: string, value: unknown): v
 }
 
 function attachSignalToElement<T = unknown>(
-    signal: Signal<T>, 
-    element: HTMLElement, 
+    signal: Signal<T>,
+    element: HTMLElement,
     property: string
 ): unknown {
     element.setAttribute(`sid:${property}`, signal.id);
@@ -58,6 +85,20 @@ function attachSignalToElement<T = unknown>(
     registerSignalSubscription(element, unsubscribe);
     return unsubscribe;
 }
+
+function attachSignalToElementStyle(
+    signal: Signal<string | number>,
+    element: HTMLElement,
+    property: string
+): unknown {
+    element.setAttribute(`sid:style:${property}`, signal.id);
+    const unsubscribe = subscribeSignal(signal, (value: string | number) => {
+        attachStylePropertyToElement(element, property, value);
+    });
+    registerSignalSubscription(element, unsubscribe);
+    return unsubscribe;
+}
+
 
 export {
     attachPropertyToElement

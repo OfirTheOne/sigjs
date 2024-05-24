@@ -1,3 +1,7 @@
+import type * as CSS from 'csstype';
+
+
+type CSSProperties = CSS.Properties<string | number>
 
 export interface HTMLElementEventHandlers<E = HTMLElement> {
     onAbort?: (event: UIEvent) => void;
@@ -77,6 +81,7 @@ export type HTMLElementEventHandlersExtendsConcurrency = {
 interface NonNativeElementAttributes {
     ref?: any;
     className?: string;
+    style?: CSSProperties;
 }
 
 export interface HTMLElementAttributes<E = HTMLElement> extends 
@@ -107,7 +112,7 @@ export interface HTMLElementAttributes<E = HTMLElement> extends
     popover?: string;
     slot?: string;
     spellcheck?: boolean;
-    style?: string;
+    // style?: string;
     tabindex?: number;
     title?: string;
     translate?: 'yes' | 'no';
