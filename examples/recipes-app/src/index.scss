@@ -1,3 +1,14 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+@font-face {
+    font-family: 'Cardo';
+    src: url('/fonts/Cardo/Cardo-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'Roboto_Serif';
+    src: url('/fonts/Roboto_Serif/RobotoSerif-Italic-VariableFont_GRAD,opsz,wdth,wght.ttf');
+}
+

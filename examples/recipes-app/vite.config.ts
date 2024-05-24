@@ -11,7 +11,7 @@ export default defineConfig({
     //     }
     // },
     plugins: [svgPlugin()],
-
+    publicDir: path.resolve(__dirname, './assets'),
     css: { modules: { localsConvention: 'camelCase' } },
     esbuild: {
         jsxFactory: 'createElement',

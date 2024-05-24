@@ -37,10 +37,10 @@ function FilterSection({ search$, filter$ }: {
     filter$: Signal<{ mostPopular: boolean, newest: boolean }>
 }) {
     return (
-        <div className='m-auto flex flex-row gap-4'>
+        <div  className='m-auto flex flex-row gap-4'>
             <div className='w-60 flex flex-col gap-4'>
                 <div className="flex flex-col justify-center">
-                    <h3 className="text-lg font-semibold">Search</h3>
+                    <h3 className="text-lg font-serif capitalize font-thin">Search</h3>
                     <input
                         type="text"
                         value={search$}
@@ -49,17 +49,16 @@ function FilterSection({ search$, filter$ }: {
                         onInput={(e: Event) => search$.setValue((e.target as HTMLInputElement).value)}
                     />
                 </div>
-
                 <div className="flex flex-col justify-center">
                     <div className=''>
-                        <h3 className="text-lg font-semibold">Filter</h3>
+                        <h3 className="text-lg font-serif font-thin">Sort By</h3>
                     </div>
                     <fieldset className='flex flex-row gap-4  py-2'>
                         <div className="flex flex-row gap-2 items-center">
                             <input
                                 type="radio"
                                 id="most_popular"
-                                className="form-radio text-blue-600"
+                                className="form-radio text-blue-600 cursor-pointer"
                                 checked={filter$.derive(filter => filter.mostPopular)}
                                 name="sortBy"
                                 onChange={(e: Event) => {
@@ -74,7 +73,7 @@ function FilterSection({ search$, filter$ }: {
                         <div className="flex flex-row gap-2 items-center">
                             <input
                                 type="radio"
-                                className="form-radio font-thin text-blue-600"
+                                className="form-radio font-thin text-blue-600 cursor-pointer"
                                 checked={filter$.derive(filter => filter.newest)}
                                 name="sortBy"
                                 id="newest"
@@ -93,7 +92,7 @@ function FilterSection({ search$, filter$ }: {
                 </div>
             </div>
             <div className='flex flex-col gap-4 self-end'>
-                <button className='font-bold py-2 px-4 flex items-center gap-2 hover:text-neutral-600' onClick={() => {
+                <button className='font-bold py-2 px-4 flex items-center gap-2 hover:text-neutral-600 cursor-pointer' onClick={() => {
                     search$.setValue('');
                     filter$.setValue({ mostPopular: false, newest: false });
                 }}>
@@ -120,10 +119,12 @@ function RecipesGrid({ recipes$ }: { recipes$: Signal<Recipe[]> }) {
 function RecipeCard(props: Recipe) {
     return (<a
         router-link
-        className='flex flex-col uppercase'
+        className='flex flex-col uppercase mb-2'
         href={`/recipes/${props.id}`}
     >
-        <img src={props.image} alt={props.title} className={'w-60 h-80'} />
-        <h3>{props.title}</h3>
+        <img src={props.image} alt={props.title} className={'w-60 h-80 object-cover border'} />
+        <h3 className='font-thin'>{props.title}</h3>
     </a>);
 }
+
+

@@ -410,7 +410,7 @@ app.get('/recipes/:id', async (req, res) => {
           alt=${recipe.title} 
         />
       </div>
-      <div class="flex w-2/3 flex-col gap-2 p-8">
+      <div class="flex w-2/3 flex-col gap-2 p-8 ingredients">
         <div class="uppercase tracking-wide text-indigo-500 font-semibold text-2xl">${recipe.title}</div>
         <h3 class="text-xl font-semibold">Ingredients</h3>
         <ul class="list-disc list-inside">
