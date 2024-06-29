@@ -6,10 +6,11 @@ import { createElement } from "@/jsx";
 import { DOM } from "@/core/html";
 import { matchRoute } from "./match-route";
 import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
+import { isPromise } from "@/common/is-promise";
 import logger from "@/common/logger/logger";
-import type { Router, RouterConfig, RouteCommonConfig, RouteSyncConfig } from "./router.type";
 import type { RootElementWithMetadata } from "@/core/dom-render/create-root";
 import type { VirtualElement } from "@/types";
+import type { Router, RouterConfig, RouteCommonConfig, RouteSyncConfig } from "./router.type";
 
 const routersStore: Record<string, Router> = {};
 
@@ -35,7 +36,6 @@ function getParams(): Record<string, string> {
         return router.navigationMatchMetadata.params || {};
     }
     return {};
-
 }
 
 function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata): Router {
@@ -57,6 +57,9 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
     });
 
     const router: Router = {
+        navigateState: {
+            isNavigating: false,
+        },
         rootId: renderedRoot.id,
         container: routerElement,
         push,
@@ -67,11 +70,20 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
     routersStore[router.rootId] = router;
 
     function push(path: string | URL, state?: Record<string, unknown>) {
+        if(router.navigateState.isNavigating) {
+            logger.warn('Router is currently navigating');
+            return;
+        }
         history.pushState(state, "", path);
         navigate(window.location.pathname);
     }
 
     function navigate(path: string) {
+        if(router.navigateState.isNavigating) {
+            logger.warn('Router is currently navigating');
+            return;
+        }
+
         // Find the route that matches the path
         const matchResult = matchRoute(path, routesWithId, base);
         if (!matchResult) {
@@ -83,95 +95,79 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         }
 
         const { route, params } = matchResult;
-        if(route.shouldEnter) {
-            let shouldEnterResult = false;
-            try {
-                shouldEnterResult = route.shouldEnter(params, history.state);
-            } catch (error) {
-                shouldEnterResult = false;
-            }
+
+        const shouldEnterFunction = route.shouldEnter || function shouldEnterTrue() { return true; }
+        let shouldEnterResult: boolean | Promise<boolean>;
+        try {
+            shouldEnterResult = shouldEnterFunction(path, params, history.state, router);
+        } catch (error) {
+            shouldEnterResult = false;
+        }
+        if(isPromise<boolean>(shouldEnterResult)) {
+            router.navigateState = {
+                isNavigating: true,
+                matchMetadata: { path, route, params }
+            };
+            shouldEnterResult
+                .then((actualShouldEnterResult) => {
+                    router.navigateState.isNavigating = false;
+                    if(!actualShouldEnterResult) {
+                        logger.warn(`Route ${route.path} should not enter`);
+                        return;
+                    }
+                    applyMatching();
+                })
+                .catch(() => {
+                    router.navigateState.isNavigating = false;
+                    logger.warn(`Route ${route.path} should not enter`);
+                    return;
+                });
+        } else {
             if(!shouldEnterResult) {
                 logger.warn(`Route ${route.path} should not enter`);
                 return;
             }
-        }
-        
-        const routeId = route.id + (params ? JSON.stringify(params) : '');
-
-        if(router.matchedRouteId === routeId) return;
-        // Route is about to change
-        if(router.navigationMatchMetadata) {
-            const { route: prevRoute, params: prevParams = {} } = router.navigationMatchMetadata;
-            if(prevRoute.onLeave) prevRoute.onLeave(prevParams);
-            const preNavigateRouteElement = Array.from(router.container.childNodes);  
-            memoRenderedRoute[router.matchedRouteId] = preNavigateRouteElement;
+            applyMatching();
         }
 
-        router.navigationMatchMetadata = {
-            path,
-            route,
-            params
-        };
-        router.matchedRouteId = routeId;
-
-        function updateDom() {
-        // const componentElementOrPromise = route.component();
-        /*
-        if(isPromise(componentElementOrPromise)) {
-            const routeAsync = route as RouteCommonConfig & RouteAsyncConfig;
-            const routeAsyncId = routeId;
-            // Show loading component
-            if (routeAsync.loading) {
-                const loadingComponent = routeAsync.loading();
-                const loadingDom = render(loadingComponent, router.container);
-                DOM.appendChild(router.container, loadingDom);
-                if(routeAsync.onEnter) routeAsync.onEnter();
+        function applyMatching() {
+            const routeId = route.id + (params ? JSON.stringify(params) : '');
+            if(router.matchedRouteId === routeId) return;
+            // Route is about to change
+            if(router.navigationMatchMetadata) {
+                const { route: prevRoute, params: prevParams = {} } = router.navigationMatchMetadata;
+                if(prevRoute.onLeave) prevRoute.onLeave(prevParams);
+                const preNavigateRouteElement = Array.from(router.container.childNodes);  
+                memoRenderedRoute[router.matchedRouteId] = preNavigateRouteElement;
             }
-            if(!memoRenderedRoute[routeAsyncId]) {
-                componentElementOrPromise.then(componentElement => {
-                    // Remove loading component
-                    router.container.innerHTML = '';
-                    const componentDom = render(componentElement, router.container);
-                    // memoRenderedRoute[routeAsyncId] = componentDom;
-                    DOM.appendChild(router.container, componentDom); 
-                }).catch(() => {
-                    // If loading the component fails, load the fallback component if it exists
-                    if (routeAsync.fallback) {
-                        // Render the fallback component
-                        const fallbackComponent = routeAsync.fallback();
-                        const fallbackDom = render(fallbackComponent, router.container);
-                        DOM.appendChild(router.container, fallbackDom);
-                    }
-                });
-            } else {
-                DOM.appendChild(router.container, memoRenderedRoute[routeAsyncId]);
+    
+            router.navigationMatchMetadata = {
+                path,
+                route,
+                params
+            };
+            router.matchedRouteId = routeId;
+    
+            function updateDom() {
+                router.container.innerHTML = '';
+                const routeSync = route as RouteCommonConfig & RouteSyncConfig;
+                const routeSyncId = routeId;
+                if(!memoRenderedRoute[routeSyncId]) {
+                    const componentElement = routeSync.component();    
+                    const componentDom = render(adaptVirtualElementChild(componentElement), router.container);
+                    DOM.appendChild(router.container, componentDom);
+                } else {
+                    DOM.appendChild(router.container, memoRenderedRoute[routeSyncId]);
+                }
+                if(routeSync.onEnter) routeSync.onEnter();
             }
-        } else {
-            */
-            router.container.innerHTML = '';
-            const routeSync = route as RouteCommonConfig & RouteSyncConfig;
-            const routeSyncId = routeId;
-            if(!memoRenderedRoute[routeSyncId]) {
-                const componentElement = routeSync.component();
-                
-                const componentDom = render(adaptVirtualElementChild(componentElement), router.container);
-                DOM.appendChild(router.container, componentDom);
-            } else {
-                DOM.appendChild(router.container, memoRenderedRoute[routeSyncId]);
-            }
-            if(routeSync.onEnter) routeSync.onEnter();
-        // }   
-        }
-
-        if(!useViewTransition) {
-            updateDom();
-        } else if('startViewTransition' in document) {
-            if(!document.startViewTransition) {
+    
+            if(!useViewTransition) {
                 updateDom();
-            } else if(typeof document.startViewTransition === 'function') {
-                document.startViewTransition(() => updateDom());
-            }
-        } 
+            } else {
+                applyViewTransition(updateDom);
+            } 
+        }
     }
 
     // Navigate to the initial route
@@ -197,7 +193,6 @@ function createRouter(config: RouterConfig): VirtualElement {
     return rootRouterElement;
 }
 
-
 function overrideNativeNavigation(rootRouterElement: HTMLElement, router: Router) {
     rootRouterElement.addEventListener('click', (event) => {
         const target = (event.target as HTMLElement).closest('a');
@@ -211,5 +206,12 @@ function overrideNativeNavigation(rootRouterElement: HTMLElement, router: Router
     });
 }
 
+function applyViewTransition(updateDom: () => void) {
+    if('startViewTransition' in document && typeof document.startViewTransition === 'function' ) {
+        document.startViewTransition(() => updateDom());
+    } else {
+        updateDom();
+    }
+}
 export { createRouter, getRouter, getParams };
 

@@ -1,10 +1,48 @@
 import express from 'express';
 import { json } from 'body-parser';
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 const app = express();
 app.use(json());
 app.use(cors());
+
+// Preknown list of users
+const users = [
+  { username: 'user1', password: bcrypt.hashSync('password1', 10) },
+  { username: 'user2', password: bcrypt.hashSync('password2', 10) },
+  // add more users as needed
+];
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  const user = users.find(user => user.username === username);
+  if (!user || !bcrypt.compareSync(password, user.password)) {
+    return res.status(401).json({ message: 'Invalid username or password' });
+  }
+
+  const token = jwt.sign({ username: user.username }, 'your-secret-key', { expiresIn: '1h' });
+  return res.json({ token });
+});
+
+app.get('/validate', (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  try {
+    if (!token)
+      throw new Error('No token provided');
+    const decoded = jwt.verify(token, 'your-secret-key');
+    if (!decoded || typeof decoded !== 'object')
+      throw new Error('Invalid token');
+    return res.json({ valid: true, username: decoded.username });
+  } catch {
+    return res.json({ valid: false });
+  }
+});
+
+// your existing code...
+
 
 const recipes = [
   {
@@ -337,6 +375,8 @@ const recipes = [
     ]
   }
 ];
+
+
 
 app.get('/layout', async (req, res) => {
   const query = req.query;

@@ -1,12 +1,21 @@
 import { ComponentFunction } from "../types";
 
+
+export interface ShouldEnterCallback {
+    (
+        path: string,
+        params: Record<string, string> | undefined,
+        state: Record<string, unknown> | undefined,
+        router: Router
+    ): boolean | Promise<boolean>;
+}
+
 export type RouteCommonConfig = {
     path: string;
     id?: string;
+    children?: RouteConfig[];
     memo?: boolean;
-    shouldEnter?: (
-        params: Record<string, string>,
-        state?: Record<string, unknown>,) => boolean;
+    shouldEnter?: ShouldEnterCallback;
     onEnter?: () => void;
     onLeave?: (params: Record<string, string>) => void;
 };
@@ -30,6 +39,12 @@ export type RouterConfig = {
     useViewTransition?: boolean;
 };
 
+export type NavigationMatchMetadata = {
+    path: string;
+    route: RouteConfig;
+    params?: Record<string, string> | undefined;
+}
+
 export type Router = {
     rootId: string;
     container: HTMLElement;
@@ -37,9 +52,9 @@ export type Router = {
     state: Record<string, unknown>;
     push: (path: string | URL, state?: Record<string, unknown>) => void
     matchedRouteId: string;
-    navigationMatchMetadata?: {
-        path: string;
-        route: RouteConfig;
-        params?: Record<string, string>;
+    navigateState: {
+        isNavigating: boolean;
+        matchMetadata?: NavigationMatchMetadata;
     }
+    navigationMatchMetadata?: NavigationMatchMetadata
 };
