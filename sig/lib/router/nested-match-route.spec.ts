@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { matchRoute, RouteConfig } from './nested-match-route';
+import { matchRoute } from './nested-match-route';
+import { RouteConfig } from './match-route.type';
 
-describe.skip('matchRoute', () => {
+describe('matchRoute', () => {
   const routesConfig = [
     {
       path: "/",
@@ -38,7 +39,7 @@ describe.skip('matchRoute', () => {
   ];
 
   it('should match root route', () => {
-    const {routes, params } = matchRoute('/', routesConfig);
+    const { routes, params } = matchRoute('/', routesConfig);
     expect(params).toStrictEqual({});
     expect(routes).toStrictEqual([
       routeOmitChildren(routesConfig[0])
@@ -46,7 +47,7 @@ describe.skip('matchRoute', () => {
   });
 
   it('should match contact route', () => {
-    const {routes, params } = matchRoute('/contact', routesConfig);
+    const { routes, params } = matchRoute('/contact', routesConfig);
     expect(params).toStrictEqual({});
     expect(routes).toStrictEqual([
       routeOmitChildren(routesConfig[0]),
@@ -55,17 +56,18 @@ describe.skip('matchRoute', () => {
   });
 
   it('should match dashboard route with parameter', () => {
-    const {routes, params } = matchRoute('/dashboard/123', routesConfig);
-    expect(params).toStrictEqual({ board: '123' });
+    const { routes, params } = matchRoute('/dashboard/123', routesConfig);
     expect(routes).toStrictEqual([
       routeOmitChildren(routesConfig[0]),
       routeOmitChildren(routesConfig[0].children[1]),
       routeOmitChildren(routesConfig[0].children[1].children?.[0]),
     ]);
+    expect(params).toStrictEqual({ board: '123' });
+
   });
 
   it('should match dashboard route with parameter and overview router after', () => {
-    const {routes, params } = matchRoute('/dashboard/123/overview', routesConfig);
+    const { routes, params } = matchRoute('/dashboard/123/overview', routesConfig);
     expect(params).toStrictEqual({ board: '123' });
     expect(routes).toStrictEqual([
       routeOmitChildren(routesConfig[0]),
@@ -76,7 +78,7 @@ describe.skip('matchRoute', () => {
   });
 
   it('should match dashboard main route', () => {
-    const {routes, params } = matchRoute('/dashboard/main', routesConfig);
+    const { routes, params } = matchRoute('/dashboard/main', routesConfig);
     expect(params).toStrictEqual({});
     expect(routes).toStrictEqual([
       routeOmitChildren(routesConfig[0]),
@@ -87,7 +89,7 @@ describe.skip('matchRoute', () => {
 
 
   it('should match dashboard foo route', () => {
-    const {routes, params } = matchRoute('/dashboard/foo', routesConfig);
+    const { routes, params } = matchRoute('/dashboard/foo', routesConfig);
     expect(params).toStrictEqual({});
     expect(routes).toStrictEqual([
       routeOmitChildren(routesConfig[0]),
@@ -97,7 +99,7 @@ describe.skip('matchRoute', () => {
   });
 
   it('should match dashboard main route', () => {
-    const {routes, params } = matchRoute('/dashboard/main/overview', routesConfig);
+    const { routes, params } = matchRoute('/dashboard/main/overview', routesConfig);
     expect(params).toStrictEqual({});
     expect(routes).toStrictEqual([
       routeOmitChildren(routesConfig[0]),
@@ -108,7 +110,7 @@ describe.skip('matchRoute', () => {
   });
 
   it('should return null for non-matching route', () => {
-    const {routes, params } = matchRoute('/nonexistent', routesConfig);
+    const { routes, params } = matchRoute('/nonexistent', routesConfig);
     expect(params).toStrictEqual({});
     expect(routes).toStrictEqual([
       routeOmitChildren(routesConfig[0])
@@ -119,7 +121,7 @@ describe.skip('matchRoute', () => {
 function routeOmitChildren(route?: RouteConfig) {
   if (!route) {
     return null;
-  } 
+  }
   const { children, ...routeWithoutChildren } = route;
   return routeWithoutChildren;
 }
@@ -141,7 +143,7 @@ describe('matchRoute with flat route ', () => {
   ];
 
   it('should match root route', () => {
-    const {routes, params } = matchRoute('/', routesConfig);
+    const { routes, params } = matchRoute('/', routesConfig);
     expect(params).toStrictEqual({});
     expect(routes).toStrictEqual([
       routeOmitChildren(routesConfig[0])
@@ -149,15 +151,15 @@ describe('matchRoute with flat route ', () => {
   });
 
   it('should match contact route', () => {
-    const {routes, params } = matchRoute('/contact', routesConfig);
+    const { routes, params } = matchRoute('/contact', routesConfig);
     expect(params).toStrictEqual({});
     expect(routes).toStrictEqual([
       routeOmitChildren(routesConfig[1])
     ]);
-  } );
+  });
 
-  it.only('should match dashboard route', () => {
-    const {routes, params } = matchRoute('/dashboard', routesConfig);
+  it('should match dashboard route', () => {
+    const { routes, params } = matchRoute('/dashboard', routesConfig);
     expect(routes).toStrictEqual([
       routeOmitChildren(routesConfig[3])
     ]);
@@ -165,11 +167,43 @@ describe('matchRoute with flat route ', () => {
   });
 
   it('should match dashboard route with parameter', () => {
-    const {routes, params } = matchRoute('/dashboard/123', routesConfig);
+    const { routes, params } = matchRoute('/dashboard/123', routesConfig);
     expect(routes).toStrictEqual([
       routeOmitChildren(routesConfig[2])
     ]);
     expect(params).toStrictEqual({ board: '123' });
+  });
+
+});
+
+describe('matchRoute tow matching routes', () => {
+  const routesConfig = [
+    {
+      path: "/",
+      children: [
+        {
+          path: "contact",
+          children: [
+            {
+              path: 'overview'
+            }
+          ]
+        },
+        {
+          path: "contact/overview",
+        }
+      ]
+    }
+  ];
+
+  it('should match contact route', () => {
+    const { routes, params } = matchRoute('/contact/overview', routesConfig);
+    expect(params).toStrictEqual({});
+    expect(routes).toStrictEqual([
+      routeOmitChildren(routesConfig[0]),
+      routeOmitChildren(routesConfig[0].children[0]),
+      routeOmitChildren(routesConfig[0].children?.[0]?.children?.[0])
+    ]);
   });
 
 });

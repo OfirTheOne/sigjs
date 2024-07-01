@@ -1,4 +1,6 @@
-import { RouteConfig } from "./router.type";
+// import { RouteConfig } from "./router.type";
+
+import { RouteConfig } from "./match-route.type";
 
 export function matchRoute(path: string, routesWithId:  (RouteConfig & { id: string })[], base: string) {
   for (const route of routesWithId) {
