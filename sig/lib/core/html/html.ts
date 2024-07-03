@@ -9,6 +9,10 @@ export const DOM = {
         return element;
     },
 
+    createComment(comment: string): Comment {
+        return document.createComment(comment);
+    },
+
     appendChild(parent: HTMLElement, child: Node | Node[]): void {
         if(!Array.isArray(child)) {
             if (child.parentElement !== parent) {
@@ -21,5 +25,10 @@ export const DOM = {
                 }
             });
         }
+    },
+
+    addComment(node: Node, comment: string) {
+        const commentNode = DOM.createComment(comment);
+        node.appendChild(commentNode);
     }
 }

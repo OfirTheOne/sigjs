@@ -1,4 +1,6 @@
+
 // import { isPromise } from "@/common/is-promise";
+/*
 import { uniqueId } from "@/common/unique-id";
 import { render } from '@/core';
 import { getRenderedRoot } from "@/core/global";
@@ -17,6 +19,8 @@ const routersStore: Record<string, Router> = {};
 customElements.define('app-router', class extends HTMLElement {})
 
 const history = window.history;
+
+
 
 function getRouter(): Router {
     const renderedRootId = getRenderedRoot();
@@ -215,3 +219,4 @@ function applyViewTransition(updateDom: () => void) {
 }
 export { createRouter, getRouter, getParams };
 
+*/

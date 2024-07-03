@@ -7,11 +7,11 @@ import YoutubeIcon from './../../../assets/icons/youtube_icon.svg';
 import ShoppingBag from './../../../assets/icons/shopping-bag.svg';
 import PinterestBag from './../../../assets/icons/pinterest-icon.svg';
 
-export const Layout = ((_props, children) => {
+export const AppLayout = ((_props) => {
     return (<div>
         <NavBar />
         <SecondaryNavBar />
-        {children}
+        <router-outlet></router-outlet>
     </div>)
 }) as ComponentFunction;
 

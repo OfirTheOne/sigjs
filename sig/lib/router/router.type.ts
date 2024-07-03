@@ -1,3 +1,13 @@
+
+declare global {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
+    namespace JSX {
+        interface IntrinsicElements {
+            'router-outlet': any;
+        }
+    }
+}
+
 import { ComponentFunction } from "../types";
 
 

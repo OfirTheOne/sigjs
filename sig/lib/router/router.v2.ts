@@ -14,9 +14,9 @@ import type { Router, RouterConfig, RouteCommonConfig, RouteSyncConfig, RouteCon
 
 const routersStore: Record<string, Router> = {};
 
-customElements.define('app-router', class extends HTMLElement {});
+customElements.define('app-router', class extends HTMLElement { });
 
-customElements.define('router-outlet', class extends HTMLElement {});
+customElements.define('router-outlet', class extends HTMLElement { });
 
 const history = window.history;
 
@@ -26,7 +26,7 @@ function getRouter(): Router {
         throw new Error('Out of a root context');
     }
     const router = routersStore[renderedRootId.id];
-    if(!router) {
+    if (!router) {
         throw new Error('No router found');
     }
     return router;
@@ -34,14 +34,14 @@ function getRouter(): Router {
 
 function getParams(): Record<string, string> {
     const router = getRouter();
-    if(router.navigationMatchMetadata) {
+    if (router.navigationMatchMetadata) {
         return router.navigationMatchMetadata.params || {};
     }
     return {};
 }
 
 function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata): Router {
-    const { routes, base = '', onNoMatch, useViewTransition = true } = config;
+    const { routes, base = '', onNoMatch , useViewTransition = true } = config;
     const routesWithId = routes.map(route => {
         return {
             ...route,
@@ -72,7 +72,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
     routersStore[router.rootId] = router;
 
     function push(path: string | URL, state?: Record<string, unknown>) {
-        if(router.navigateState.isNavigating) {
+        if (router.navigateState.isNavigating) {
             logger.warn('Router is currently navigating');
             return;
         }
@@ -81,15 +81,15 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
     }
 
     function navigate(path: string) {
-        if(router.navigateState.isNavigating) {
+        if (router.navigateState.isNavigating) {
             logger.warn('Router is currently navigating');
             return;
         }
 
         // Find the route that matches the path
-        const matchResult = matchRoute(path, routesWithId, base);
+        const matchResult = matchRoute(path, routesWithId); // , base);
         if (!matchResult) {
-            if(onNoMatch) {
+            if (onNoMatch) {
                 onNoMatch();
             }
             logger.warn(`No route found for path ${path}`);
@@ -98,27 +98,30 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
 
         const { routes, params } = matchResult;
 
-        if(routes.length === 0) {
+        if (routes.length === 0) {
             logger.warn(`No route found for path ${path}`);
             return;
         }
 
-        handleRoutesMatchedResult(
-            router,
-            routes,
-            params,
-            path,
-            base,
-            memoRenderedRoute
-        ).then((componentDom) => {
-            if(componentDom) {
-                if(!useViewTransition) {
-                    updateDom(componentDom);
-                } else {
-                    applyViewTransition(() => updateDom(componentDom));
-                } 
-            }
-        });
+        const delayedHandleRoutesMatchedResult = () => {
+            handleRoutesMatchedResult(
+                router,
+                routes,
+                params,
+                path,
+                base,
+                memoRenderedRoute
+            ).then((componentDom) => {
+                if (componentDom) updateDom(componentDom);
+            });
+        }
+        if (!useViewTransition) {
+            delayedHandleRoutesMatchedResult();
+        } else {
+            applyViewTransition(delayedHandleRoutesMatchedResult);
+        }
+
+
 
         // for(const route of routes) {
         //     const shouldEnterFunction = route.shouldEnter || function shouldEnterTrue() { return true; }
@@ -203,12 +206,12 @@ function applyMatching(
     memoRenderedRoute: Record<string, ChildNode[]>
 ) {
     const routeId = route.id + (params ? JSON.stringify(params) : '');
-    if(router.matchedRouteId === routeId) return;
+    if (router.matchedRouteId === routeId) return;
     // Route is about to change
-    if(router.navigationMatchMetadata) {
+    if (router.navigationMatchMetadata) {
         const { route: prevRoute, params: prevParams = {} } = router.navigationMatchMetadata;
-        if(prevRoute.onLeave) prevRoute.onLeave(prevParams);
-        const preNavigateRouteElement = Array.from(router.container.childNodes);  
+        if (prevRoute.onLeave) prevRoute.onLeave(prevParams);
+        const preNavigateRouteElement = Array.from(router.container.childNodes);
         memoRenderedRoute[router.matchedRouteId] = preNavigateRouteElement;
     }
 
@@ -222,15 +225,14 @@ function applyMatching(
     const routeSync = route as RouteCommonConfig & RouteSyncConfig;
     const routeSyncId = routeId;
     let componentDom: HTMLElement | Text | ChildNode[];
-    if(!memoRenderedRoute[routeSyncId]) {
-        const componentElement = routeSync.component();    
+    if (!memoRenderedRoute[routeSyncId]) {
+        const componentElement = routeSync.component();
         componentDom = render(adaptVirtualElementChild(componentElement), router.container);
-        // DOM.appendChild(router.container, componentDom);
+        DOM.appendChild(router.container, componentDom);
     } else {
         componentDom = memoRenderedRoute[routeSyncId];
     }
-
-    return componentDom;
+    return componentDom as HTMLElement | Text | ChildNode[];
 }
 
 async function handleRoutesMatchedResult(
@@ -241,21 +243,19 @@ async function handleRoutesMatchedResult(
     _base: string,
     memoRenderedRoute: Record<string, ChildNode[]>
 ) {
-
     let rootComponentDom: HTMLElement | Text | ChildNode[] | undefined | null = null;
     let componentDom: HTMLElement | Text | ChildNode[] | undefined;
-    for(const route of routes) {
-
+    for (const route of routes) {
         const prevComponentDom = componentDom;
-
         const shouldEnterFunction = route.shouldEnter || function shouldEnterTrue() { return true; }
         let shouldEnterResult: boolean | Promise<boolean>;
         try {
             shouldEnterResult = shouldEnterFunction(path, params, history.state, router);
         } catch (error) {
+            logger.warn(`Route ${route.path} throws an error on shouldEnter, instead of returning a boolean, prefer handling the error and return false.`);
             shouldEnterResult = false;
         }
-        if(isPromise<boolean>(shouldEnterResult)) { 
+        if (isPromise<boolean>(shouldEnterResult)) {
             router.navigateState = {
                 isNavigating: true,
                 matchMetadata: { path, route, params }
@@ -263,7 +263,7 @@ async function handleRoutesMatchedResult(
             try {
                 const actualShouldEnterResult = await shouldEnterResult;
                 router.navigateState.isNavigating = false;
-                if(!actualShouldEnterResult) {
+                if (!actualShouldEnterResult) {
                     logger.warn(`Route ${route.path} should not enter`);
                     return;
                 }
@@ -280,7 +280,7 @@ async function handleRoutesMatchedResult(
                 return;
             }
         } else {
-            if(!shouldEnterResult) {
+            if (!shouldEnterResult) {
                 logger.warn(`Route ${route.path} should not enter`);
                 break;
             }
@@ -293,19 +293,19 @@ async function handleRoutesMatchedResult(
             );
         }
 
-        if(rootComponentDom === null) {
+        if (rootComponentDom === null) {
             rootComponentDom = componentDom;
         } else {
-            if(prevComponentDom && componentDom) {
+            if (prevComponentDom && componentDom) {
                 // connecting current component to the previous (parent) component
-                if(prevComponentDom instanceof HTMLElement) {
+                if (prevComponentDom instanceof HTMLElement) {
                     const routerOutlet = prevComponentDom.querySelector('router-outlet');
-                    if(routerOutlet) {
+                    if (routerOutlet) {
                         routerOutlet.innerHTML = '';
-                        if(componentDom instanceof HTMLElement || componentDom instanceof Text) {
-                            prevComponentDom.replaceWith(componentDom);
-                        } else if(Array.isArray(componentDom)) {
-                            prevComponentDom.replaceWith(...componentDom);
+                        if (componentDom instanceof HTMLElement || componentDom instanceof Text) {
+                            routerOutlet.replaceWith(componentDom);
+                        } else if (Array.isArray(componentDom)) {
+                            routerOutlet.replaceWith(...componentDom);
                         }
                     }
                 }
@@ -323,10 +323,10 @@ function createRouter(config: RouterConfig): VirtualElement {
     }
     const router = buildRouter(config, renderedRoot);
     let rootRouterElement: VirtualElement;
-    if(!config.ignoreRouterLink) {
+    if (!config.ignoreRouterLink) {
         overrideNativeNavigation(router.container, router);
     }
-    if(config.layout) {
+    if (config.layout) {
         rootRouterElement = createElement(config.layout, {}, router.container);
     } else {
         rootRouterElement = createElement(router.container, {});
@@ -337,10 +337,10 @@ function createRouter(config: RouterConfig): VirtualElement {
 function overrideNativeNavigation(rootRouterElement: HTMLElement, router: Router) {
     rootRouterElement.addEventListener('click', (event) => {
         const target = (event.target as HTMLElement).closest('a');
-        if(target && target.tagName === 'A' && target.hasAttribute('href') && target.hasAttribute('router-link'))  {
+        if (target && target.tagName === 'A' && target.hasAttribute('href') && target.hasAttribute('router-link')) {
             event.preventDefault();
-            const href = target.getAttribute('href');   
-            if(href) {
+            const href = target.getAttribute('href');
+            if (href) {
                 router.push(href);
             }
         }
@@ -348,7 +348,7 @@ function overrideNativeNavigation(rootRouterElement: HTMLElement, router: Router
 }
 
 function applyViewTransition(updateDom: () => void) {
-    if('startViewTransition' in document && typeof document.startViewTransition === 'function' ) {
+    if ('startViewTransition' in document && typeof document.startViewTransition === 'function') {
         document.startViewTransition(() => updateDom());
     } else {
         updateDom();
