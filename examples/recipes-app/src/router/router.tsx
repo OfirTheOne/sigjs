@@ -52,9 +52,7 @@ const loginRedirect: ShouldEnterCallback = (path, params, state, router) => {
     .then(res => res.json())
     .then(res => {
         if (res && res.valid) {
-            // setTimeout(() => router.push('/app'), 0);
             router.push('/app');
-            // router.push('/');
             return false;
         } else {
             localStorage.removeItem('token');
@@ -86,13 +84,7 @@ export function AppRouter() {
                         children: [
                             { path: 'about', component: () => <div>About</div> },
                             { path: 'contact', component: () => <div>Contact</div> },
-                            { 
-                                path: 'recipes', 
-                                shouldEnter: authGuardAsync,  
-                                component: () => <RecipesPage />,
-                                // children: [
-                                // ]
-                            },
+                            { path: 'recipes', shouldEnter: authGuardAsync,  component: () => <RecipesPage /> },
                             { path: 'recipes/:id', shouldEnter: authGuardAsync, component: () => <RecipePage /> },
                             { path: 'videos', component: () => <div>Videos</div> },
                             { path: 'cookbook', component: () => <div>Cookbook</div> },
@@ -102,6 +94,5 @@ export function AppRouter() {
                 ]
             }
         ],
-        // layout: Layout
     });
 }

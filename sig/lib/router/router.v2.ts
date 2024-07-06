@@ -11,7 +11,7 @@ import { KeyBuilder, keyBuilder } from "@/common/key-builder/key-builder";
 import type { RootElementWithMetadata } from "@/core/dom-render/create-root";
 import type { VirtualElement } from "@/types";
 import type { Router, RouterConfig, RouteCommonConfig, RouteSyncConfig, RouteConfig } from "./router.type";
-// import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
+import { getActiveContext } from "@/core/dom-render/component-context/component-context";
 
 const routersStore: Record<string, Router> = {};
 
@@ -41,18 +41,33 @@ function getParams(): Record<string, string> {
     return {};
 }
 
-function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata): Router {
-    const { routes, base = '', onNoMatch, useViewTransition = true } = config;
-    const renderKey = keyBuilder(`router:${renderedRoot.id}`);
-    const redirectStack: Parameters<typeof push>[] = [];
 
-    const routesWithId = routes.map(route => {
+const appendIdToAllRouteTree = (routes: RouteConfig[]): RouteConfig[] => {
+    return routes.map(route => {
         return {
             ...route,
-            id: route.id ? route.id : uniqueId()
+            id: route.id ? route.id : uniqueId(),
+            children: route.children ? appendIdToAllRouteTree(route.children) : route.children
         }
     });
-    const routerElement = document.createElement('app-router');
+}
+
+function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata): Router {
+    const { routes, base = '', onNoMatch, useViewTransition = true } = config;
+    const context = getActiveContext();
+    if(!context) {
+        throw new Error('No active context');
+    }
+    const renderKey = keyBuilder(context.key).push(`router:${renderedRoot.id}`);
+    const redirectStack: Parameters<typeof push>[] = [];
+    const routesWithId = appendIdToAllRouteTree(routes);
+    // const routesWithId = routes.map(route => {
+    //     return {
+    //         ...route,
+    //         id: route.id ? route.id : uniqueId()
+    //     }
+    // });
+    const routerElement = DOM.createElement('app-router', renderKey);
 
     const memoRenderedRoute: Record<string, HTMLElement | Text | ChildNode[]> = {};
 
@@ -154,12 +169,12 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
     return router;
 }
 
-function applyMatching(
+function renderMatch(
     router: Router,
     route: RouteCommonConfig & RouteSyncConfig,
     params: Record<string, string>,
     _path: string,
-    _memoRenderedRoute: Record<string, HTMLElement | Text | ChildNode[]>,
+    memoRenderedRoute: Record<string, HTMLElement | Text | ChildNode[]>,
     routerRenderKey: KeyBuilder,
     container: HTMLElement
 ) {
@@ -168,19 +183,39 @@ function applyMatching(
     // Route is about to change
  
     router.matchedRouteId = routeId;
-
     const routeSync = route as RouteCommonConfig & RouteSyncConfig;
-    // const routeSyncId = routeId;
-    // let componentDom: HTMLElement | Text | ChildNode[];
-    // if (!memoRenderedRoute[routeSyncId]) {
-    const componentVirtualElement = createElement(routeSync.component, {});
-    const componentDom = render(componentVirtualElement, container, routerRenderKey.push(routeId));
-        // memoRenderedRoute[routeSyncId] = componentDom;
-    // } else {
-    //     componentDom = memoRenderedRoute[routeSyncId];
-    // }
+    let componentDom: HTMLElement | Text | ChildNode[];  
+    if (route.memo !== false && memoRenderedRoute[routeId]) {
+        componentDom = memoRenderedRoute[routeId];
+        emptyOutComponentOutlet(componentDom);
+    } else {
+        const componentVirtualElement = createElement(routeSync.component, {});
+        componentDom = render(componentVirtualElement, container, routerRenderKey.push(routeId));
+        memoRenderedRoute[routeId] = componentDom;
+    }
     return componentDom as HTMLElement | Text | ChildNode[];
 }
+
+function emptyOutComponentOutlet(componentDom: HTMLElement | Text | ChildNode[]) {
+    if(componentDom instanceof Element) {
+        const outlet = componentDom.querySelector('router-outlet');
+        if(outlet) {
+            console.log('emptyOutComponentOutlet');
+            outlet.innerHTML = '';
+        }
+    } else if(Array.isArray(componentDom)) {
+        componentDom.forEach(node => {
+            if(node instanceof Element) {
+                const outlet = node.querySelector('router-outlet');
+                if(outlet) {
+                    console.log('emptyOutComponentOutlet');
+                    outlet.innerHTML = '';
+                }
+            }
+        })
+    }
+}
+
 
 
 async function handleRoutesMatchedResult(
@@ -208,7 +243,6 @@ async function handleRoutesMatchedResult(
 
         router.navigateState = {
             isNavigating: true,
-            // matchMetadata: { path, routes, params }
         };
         let actualShouldEnterResult = false;
         if (isPromise<boolean>(shouldEnterResult)) {
@@ -241,7 +275,7 @@ async function handleRoutesMatchedResult(
             = componentContainer 
             || DOM.createElement('router-outlet', currentRouteRenderKey.clone().push('router-outlet'));
 
-        componentDom = applyMatching(
+        componentDom = renderMatch(
             router,
             route,
             params,

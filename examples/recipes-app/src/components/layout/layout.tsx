@@ -1,6 +1,5 @@
 
 import { getRouter } from 'sig/router';
-import { ComponentFunction } from 'sig';
 import Facebook from './../../../assets/icons/facebook_icon.svg';
 import TwitterIcon from './../../../assets/icons/twitter_icon.svg';
 import YoutubeIcon from './../../../assets/icons/youtube_icon.svg';
@@ -12,12 +11,11 @@ export const AppLayout = ((_props) => {
         <NavBar />
         <SecondaryNavBar />
         <router-outlet></router-outlet>
-    </div>)
-}) as ComponentFunction;
+    </div>);
+});
 
 function NavBar() {
     return (<nav className='flex flex-row items-center h-14 bg-[#faf4eb] px-8'>
-        {/* <p className='flex flex-1'>Search</p> */}
         <ul className='flex flex-row justify-end gap-6 items-center'>
             <li className='flex h-5 w-5'>{ShoppingBag()}</li>
             <li className='flex h-5 w-5'>{PinterestBag()}</li>

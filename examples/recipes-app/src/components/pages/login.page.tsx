@@ -1,7 +1,6 @@
 import { getRouter } from "sig/router";
 
 
-
 export function LoginPage() {
     const router = getRouter();
 

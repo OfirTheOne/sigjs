@@ -10,7 +10,6 @@ declare global {
 
 import { ComponentFunction } from "../types";
 
-
 export interface ShouldEnterCallback {
     (
         path: string,
@@ -41,7 +40,7 @@ export type RouteSyncConfig = {
 export type RouteConfig = RouteCommonConfig & RouteSyncConfig; // (RouteAsyncConfig | RouteSyncConfig);
 
 export type RouterConfig = {
-    routes: RouteConfig[];
+    routes: (RouteConfig & { default?: boolean })[];
     base?: string;
     onNoMatch?: () => void;
     layout?: ComponentFunction;
