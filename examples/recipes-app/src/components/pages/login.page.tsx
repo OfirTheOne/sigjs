@@ -23,7 +23,7 @@ export function LoginPage() {
                 if (res) {
                     localStorage.setItem('token', res.token);
                     console.log('Login successful');
-                    router.push('/');
+                    router.push('/app/recipes');
                 } else {
                     console.log('Login failed');
                 }

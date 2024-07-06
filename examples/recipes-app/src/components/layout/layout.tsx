@@ -32,15 +32,15 @@ function SecondaryNavBar() {
     const { push } = getRouter();
     return (<nav className='flex flex-row justify-around items-center bg-yellow-100/10 h-20 px-14'>
         <div className='flex justify-around w-1/4'>
-            <div onClick={() => push('/about')} className='flex font-thin text-neutral-700 hover:text-neutral-500 cursor-pointer'>About</div>
-            <div onClick={() => push('/recipes')} className='flex font-thin text-neutral-700 hover:text-neutral-500 cursor-pointer'>Recipes</div>
-            <div onClick={() => push('/videos')} className='flex font-thin text-neutral-700 hover:text-neutral-500 cursor-pointer'>Videos</div>
+            <div onClick={() => push('/app/about')} className='flex font-thin text-neutral-700 hover:text-neutral-500 cursor-pointer'>About</div>
+            <div onClick={() => push('/app/recipes')} className='flex font-thin text-neutral-700 hover:text-neutral-500 cursor-pointer'>Recipes</div>
+            <div onClick={() => push('/app/videos')} className='flex font-thin text-neutral-700 hover:text-neutral-500 cursor-pointer'>Videos</div>
         </div>
         <div className='flex justify-center text-4xl font-serif capitalize font-thin text-center w-1/5'>Recipes App</div>
         <div className='flex justify-around w-1/4'>
-            <div onClick={() => push('/cookbook')} className='flex font-thin text-neutral-700 hover:text-neutral-500 cursor-pointer'>Cookbook</div>
-            <div onClick={() => push('/press')} className='flex font-thin text-neutral-700 hover:text-neutral-500 cursor-pointer'>Press</div>
-            <div onClick={() => push('/contact')} className='flex font-thin text-neutral-700 hover:text-neutral-500 cursor-pointer'>Contact</div>
+            <div onClick={() => push('/app/cookbook')} className='flex font-thin text-neutral-700 hover:text-neutral-500 cursor-pointer'>Cookbook</div>
+            <div onClick={() => push('/app/press')} className='flex font-thin text-neutral-700 hover:text-neutral-500 cursor-pointer'>Press</div>
+            <div onClick={() => push('/app/contact')} className='flex font-thin text-neutral-700 hover:text-neutral-500 cursor-pointer'>Contact</div>
         </div>
     </nav>);
 }

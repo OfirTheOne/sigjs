@@ -32,7 +32,7 @@ const authGuardAsync: ShouldEnterCallback = (path, params, state, router) => {
             localStorage.removeItem('token');
             console.log('You are not logged in');
             alert('You are not logged in');
-            setTimeout(() => router.push('/login'), 0);
+            router.push('/login');
             return false;
         }
     });
@@ -52,7 +52,8 @@ const loginRedirect: ShouldEnterCallback = (path, params, state, router) => {
     .then(res => res.json())
     .then(res => {
         if (res && res.valid) {
-            setTimeout(() => router.push('/'), 0);
+            // setTimeout(() => router.push('/app'), 0);
+            router.push('/app');
             // router.push('/');
             return false;
         } else {
@@ -81,7 +82,7 @@ export function AppRouter() {
                     { 
                         path: 'app', 
                         shouldEnter: authGuardAsync, 
-                        component: () => <RecipesPage />, 
+                        component: () => <router-outlet></router-outlet>, 
                         children: [
                             { path: 'about', component: () => <div>About</div> },
                             { path: 'contact', component: () => <div>Contact</div> },

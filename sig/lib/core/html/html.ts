@@ -19,11 +19,11 @@ export const DOM = {
                 parent.appendChild(child);
             }
         } else { 
-            child.forEach((c) => {
-                if (c.parentElement !== parent) {
-                    parent.appendChild(c);
-                }
-            });
+            parent.append(...child);
+            // child.forEach((c) => {
+            //     if (c.parentElement !== parent) {
+            //     }
+            // });
         }
     },
 

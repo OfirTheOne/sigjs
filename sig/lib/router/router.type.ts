@@ -51,7 +51,7 @@ export type RouterConfig = {
 
 export type NavigationMatchMetadata = {
     path: string;
-    route: RouteConfig;
+    routes: RouteConfig[];
     params?: Record<string, string> | undefined;
 }
 
@@ -64,7 +64,7 @@ export type Router = {
     matchedRouteId: string;
     navigateState: {
         isNavigating: boolean;
-        matchMetadata?: NavigationMatchMetadata;
+        // matchMetadata?: NavigationMatchMetadata;
     }
     navigationMatchMetadata?: NavigationMatchMetadata
 };

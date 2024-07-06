@@ -16,7 +16,7 @@ function render(element: VirtualElement, container: HTMLElement | undefined, key
 function render(element: VirtualElement | VirtualElement[], container: HTMLElement | undefined, key: KeyBuilder): HTMLElement | Text {
     if (Array.isArray(element)) {
         if (!container)
-            throw new Error('Invalid container element for multiple rendering');
+            throw new Error('Invalid container element for multiple rendering, container must be provided');
         return childrenRender(element, container, key, render);
     }
     switch (element.type as ElementType) {
@@ -46,19 +46,19 @@ function render(element: VirtualElement | VirtualElement[], container: HTMLEleme
         case /* edge node */
             ELEMENT_TYPE.SIGNAL:
             if (!container)
-                throw new Error('Invalid container element for signal rendering');
+                throw new Error('Invalid container element for signal rendering, container must be provided');
             return signalRender(element.props.signal as Signal, container);
 
         case /* non edge node */
             ELEMENT_TYPE.COMPONENT:
             if (!container)
-                throw new Error('Invalid container element for component rendering');
+                throw new Error('Invalid container element for component rendering, container must be provided');
             return componentRender(element, container, key, render);
 
         case /* non edge node - internally glue any child nodes */
             ELEMENT_TYPE.CONTROL_FLOW:
             if (!container)
-                throw new Error('Invalid container element for control flow rendering');
+                throw new Error('Invalid container element for control flow rendering, container must be provided');
             return controlFlowRender(element, container, key, render);
 
         case /* non edge node - internally glue any child nodes */
