@@ -16,7 +16,7 @@ export interface ShouldEnterCallback {
         params: Record<string, string> | undefined,
         state: Record<string, unknown> | undefined,
         router: Router
-    ): boolean | Promise<boolean>;
+    ): boolean | RouterPushParameters | Promise<boolean | RouterPushParameters>;
 }
 
 export type RouteCommonConfig = {
@@ -52,6 +52,10 @@ export type NavigationMatchMetadata = {
     path: string;
     routes: RouteConfig[];
     params?: Record<string, string> | undefined;
+}
+
+export type RouterPushParameters = {
+    path: string | URL, state?: Record<string, unknown>
 }
 
 export type Router = {

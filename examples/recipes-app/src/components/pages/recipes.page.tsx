@@ -120,7 +120,7 @@ function RecipeCard(props: Recipe) {
     return (<a
         router-link
         className='flex flex-col uppercase mb-2'
-        href={`/recipes/${props.id}`}
+        href={`/app/recipes/${props.id}`}
     >
         <img src={props.image} alt={props.title} className={'w-60 h-80 object-cover border'} />
         <h3 className='font-thin'>{props.title}</h3>

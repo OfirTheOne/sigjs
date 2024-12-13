@@ -6,38 +6,25 @@ import { RecipesPage } from '../components/pages/recipes.page';
 import { AppLayout } from '../components/layout/layout';
 import { LoginPage } from '../components/pages/login.page';
 
-const authGuard: ShouldEnterCallback = (path, params, state, router) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-        setTimeout(() => router.push('/login'), 0);
-        return false;
-    }
-    return true;
-}
 
-
-const authGuardAsync: ShouldEnterCallback = (path, params, state, router) => {
+const authGuardAsync: ShouldEnterCallback = async (path, params, state, router) => {
     const token = localStorage.getItem('token');
     // return true;
-    return fetch('http://localhost:3030/validate', {
+    const res = await fetch('http://localhost:3030/validate', {
         headers: {
             authorization: `Bearer ${token}`
         }
-    })
-    .then(res => res.json())
-    .then(res => {
-        if (res && res.valid) {
-            return true;
-        } else {
-            localStorage.removeItem('token');
-            console.log('You are not logged in');
-            alert('You are not logged in');
-            router.push('/login');
-            return false;
-        }
     });
+    const parsedRes = await res.json();
+    if (parsedRes && parsedRes.valid) {
+        return true;
+    } else {
+        localStorage.removeItem('token');
+        console.log('You are not logged in');
+        alert('You are not logged in');
+        return { path: '/login' };
+    }
 }
-
 
 const loginRedirect: ShouldEnterCallback = (path, params, state, router) => {
     const token = localStorage.getItem('token');
@@ -52,21 +39,19 @@ const loginRedirect: ShouldEnterCallback = (path, params, state, router) => {
     .then(res => res.json())
     .then(res => {
         if (res && res.valid) {
-            router.push('/app');
-            return false;
+            return { path: '/app' };
         } else {
             localStorage.removeItem('token');
             console.log('You are not logged in');
             alert('You are not logged in');
-            return false;
+            return true;
         }
     });
 }
 
-
-
 export function AppRouter() {
     return createRouter({
+        useViewTransition: true,
         routes: [
             {
                 path: '/',
@@ -75,7 +60,8 @@ export function AppRouter() {
                     { 
                         path: 'login', 
                         shouldEnter: loginRedirect, 
-                        component: () => <LoginPage /> 
+                        component: () => <LoginPage />,
+                        memo: false
                     },
                     { 
                         path: 'app', 
@@ -84,8 +70,8 @@ export function AppRouter() {
                         children: [
                             { path: 'about', component: () => <div>About</div> },
                             { path: 'contact', component: () => <div>Contact</div> },
-                            { path: 'recipes', shouldEnter: authGuardAsync,  component: () => <RecipesPage /> },
-                            { path: 'recipes/:id', shouldEnter: authGuardAsync, component: () => <RecipePage /> },
+                            { path: 'recipes', memo: false, shouldEnter: authGuardAsync, component: () => <RecipesPage /> },
+                            { path: 'recipes/:id', memo: false, shouldEnter: authGuardAsync, component: () => <RecipePage /> },
                             { path: 'videos', component: () => <div>Videos</div> },
                             { path: 'cookbook', component: () => <div>Cookbook</div> },
                             { path: 'press', component: () => <div>Press</div> },
