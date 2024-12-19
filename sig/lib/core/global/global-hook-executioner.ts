@@ -38,6 +38,13 @@ function createHookExecutioner() {
                             if (context) {
                                 runOnConnectHooks(context);
                             }
+                            const element = context.element;
+                            const subEntry = element && globalSubscribersMap.get(element)
+                            if (subEntry) {
+                                subEntry.signals.forEach(signal => {
+                                    signal.exitStaleMode();
+                                });
+                            }
                         });
                     }
 
@@ -56,9 +63,8 @@ function createHookExecutioner() {
                             if (subEntry) {
                                 console.log('Element was removed from the DOM');
                                 subEntry.signals.forEach(signal => {
-                                    signal.disconnect();
+                                    signal.enterStaleMode();
                                 });
-                                subEntry.subscriptions.forEach(unsub => unsub());
                             }
                         });
                     }

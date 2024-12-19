@@ -10,14 +10,25 @@ declare global {
 
 import { ComponentFunction } from "../types";
 
-export interface ShouldEnterCallback {
-    (
-        path: string,
-        params: Record<string, string> | undefined,
-        state: Record<string, unknown> | undefined,
-        router: Router
-    ): boolean | RouterPushParameters | Promise<boolean | RouterPushParameters>;
+export interface ShouldEnterCallbackArgs {
+    path: string,
+    params: Record<string, string> | undefined,
+    state: Record<string, unknown> | undefined,
+    router: Router
 }
+
+
+export interface ShouldEnterCallback {
+    (args: ShouldEnterCallbackArgs): boolean | RouterPushParameters | Promise<boolean | RouterPushParameters>;
+}
+
+export interface LoaderCallbackArgs {
+    path: string,
+    params: Record<string, string> | undefined,
+    state: Record<string, unknown> | undefined,    
+}
+
+export type LoaderCallback = (args: LoaderCallbackArgs) => Promise<unknown> | unknown;
 
 export type RouteCommonConfig = {
     path: string;
@@ -25,6 +36,7 @@ export type RouteCommonConfig = {
     children?: RouteConfig[];
     memo?: boolean;
     shouldEnter?: ShouldEnterCallback;
+    
     onEnter?: () => void;
     onLeave?: (params: Record<string, string>) => void;
 };

@@ -6,6 +6,7 @@ function buildSignal<T>(value: T, id?: string):
     CoreSignalCapabilities<T> &
     EnhancedSignalCapabilities<T> {
     let listeners: Listener<T>[] = [];
+    let staleMode = false;
     const linkedSubscriptions: (() => void)[] = [];
     const nonCallableSignal: Pick<Signal<T>
         , 'id'
@@ -18,6 +19,8 @@ function buildSignal<T>(value: T, id?: string):
         | 'emit'
         | 'value'
         | 'setValue'
+        | 'enterStaleMode'
+        | 'exitStaleMode'
     > = {
         id: id || String(signalCounter),
         get value() {
@@ -28,7 +31,9 @@ function buildSignal<T>(value: T, id?: string):
             this.emit(newValue);
         },
         emit(value: T) {
-            listeners.forEach(listener => listener(value));
+            if (!staleMode) {                
+                listeners.forEach(listener => listener(value));
+            }
         },
         setValue(newValue: ((value: T) => T) | T) {
             if (typeof newValue === 'function') {
@@ -42,6 +47,12 @@ function buildSignal<T>(value: T, id?: string):
             return () => {
                 listeners = listeners.filter(l => l !== listener);
             };
+        },
+        enterStaleMode() {
+            staleMode = true;
+        },
+        exitStaleMode() {
+            staleMode = false;
         },
         disconnect() {
             listeners = [];

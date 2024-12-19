@@ -12,6 +12,10 @@ interface CoreSignalCapabilities<T> {
     readonly listeners: Listener<T>[];
     disconnect(): void;
 }
+interface StaleSignalCapabilities {
+    enterStaleMode: () => void;
+    exitStaleMode: () => void;
+}
 
 interface EnhancedSignalCapabilities<T> {
     /**
@@ -49,7 +53,11 @@ interface CallableSignal<T> {
     (): T;
 }
 
-interface Signal<T = unknown> extends CoreSignalCapabilities<T>, EnhancedSignalCapabilities<T>, CallableSignal<T> {
+interface Signal<T = unknown> extends 
+    CoreSignalCapabilities<T>, 
+    EnhancedSignalCapabilities<T>, 
+    StaleSignalCapabilities,
+    CallableSignal<T> {
 }
 
 // interface Signal<T = unknown> {

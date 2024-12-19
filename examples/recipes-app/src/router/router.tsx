@@ -7,7 +7,7 @@ import { AppLayout } from '../components/layout/layout';
 import { LoginPage } from '../components/pages/login.page';
 
 
-const authGuardAsync: ShouldEnterCallback = async (path, params, state, router) => {
+const authGuardAsync: ShouldEnterCallback = async () => {
     const token = localStorage.getItem('token');
     // return true;
     const res = await fetch('http://localhost:3030/validate', {
@@ -26,7 +26,7 @@ const authGuardAsync: ShouldEnterCallback = async (path, params, state, router) 
     }
 }
 
-const loginRedirect: ShouldEnterCallback = (path, params, state, router) => {
+const loginRedirect: ShouldEnterCallback = () => {
     const token = localStorage.getItem('token');
     if (!token) {
         return true;

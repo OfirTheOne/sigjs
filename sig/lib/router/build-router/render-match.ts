@@ -27,7 +27,6 @@ export function renderMatch(
     router: Router,
     route: RouteCommonConfig & RouteSyncConfig,
     params: Record<string, string>,
-    _path: string,
     memoRenderedRoute: Record<string, HTMLElement | Text | ChildNode[]>,
     routerRenderKey: KeyBuilder,
     container: HTMLElement
@@ -36,9 +35,7 @@ export function renderMatch(
     componentDom: HTMLElement | Text | ChildNode[];
     memo: boolean;
 } {
-    const routeId = route.id + (params ? JSON.stringify(params) : '');
-    // Route is about to change
- 
+    const routeId = route.id + (params ? JSON.stringify(params) : ''); 
     router.matchedRouteId = routeId;
     const routeSync = route as RouteCommonConfig & RouteSyncConfig;
     let componentDom: HTMLElement | Text | ChildNode[];  
