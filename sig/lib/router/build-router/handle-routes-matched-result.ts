@@ -68,7 +68,11 @@ export async function handleRoutesMatchedResult(
                 memo: true
             };
         } else {
-            const componentVirtualElement = createElement(routeSync.component, {});
+            const loaderResult = await runLoaderStage(route, params, path);
+            const componentVirtualElement = createElement(routeSync.component, {
+                loaderResult,
+                params,
+            });
             currentComponentDom = render(componentVirtualElement, componentContainer, currentRouteRenderKey.push(routeId));
             memoRenderedRoute[routeId] = currentComponentDom;
             renderMatchResult = {
@@ -174,4 +178,25 @@ async function runShouldEnterStage(
     }
     router.navigateState.isNavigating = false;
     return actualShouldEnterResult;
+}
+
+async function runLoaderStage(
+    route: RouteConfig,
+    params: Record<string, string>,
+    path: string,
+): Promise<unknown> {
+    const loaderFunction = route.loader;
+    if (loaderFunction) {
+        const result = loaderFunction({ path, params, state: history.state });
+        if (isPromise(result)) {
+            try {
+                return await result;
+            } catch (error) {
+                logger.warn(`Route ${route.path} throws an error on loader, instead of returning a component, prefer handling the error and return a component.`);
+                return null;
+            }
+        } else {
+            return result;
+        }
+    }
 }

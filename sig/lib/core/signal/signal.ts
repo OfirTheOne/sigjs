@@ -1,10 +1,11 @@
-import { Signal, CoreSignalCapabilities, EnhancedSignalCapabilities, Listener } from "./signal.types";
+import { Signal, CoreSignalCapabilities, EnhancedSignalCapabilities, StaleSignalCapabilities, Listener } from "./signal.types";
 
 let signalCounter = 0
 
 function buildSignal<T>(value: T, id?: string):
     CoreSignalCapabilities<T> &
-    EnhancedSignalCapabilities<T> {
+    EnhancedSignalCapabilities<T> & 
+    StaleSignalCapabilities {
     let listeners: Listener<T>[] = [];
     let staleMode = false;
     const linkedSubscriptions: (() => void)[] = [];
@@ -121,6 +122,8 @@ function signal<T>(value: T, id?: string): Signal<T> {
     callableSignal.derive = nonCallableSignal.derive;
     callableSignal.setValue = nonCallableSignal.setValue;
     callableSignal.emit = nonCallableSignal.emit;
+    callableSignal.enterStaleMode = nonCallableSignal.enterStaleMode;
+    callableSignal.exitStaleMode = nonCallableSignal.exitStaleMode;
     signalCounter++;
     return callableSignal as Signal<T>;
 }

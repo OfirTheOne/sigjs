@@ -103,5 +103,36 @@ import type { Signal } from './signal.types';
                 expect(derivedSignal.value).toBe(30);
             });
         });
+
+        describe('stale mode', () => {
+            it('should not emit values to subscribers while in stale mode', () => {
+                const signal = signalBuilderFn(10);
+                const listener = vitest.fn();
+                signal.subscribe(listener);
+                signal.enterStaleMode();
+                signal.value = 20;
+                expect(listener).not.toHaveBeenCalled();
+            });
+
+            it('should emit the last value set while in stale mode when exiting stale mode', () => {
+                const signal = signalBuilderFn(10);
+                const listener = vitest.fn();
+                signal.subscribe(listener);
+                signal.enterStaleMode();
+                signal.value = 20;
+                signal.value = 30;
+                signal.exitStaleMode();
+                expect(listener).toHaveBeenCalledWith(30);
+            });
+
+            it('should not emit any value if no value was set while in stale mode', () => {
+                const signal = signalBuilderFn(10);
+                const listener = vitest.fn();
+                signal.subscribe(listener);
+                signal.enterStaleMode();
+                signal.exitStaleMode();
+                expect(listener).not.toHaveBeenCalled();
+            });
+        });
     });
 });

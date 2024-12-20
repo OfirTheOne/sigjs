@@ -25,8 +25,12 @@ interface EnhancedSignalCapabilities<T> {
      * @example
      * const numberSignal = signal(1);
      * const stringSignal = numberSignal.derive(value => String(value));
-     * stringSignal.subscribe(value => console.log(value)); // '1'
-     * numberSignal.setValue(2); // '2'
+     * console.log(stringSignal()); 
+     * stringSignal.subscribe(value => console.log(value));
+     * numberSignal.setValue(2); 
+     * console logs:
+     * // > '1'
+     * // > '2'
      */ 
     derive<L = T>(pipe: (value: T) => L): Signal<L>;
     /**
@@ -60,17 +64,6 @@ interface Signal<T = unknown> extends
     CallableSignal<T> {
 }
 
-// interface Signal<T = unknown> {
-//     (): T;
-//     id: string;
-//     value: T;
-//     setValue(value: T | ((value: T) => T)): void;
-//     emit(value: T): void;
-//     subscribe(listener: Listener<T>): () => void;
-//     readonly listeners: Listener<T>[];
-//     disconnect(): void;
-
-// }
 
 // ***** Utility types *****
 
@@ -113,6 +106,7 @@ export type {
     Signal, 
     CoreSignalCapabilities,
     EnhancedSignalCapabilities,
+    StaleSignalCapabilities,
     CallableSignal,
     Listener, 
     ExtractSignalType, 

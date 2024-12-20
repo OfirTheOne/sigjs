@@ -140,10 +140,6 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
                 memoRenderedRoute,
                 renderKey
             ).then(() => {
-                // if (componentDom) {
-                //  updateDom(componentDom);
-                // } 
-
                 if(redirectStack.length) {
                     const redirectParameters = redirectStack.at(-1);
                     if(redirectParameters) {
@@ -159,11 +155,6 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         } else {
             applyViewTransition(delayedHandleRoutesMatchedResult);
         }
-
-        // function updateDom(componentDom: HTMLElement | Text | ChildNode[]) {
-        //     // router.container.innerHTML = '';
-        //     // DOM.appendChild(router.container, componentDom);
-        // }
     }
 
     // Navigate to the initial route

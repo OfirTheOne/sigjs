@@ -36,6 +36,7 @@ export type RouteCommonConfig = {
     children?: RouteConfig[];
     memo?: boolean;
     shouldEnter?: ShouldEnterCallback;
+    loader?: LoaderCallback;
     
     onEnter?: () => void;
     onLeave?: (params: Record<string, string>) => void;
