@@ -5,6 +5,7 @@ import { RecipePage } from '../components/pages/recipe.page';
 import { RecipesPage } from '../components/pages/recipes.page';
 import { AppLayout } from '../components/layout/layout';
 import { LoginPage } from '../components/pages/login.page';
+import { store } from '../store';
 
 
 const authGuardAsync: ShouldEnterCallback = async () => {
@@ -70,8 +71,20 @@ export function AppRouter() {
                         children: [
                             { path: 'about', component: () => <div>About</div> },
                             { path: 'contact', component: () => <div>Contact</div> },
-                            { path: 'recipes', memo: false, shouldEnter: authGuardAsync, component: () => <RecipesPage /> },
-                            { path: 'recipes/:id', memo: false, shouldEnter: authGuardAsync, component: () => <RecipePage /> },
+                            { 
+                                path: 'recipes',
+                                component: RecipesPage,
+                                loader: () => {
+                                    console.log('loading recipes');
+                                    const recipes = store.getState().recipes;
+                                    if (recipes.length === 0) {
+                                        store.getState().fetchRecipes();
+                                    }
+                                    const recipes$ = store.select(state => state.recipes);
+                                    return { recipes$ };
+                                }
+                             },
+                            { path: 'recipes/:id', memo: false, component: () => <RecipePage /> },
                             { path: 'videos', component: () => <div>Videos</div> },
                             { path: 'cookbook', component: () => <div>Cookbook</div> },
                             { path: 'press', component: () => <div>Press</div> },

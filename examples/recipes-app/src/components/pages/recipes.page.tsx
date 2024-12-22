@@ -1,12 +1,18 @@
 
 import { For, Signal, createSignal } from 'sig';
 import { combineLatest } from 'sig/core';
-import { store } from '../../store';
 import { Recipe } from '../../types';
 import XIcon from '../../../assets/icons/x-icon.svg';
 
-export function RecipesPage() {
-    const storeRecipes$ = store.select(state => state.recipes);
+
+interface RecipesPageProps {
+    loaderResult: {
+        recipes$: Signal<Recipe[]>;
+    }
+}
+
+export function RecipesPage({ loaderResult }: RecipesPageProps) {
+    const storeRecipes$ = loaderResult.recipes$; //store.select(state => state.recipes);
     const [search$,] = createSignal('');
     const [filter$,] = createSignal({
         mostPopular: false,
