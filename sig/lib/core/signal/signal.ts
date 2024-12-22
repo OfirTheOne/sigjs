@@ -120,7 +120,7 @@ function signal<T>(value: T, id?: string): Signal<T> {
     callableSignal.disconnect = nonCallableSignal.disconnect;
     callableSignal.link = nonCallableSignal.link;
     callableSignal.derive = nonCallableSignal.derive;
-    callableSignal.setValue = nonCallableSignal.setValue;
+    callableSignal.setValue = nonCallableSignal.setValue.bind(nonCallableSignal);
     callableSignal.emit = nonCallableSignal.emit;
     callableSignal.enterStaleMode = nonCallableSignal.enterStaleMode;
     callableSignal.exitStaleMode = nonCallableSignal.exitStaleMode;
@@ -128,9 +128,9 @@ function signal<T>(value: T, id?: string): Signal<T> {
     return callableSignal as Signal<T>;
 }
 
-function createSignal<T>(value: T, id?: string): [Signal<T>, (value: T) => void] {
+function createSignal<T>(value: T, id?: string): [Signal<T>, Signal<T>['setValue']] {
     const callableSignal = signal(value, id);
-    return [callableSignal as Signal<T>, (newValue: T) => callableSignal.value = newValue];
+    return [callableSignal as Signal<T>, callableSignal.setValue];
 }
 
 export { createSignal, signal, buildSignal };

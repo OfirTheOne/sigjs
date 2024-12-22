@@ -12,7 +12,7 @@ import type { VirtualElement, Renderable } from "@/types";
 
 interface ForProps<T = unknown> {
     list: Array<T> | Signal<Array<T>>;
-    factory: Renderable | ((item: T) => Renderable);
+    factory: Renderable | ((item: T, index: number, list: T[]) => Renderable);
     index?: string | ((item: T, i: number) => string);
     empty?: Renderable;
     as?: string;
@@ -79,7 +79,7 @@ function renderFor(
                     return indexItem.dom;
                 }
                 const childKey = key.clone().pushIndex(i);
-                const element = adaptVirtualElementChild(factoryFn(item));
+                const element = adaptVirtualElementChild(factoryFn(item, i, list));
                 const elementDom = render(element, placeholderDom, childKey);
                 indexItems.set(indexValue, { dom: elementDom });
                 return elementDom;

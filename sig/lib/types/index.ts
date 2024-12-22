@@ -16,7 +16,7 @@ interface ComponentFunctionWithMeta extends ComponentFunction {
 
 type RenderablePrimitive = string | number | boolean | null | undefined;
 
-type Renderable = JSX.IntrinsicElements | VirtualElement | RenderablePrimitive;
+type Renderable = JSX.IntrinsicElements | VirtualElement | RenderablePrimitive | Element;
 
 interface VirtualElement {
     type: string;

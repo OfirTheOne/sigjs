@@ -5,7 +5,7 @@ import logger from "@/common/logger/logger";
 import { KeyBuilder } from "@/common/key-builder/key-builder";
 import { createElement } from "@/jsx";
 import { render } from '@/core/dom-render/render/core-render';
-import type { Router, RouteConfig, RouterPushParameters, RouteCommonConfig, RouteSyncConfig, ShouldEnterCallback } from "../router.type";
+import type { RouteComponentProps, Router, RouteConfig, RouterPushParameters, RouteCommonConfig, RouteSyncConfig, ShouldEnterCallback } from "../router.type";
 
 export async function handleRoutesMatchedResult(
     router: Router,
@@ -69,10 +69,12 @@ export async function handleRoutesMatchedResult(
             };
         } else {
             const loaderResult = await runLoaderStage(route, params, path);
-            const componentVirtualElement = createElement(routeSync.component, {
+            const routeComponentProps: RouteComponentProps = {
                 loaderResult,
                 params,
-            });
+                state: history.state
+            };
+            const componentVirtualElement = createElement(routeSync.component, routeComponentProps);
             currentComponentDom = render(componentVirtualElement, componentContainer, currentRouteRenderKey.push(routeId));
             memoRenderedRoute[routeId] = currentComponentDom;
             renderMatchResult = {

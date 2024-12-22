@@ -17,7 +17,6 @@ export interface ShouldEnterCallbackArgs {
     router: Router
 }
 
-
 export interface ShouldEnterCallback {
     (args: ShouldEnterCallbackArgs): boolean | RouterPushParameters | Promise<boolean | RouterPushParameters>;
 }
@@ -30,6 +29,12 @@ export interface LoaderCallbackArgs {
 
 export type LoaderCallback = (args: LoaderCallbackArgs) => Promise<unknown> | unknown;
 
+export type RouteComponentProps<LR = unknown> = {
+    loaderResult: LR;
+    params: Record<string, string>;
+    state: Record<string, unknown>;
+}
+
 export type RouteCommonConfig = {
     path: string;
     id?: string;
@@ -37,7 +42,6 @@ export type RouteCommonConfig = {
     memo?: boolean;
     shouldEnter?: ShouldEnterCallback;
     loader?: LoaderCallback;
-    
     onEnter?: () => void;
     onLeave?: (params: Record<string, string>) => void;
 };

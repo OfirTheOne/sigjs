@@ -4,7 +4,8 @@ import type * as HEA from "sig/convenient";
 
 declare global {
   module '*.svg' {
-    const factory = () => SVGElement;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const factory = (props: { className: string}) => SVGElement;
     export default factory;
   }
 }
@@ -907,7 +908,7 @@ declare global {
       form: HEA.FormElementAttributes;
       select: HEA.SelectElementAttributes;
       option: HEA.OptionElementAttributes;
-      textarea: HEA.TextareaElementAttributes;
+      textarea: Signalize<HEA.TextareaElementAttributes>;
       video: HEA.VideoElementAttributes;
       audio: HEA.HTMLElementAttributes;
       source: HEA.SourceElementAttributes;
