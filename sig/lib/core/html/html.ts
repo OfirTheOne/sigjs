@@ -1,9 +1,9 @@
 import { KeyBuilder } from "@/common/key-builder/key-builder";
 import { ElementKeySymbol } from "@/symbols";
-
+import logger from "@/common/logger/logger";
 
 export const DOM = {
-    createElement(tagName: string, key: KeyBuilder,options?: ElementCreationOptions): HTMLElement {
+    createElement(tagName: string, key: KeyBuilder, options?: ElementCreationOptions): HTMLElement {
         const element = document.createElement(tagName, options);
         element[ElementKeySymbol] = key.toString();
         return element;
@@ -14,16 +14,29 @@ export const DOM = {
     },
 
     appendChild(parent: HTMLElement, child: Node | Node[]): void {
-        if(!Array.isArray(child)) {
-            if (child.parentElement !== parent) {
-                parent.appendChild(child);
+        if (parent === null || parent === undefined) {
+            logger.error('Parent is null or undefined');
+            return;
+        }
+        if (parent === child) {
+            logger.error('Parent is the same as child');
+            return;
+        }
+        if (parent instanceof Text) {
+            logger.error('Parent is a text node');
+            return;
+        }
+        try {
+            if (!Array.isArray(child)) {
+                if (child.parentElement !== parent) {
+                    parent.appendChild(child);
+                }
+            } else {
+                parent.append(...child);
             }
-        } else { 
-            parent.append(...child);
-            // child.forEach((c) => {
-            //     if (c.parentElement !== parent) {
-            //     }
-            // });
+        } catch (error) {
+            console.log(error);
+
         }
     },
 

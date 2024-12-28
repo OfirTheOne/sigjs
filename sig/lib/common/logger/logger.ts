@@ -24,6 +24,10 @@ class Logger {
             console.warn(message);
         }
     }
+
+    error(message: string): void {
+        console.error(message);
+    }
 }
 
 export default Logger.getInstance(true);
