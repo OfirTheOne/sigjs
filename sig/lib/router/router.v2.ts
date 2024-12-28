@@ -76,11 +76,26 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         rootId: renderedRoot.id,
         container: routerElement,
         push,
+        replace,
         navigate,
         get state() { return history.state; },
         matchedRouteId: '',
     };
     routersStore[router.rootId] = router;
+    
+    function replace(path: string | URL, state?: Record<string, unknown>) {
+
+        if (router.navigateState.isNavigating) {
+            logger.warn('Router is currently navigating');
+            redirectStack.push([path, state]);
+            return;
+        }
+        const prevPathname = window.location.pathname;
+        history.replaceState(state, "", path);
+        if (prevPathname !== window.location.pathname) {
+            navigate(window.location.pathname);
+        }
+    }
 
     function push(path: string | URL, state?: Record<string, unknown>) {
 

@@ -74,8 +74,9 @@ export type Router = {
     rootId: string;
     container: HTMLElement;
     navigate: (path: string) => void;
+    push: (path: string | URL, state?: Record<string, unknown>) => void;
+    replace: (path: string | URL, state?: Record<string, unknown>) => void;
     state: Record<string, unknown>;
-    push: (path: string | URL, state?: Record<string, unknown>) => void
     matchedRouteId: string;
     navigateState: {
         isNavigating: boolean;
