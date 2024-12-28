@@ -1,5 +1,4 @@
 
-export interface RouteConfig {
-    path: string;
-    children?: RouteConfig[];
-  }
+export type RouteConfig 
+  = ({ path: string; } | { index: boolean; })
+  & { children?: RouteConfig[]; }

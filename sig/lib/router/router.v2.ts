@@ -45,7 +45,9 @@ const appendIdToAllRouteTree = (routes: RouteConfig[]): RouteConfig[] => {
         return {
             ...route,
             id: route.id ? route.id : uniqueId(),
-            children: route.children ? appendIdToAllRouteTree(route.children) : route.children
+            children: 'children' in route ? (
+                route.children ? appendIdToAllRouteTree(route.children) : route.children
+            ) : undefined
         }
     });
 }

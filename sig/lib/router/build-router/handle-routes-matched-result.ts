@@ -5,7 +5,7 @@ import logger from "@/common/logger/logger";
 import { KeyBuilder } from "@/common/key-builder/key-builder";
 import { createElement } from "@/jsx";
 import { render } from '@/core/dom-render/render/core-render';
-import type { RouteComponentProps, Router, RouteConfig, RouterPushParameters, RouteCommonConfig, RouteSyncConfig, ShouldEnterCallback } from "../router.type";
+import type { RouteComponentProps, Router, RouteConfig, RouterPushParameters, ShouldEnterCallback } from "../router.type";
 
 export async function handleRoutesMatchedResult(
     router: Router,
@@ -34,7 +34,7 @@ export async function handleRoutesMatchedResult(
         //  - stop the rendering process if the result is not true
         //  - if the result is an object, navigate to the path 
         if (actualShouldEnterResult != true) {
-            logger.warn(`Route ${route.path} should not enter`);
+            logger.warn(`Route ${'path' in route ? route.path : route.id} should not enter`);
             if (actualShouldEnterResult && 'path' in actualShouldEnterResult) {
                 const { path, state } = actualShouldEnterResult;
                 setTimeout(() => router.push(path, state));
@@ -57,7 +57,7 @@ export async function handleRoutesMatchedResult(
         };
 
         router.matchedRouteId = routeId;
-        const routeSync = route as RouteCommonConfig & RouteSyncConfig;
+        const routeSync = route;
         let currentComponentDom: HTMLElement | Text | ChildNode[];
         if (route.memo !== false && memoRenderedRoute[routeId]) {
             currentComponentDom = memoRenderedRoute[routeId];
@@ -88,7 +88,7 @@ export async function handleRoutesMatchedResult(
         componentDom = renderMatchResult.componentDom;
         renderedComponentList.push({ routeId, componentDom, componentContainer, memo: isMemo });
         if (isMemo) {
-            logger.log(`Route ${route.path} is memoized`);
+            logger.log(`Route ${'path' in route ? route.path : route.id} is memoized`);
         }
         if (rootComponentDom === null) {
             rootComponentDom = componentDom;
@@ -163,7 +163,7 @@ async function runShouldEnterStage(
     try {
         shouldEnterResult = shouldEnterFunction({ path, params, state: history.state, router });
     } catch (error) {
-        logger.warn(`Route ${route.path} throws an error on shouldEnter, instead of returning a boolean, prefer handling the error and return false.`);
+        logger.warn(`Route ${'path' in route ? route.path : route.id} throws an error on shouldEnter, instead of returning a boolean, prefer handling the error and return false.`);
         shouldEnterResult = false;
     }
 
@@ -172,7 +172,7 @@ async function runShouldEnterStage(
         try {
             actualShouldEnterResult = await shouldEnterResult;
         } catch (error) {
-            logger.warn(`Route ${route.path} should not enter`);
+            logger.warn(`Route ${'path' in route ? route.path : route.id} should not enter`);
             actualShouldEnterResult = false;
         }
     } else {
@@ -194,7 +194,7 @@ async function runLoaderStage(
             try {
                 return await result;
             } catch (error) {
-                logger.warn(`Route ${route.path} throws an error on loader, instead of returning a component, prefer handling the error and return a component.`);
+                logger.warn(`Route ${path} throws an error on loader, instead of returning a component, prefer handling the error and return a component.`);
                 return null;
             }
         } else {

@@ -21,52 +21,66 @@ export function matchRoute<R extends RouteConfig = RouteConfig>(path: string, ro
   const rootToLeafMatrix = buildRootToLeafRouteMatrix(routes);
   const pathParts = splitPath(path);
   const processedMatchedRoutes: {
-      routeParts: { 
-        route: R; 
-        fullPath: string; 
-        routePathParts: string[]; 
-      }[];
-      firstMatchedParamIndex: number; 
-      matchParams: Record<string, string>; 
+    routeParts: {
+      route: R;
+      fullPath: string;
+      routePathParts: string[];
+      isIndex?: boolean;
+    }[];
+    firstMatchedParamIndex: number;
+    matchParams: Record<string, string>;
   }[] = [];
 
-  for(const pathRootToLeaf of rootToLeafMatrix) {
+  for (const pathRootToLeaf of rootToLeafMatrix) {
     let fullPathToCurrentRoutePart = '/';
     let firstMatchedParamIndex = -1;
     const matchParams: Record<string, string> = {};
-    const processedRouteParts: { 
-      route: R; 
-      fullPath: string; 
-      routePathParts: string[]; 
+    const processedRouteParts: {
+      route: R;
+      fullPath: string;
+      routePathParts: string[];
+      isIndex?: boolean;
     }[] = [];
-    for(const routePart of pathRootToLeaf) {
-      fullPathToCurrentRoutePart = resolvePath(fullPathToCurrentRoutePart, routePart.path);
-      const routePathParts = splitPath(fullPathToCurrentRoutePart); //  == '/' ? [''] : fullPathToCurrentRoutePart.split('/');
-      const isMatch = routePathParts.every((part, index) => {
-        if (part.startsWith(':')) {
-          if (pathParts.length <= index) {
-            return false;
-          }
-          if (firstMatchedParamIndex === -1) {
-            firstMatchedParamIndex = index;
-          }
-          matchParams[part.slice(1)] = pathParts[index];
-          return true;
-        }
-        return part === pathParts[index];
-      });
-      if(isMatch) {
+
+    for (const routePart of pathRootToLeaf) {
+      if ('index' in routePart) {
+        const prevRoutePathParts = processedRouteParts.at(-1)?.routePathParts || [];
         processedRouteParts.push({
           route: routePart,
           fullPath: fullPathToCurrentRoutePart,
-          routePathParts,
+          routePathParts: prevRoutePathParts,
+          isIndex: true,
         });
       } else {
-        break;
+        fullPathToCurrentRoutePart = resolvePath(fullPathToCurrentRoutePart, routePart.path);
+        const routePathParts = splitPath(fullPathToCurrentRoutePart); //  == '/' ? [''] : fullPathToCurrentRoutePart.split('/');
+        const isMatch = routePathParts.every((part, index) => {
+          if (part.startsWith(':')) {
+            if (pathParts.length <= index) {
+              return false;
+            }
+            if (firstMatchedParamIndex === -1) {
+              firstMatchedParamIndex = index;
+            }
+            matchParams[part.slice(1)] = pathParts[index];
+            return true;
+          }
+          return part === pathParts[index];
+        });
+        if (isMatch) {
+          processedRouteParts.push({
+            route: routePart,
+            fullPath: fullPathToCurrentRoutePart,
+            routePathParts,
+          });
+        } else {
+          break;
+        }
       }
     }
 
-    if(processedRouteParts.length) {
+
+    if (processedRouteParts.length) {
       processedMatchedRoutes.push({
         routeParts: processedRouteParts,
         firstMatchedParamIndex,
@@ -76,17 +90,17 @@ export function matchRoute<R extends RouteConfig = RouteConfig>(path: string, ro
   }
 
 
-  const postProcessedMatchedRoutes = processedMatchedRoutes.map(({ 
-    routeParts, 
-    firstMatchedParamIndex, 
-    matchParams 
+  const postProcessedMatchedRoutes = processedMatchedRoutes.map(({
+    routeParts,
+    firstMatchedParamIndex,
+    matchParams
   }) => {
     const mostSpecificRoute = routeParts.at(-1);
-    const overallRouteParts =  splitPath(mostSpecificRoute?.fullPath); // === '/' ? [''] : mostSpecificRoute?.fullPath.split('/') || [];
+    const overallRouteParts = splitPath(mostSpecificRoute?.fullPath); // === '/' ? [''] : mostSpecificRoute?.fullPath.split('/') || [];
     const depth = overallRouteParts.length;
     const isFullMatch = depth === pathParts.length;
     const isExactMatch = firstMatchedParamIndex === -1 && isFullMatch;
-    
+
     return {
       params: matchParams,
       routeParts,
@@ -98,25 +112,25 @@ export function matchRoute<R extends RouteConfig = RouteConfig>(path: string, ro
   });
 
   const exactMatch = postProcessedMatchedRoutes.find(({ isExactMatch }) => isExactMatch);
-  if(exactMatch) {
-    return { 
-      routes: exactMatch.routeParts.map(({ route }) => route), 
-      params: exactMatch.params 
+  if (exactMatch) {
+    return {
+      routes: exactMatch.routeParts.map(({ route }) => route),
+      params: exactMatch.params
     };
   }
 
   const fullMatches = postProcessedMatchedRoutes.find(({ isFullMatch }) => isFullMatch);
-  if(fullMatches) {
-    return { 
-      routes: fullMatches.routeParts.map(({ route }) => route), 
-      params: fullMatches.params 
+  if (fullMatches) {
+    return {
+      routes: fullMatches.routeParts.map(({ route }) => route),
+      params: fullMatches.params
     };
   }
 
   const mostDepthMatch = postProcessedMatchedRoutes.reduce((acc, curr) => acc.depth > curr.depth ? acc : curr);
-  return { 
-    routes: mostDepthMatch.routeParts.map(({ route }) => route), 
-    params: mostDepthMatch.params 
+  return {
+    routes: mostDepthMatch.routeParts.map(({ route }) => route),
+    params: mostDepthMatch.params
   };
 }
 

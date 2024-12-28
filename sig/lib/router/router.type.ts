@@ -35,26 +35,21 @@ export type RouteComponentProps<LR = unknown> = {
     state: Record<string, unknown>;
 }
 
-export type RouteCommonConfig = {
-    path: string;
+type RouteBaseConfig = {
     id?: string;
-    children?: RouteConfig[];
     memo?: boolean;
     shouldEnter?: ShouldEnterCallback;
     loader?: LoaderCallback;
     onEnter?: () => void;
     onLeave?: (params: Record<string, string>) => void;
-};
-// export type RouteAsyncConfig = {
-//     component: AsyncComponentFunction;
-//     fallback?: ComponentFunction;
-//     loading?: ComponentFunction;
-// };
-export type RouteSyncConfig = {
     component: ComponentFunction;
-};
+}
 
-export type RouteConfig = RouteCommonConfig & RouteSyncConfig; // (RouteAsyncConfig | RouteSyncConfig);
+export type RoutePathConfig = RouteBaseConfig & { path: string; children?: RouteConfig[]; };
+
+export type RouteIndexConfig = RouteBaseConfig & { index: boolean; };
+
+export type RouteConfig = RoutePathConfig | RouteIndexConfig;
 
 export type RouterConfig = {
     routes: (RouteConfig & { default?: boolean })[];
