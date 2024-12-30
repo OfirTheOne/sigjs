@@ -41,15 +41,16 @@ export function Layout() {
             <div className="flex sm:hidden">
               <button
                 type="button"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                onClick={() => setIsMenuOpen((curr) => !curr)}
                 className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-indigo-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
               >
                 <span className="sr-only">Open main menu</span>
-                {isMenuOpen ? (
-                    X({ className: "block h-6 w-6" })
-                ) : (
-                  Menu({ className: "block h-6 w-6" })
-                )}
+                {X({ className: "block h-6 w-6" })}
+                {/* <If
+                  condition={isMenuOpen} 
+                  then={X({ className: "block h-6 w-6" }) as any}
+                  fallback={Menu({ className: "block h-6 w-6" }) as any}
+                /> */}
               </button>
             </div>
           </div>

@@ -15,6 +15,8 @@
     "allowSyntheticDefaultImports": true,
     // "sourceMap": true,
     "jsx": "preserve",
+    "jsxFactory": "createElement",
+    "jsxFragmentFactory": "createFragment",
     "outDir": "./public/dist",
     "baseUrl": "./",
     "incremental": true,
