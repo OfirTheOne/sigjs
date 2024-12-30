@@ -176,7 +176,7 @@ describe('matchRoute with flat route ', () => {
 
 });
 
-describe('matchRoute tow matching routes', () => {
+describe('matchRoute two matching routes', () => {
   const routesConfig = [
     {
       path: "/",

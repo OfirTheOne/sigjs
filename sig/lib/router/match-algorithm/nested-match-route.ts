@@ -2,6 +2,37 @@
 import { buildRootToLeafRouteMatrix } from "./build-root-to-leaf-route-matrix";
 import { RouteConfig } from "./match-route.type";
 
+
+export function matchRoutePaths(
+  routePathParts: string[],
+  pathParts: string[]
+): { 
+  isMatch: boolean; 
+  params?: Record<string, string>; 
+  firstMatchedParamIndex?: number 
+} {
+  const params: Record<string, string> = {};
+  let firstMatchedParamIndex = -1;
+
+  const isMatch = routePathParts.every((part, index) => {
+    if (part.startsWith(':')) {
+      if (pathParts.length <= index) {
+        return false;
+      }
+      if (firstMatchedParamIndex === -1) {
+        firstMatchedParamIndex = index;
+      }
+      params[part.slice(1)] = pathParts[index];
+      return true;
+    }
+    return part === pathParts[index];
+  });
+
+  return { isMatch, params, firstMatchedParamIndex };
+}
+
+
+
 export interface MatchRouteResult<R extends RouteConfig = RouteConfig> {
   routes: R[];
   params: Record<string, string>;
@@ -17,7 +48,6 @@ export interface MatchedRoute<R extends RouteConfig = RouteConfig> {
 
 
 export function matchRoute<R extends RouteConfig = RouteConfig>(path: string, routes: R[]): MatchRouteResult<R> {
-
   const rootToLeafMatrix = buildRootToLeafRouteMatrix(routes);
   const pathParts = splitPath(path);
   const processedMatchedRoutes: {
@@ -54,20 +84,20 @@ export function matchRoute<R extends RouteConfig = RouteConfig>(path: string, ro
       } else {
         fullPathToCurrentRoutePart = resolvePath(fullPathToCurrentRoutePart, routePart.path);
         const routePathParts = splitPath(fullPathToCurrentRoutePart); //  == '/' ? [''] : fullPathToCurrentRoutePart.split('/');
-        const isMatch = routePathParts.every((part, index) => {
-          if (part.startsWith(':')) {
-            if (pathParts.length <= index) {
-              return false;
-            }
-            if (firstMatchedParamIndex === -1) {
-              firstMatchedParamIndex = index;
-            }
-            matchParams[part.slice(1)] = pathParts[index];
-            return true;
-          }
-          return part === pathParts[index];
-        });
+        
+        const {
+          isMatch, 
+          params: currentMatchParams,
+          firstMatchedParamIndex: currentFirstMatchedParamIndex  
+        } = matchRoutePaths(routePathParts, pathParts);
+
         if (isMatch) {
+          if (currentMatchParams && Object.keys(currentMatchParams).length) {
+            Object.assign(matchParams, currentMatchParams);
+            if (firstMatchedParamIndex === -1 && currentFirstMatchedParamIndex !== undefined) {
+              firstMatchedParamIndex = currentFirstMatchedParamIndex;
+            }
+          }
           processedRouteParts.push({
             route: routePart,
             fullPath: fullPathToCurrentRoutePart,
@@ -78,7 +108,6 @@ export function matchRoute<R extends RouteConfig = RouteConfig>(path: string, ro
         }
       }
     }
-
 
     if (processedRouteParts.length) {
       processedMatchedRoutes.push({
@@ -144,7 +173,7 @@ function resolvePath(...pathParts: string[]): string {
 }
 
 
-function splitPath(path?: string): string[] {
+export function splitPath(path?: string): string[] {
   if (path === undefined) {
     return [];
   }

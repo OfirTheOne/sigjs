@@ -20,6 +20,7 @@ customElements.define('router-outlet', class extends HTMLElement { });
 
 const history = window.history;
 
+/** @publicApi **/
 function getRouter(): Router {
     const renderedRootId = getRenderedRoot();
     if (!renderedRootId) {
@@ -31,7 +32,7 @@ function getRouter(): Router {
     }
     return router;
 }
-
+/** @publicApi **/
 function getParams(): Record<string, string> {
     const router = getRouter();
     if (router.navigationMatchMetadata) {
@@ -178,7 +179,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
     navigate(window.location.pathname);
     return router;
 }
-
+/** @publicApi **/
 function createRouter(config: RouterConfig): VirtualElement {
     const renderedRoot = getRenderedRoot();
     if (!renderedRoot) {
