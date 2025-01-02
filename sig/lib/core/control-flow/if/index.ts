@@ -4,14 +4,15 @@ import { DOM } from "@/core/html";
 import { Signal, isSignal, subscribeSignal } from "@/core/signal";
 import { IfControlFlow } from "@/symbols";
 import { ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/constants";
-import type { VirtualElement } from "@/types";
+import type { Renderable, VirtualElement } from "@/types";
 import type { RenderFunction } from "@/core/dom-render/render";
+import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
 
 
 interface IfProps {
     condition: Signal<any>;
-    then: VirtualElement;
-    fallback?: VirtualElement;
+    then: Renderable;
+    fallback?: Renderable;
     memo?: boolean
 }
 
@@ -54,7 +55,7 @@ function renderIf(
                     return;
                 }
                 const thenKey = currentKey.clone().push('if-then');
-                thenElementDom = render(then, placeholder, thenKey);
+                thenElementDom = render(adaptVirtualElementChild(then), placeholder, thenKey);
                 DOM.appendChild(placeholder, thenElementDom);
             } else if (fallback) {
                 if(memo && fallbackElementDom) {
@@ -62,7 +63,7 @@ function renderIf(
                     return;
                 }
                 const fallbackKey = currentKey.clone().push('if-fallback');
-                fallbackElementDom = render(fallback, placeholder, fallbackKey);
+                fallbackElementDom = render(adaptVirtualElementChild(fallback), placeholder, fallbackKey);
                 DOM.appendChild(placeholder, fallbackElementDom);
             } else {
                 return container;
