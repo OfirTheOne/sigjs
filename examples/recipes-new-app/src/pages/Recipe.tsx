@@ -32,7 +32,7 @@ export function Recipe({ params }: RouteComponentProps) {
     return (
         <If 
             condition={recipe$} 
-            fallback={<div>Recipe not found</div> as any}
+            fallback={<div>Recipe not found</div>}
             then={
                 <div className="max-w-4xl mx-auto">
                     <div className="mb-8">
@@ -153,7 +153,7 @@ export function Recipe({ params }: RouteComponentProps) {
                                 )}
                             />
                     </div>
-                </div> as any
+                </div>
             }
         />
             
