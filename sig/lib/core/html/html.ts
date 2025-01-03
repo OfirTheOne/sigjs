@@ -43,5 +43,23 @@ export const DOM = {
     addComment(node: Node, comment: string) {
         const commentNode = DOM.createComment(comment);
         node.appendChild(commentNode);
-    }
+    },
+
+    classListRemove(dom: HTMLElement, value: string | string[]) {
+        let values: string[] = [];
+        if (typeof value === 'string') {
+            values = value.split(' ')
+        } 
+        values = values.map(v => v.trim());
+        dom.classList.remove(...values);
+    },
+
+    classListAdd(dom: HTMLElement, value: string | string[]) {
+        let values: string[] = [];
+        if (typeof value === 'string') {
+            values = value.split(' ')
+        } 
+        values = values.map(v => v.trim());
+        dom.classList.add(...values);
+    },
 }
