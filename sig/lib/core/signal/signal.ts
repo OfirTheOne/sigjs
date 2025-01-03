@@ -1,13 +1,17 @@
-import { Signal, CoreSignalCapabilities, EnhancedSignalCapabilities, StaleSignalCapabilities, Listener } from "./signal.types";
+import { Signal, CoreSignalCapabilities, EnhancedSignalCapabilities, StaleSignalCapabilities, Listener, RememberPreviousValueSignalCapabilities, SignalOptions } from "./signal.types";
 
 let signalCounter = 0
 
-function buildSignal<T>(value: T, id?: string):
-    CoreSignalCapabilities<T> &
-    EnhancedSignalCapabilities<T> & 
-    StaleSignalCapabilities {
+type BuildSignalResult<T> 
+    = CoreSignalCapabilities<T> 
+    & EnhancedSignalCapabilities<T>
+    & RememberPreviousValueSignalCapabilities<T> 
+    & StaleSignalCapabilities;
+
+function buildSignal<T>(value: T, options?: SignalOptions): BuildSignalResult<T> {
     let listeners: Listener<T>[] = [];
     let staleMode = false;
+    let _prevValue: T | undefined;
     const linkedSubscriptions: (() => void)[] = [];
     const nonCallableSignal: Pick<Signal<T>
         , 'id'
@@ -19,20 +23,23 @@ function buildSignal<T>(value: T, id?: string):
         | 'disconnect'
         | 'emit'
         | 'value'
+        | 'previousValue'
         | 'setValue'
         | 'enterStaleMode'
         | 'exitStaleMode'
     > = {
-        id: id || String(signalCounter),
-        get value() {
-            return value;
-        },
+        id: options?.id || String(signalCounter),
+        get previousValue() { return _prevValue; },
+        get value() { return value; },
         set value(newValue: T) {
+            if(options?.rememberPrevValue) {
+                _prevValue = value;
+            }
             value = newValue;
             this.emit(newValue);
         },
         emit(value: T) {
-            if (!staleMode) {                
+            if (!staleMode) {
                 listeners.forEach(listener => listener(value));
             }
         },
@@ -45,16 +52,10 @@ function buildSignal<T>(value: T, id?: string):
         },
         subscribe(listener: Listener<T>) {
             listeners.push(listener);
-            return () => {
-                listeners = listeners.filter(l => l !== listener);
-            };
+            return () => { listeners = listeners.filter(l => l !== listener); };
         },
-        enterStaleMode() {
-            staleMode = true;
-        },
-        exitStaleMode() {
-            staleMode = false;
-        },
+        enterStaleMode() { staleMode = true; },
+        exitStaleMode() { staleMode = false; },
         disconnect() {
             listeners = [];
             this.linkedSubscriptions.forEach(unsubscribe => unsubscribe());
@@ -76,19 +77,15 @@ function buildSignal<T>(value: T, id?: string):
             this.subscribe((value) => setDerivedSignal(pipe(value)));
             return derivedSignal;
         },
-        get listeners() {
-            return listeners;
-        },
-        get linkedSubscriptions() {
-            return linkedSubscriptions;
-        }
+        get listeners() { return listeners; },
+        get linkedSubscriptions() { return linkedSubscriptions; }
     };
     return nonCallableSignal;
 }
 
-function signal<T>(value: T, id?: string): Signal<T> {
+function signal<T>(value: T, options?: SignalOptions): Signal<T> {
 
-    const nonCallableSignal = buildSignal(value, id);
+    const nonCallableSignal = buildSignal(value, options);
 
     const callableSignal = function (this: Signal<T>) {
         return nonCallableSignal.value;
@@ -99,6 +96,11 @@ function signal<T>(value: T, id?: string): Signal<T> {
         },
         set(newValue: T) {
             nonCallableSignal.value = newValue;
+        }
+    });
+    Object.defineProperty(callableSignal, 'previousValue', {
+        get() {
+            return nonCallableSignal.previousValue;
         }
     });
     Object.defineProperty(callableSignal, 'listeners', {
@@ -128,8 +130,8 @@ function signal<T>(value: T, id?: string): Signal<T> {
     return callableSignal as Signal<T>;
 }
 
-function createSignal<T>(value: T, id?: string): [Signal<T>, Signal<T>['setValue']] {
-    const callableSignal = signal(value, id);
+function createSignal<T>(value: T, options?: SignalOptions): [Signal<T>, Signal<T>['setValue']] {
+    const callableSignal = signal(value, options);
     return [callableSignal as Signal<T>, callableSignal.setValue];
 }
 

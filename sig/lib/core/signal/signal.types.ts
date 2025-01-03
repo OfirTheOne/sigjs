@@ -1,3 +1,7 @@
+type SignalOptions = {
+    id?: string;
+    rememberPrevValue?: boolean;
+}
 
 
 type Listener<T = unknown> = (value: T) => void;
@@ -53,6 +57,10 @@ interface EnhancedSignalCapabilities<T> {
     readonly linkedSubscriptions: (() => void)[];
 }
 
+interface RememberPreviousValueSignalCapabilities<T> {
+    previousValue: T | undefined;
+}
+
 interface CallableSignal<T> {
     (): T;
 }
@@ -60,6 +68,7 @@ interface CallableSignal<T> {
 interface Signal<T = unknown> extends 
     CoreSignalCapabilities<T>, 
     EnhancedSignalCapabilities<T>, 
+    RememberPreviousValueSignalCapabilities<T>,
     StaleSignalCapabilities,
     CallableSignal<T> {
 }
@@ -107,6 +116,8 @@ export type {
     CoreSignalCapabilities,
     EnhancedSignalCapabilities,
     StaleSignalCapabilities,
+    RememberPreviousValueSignalCapabilities,
+    SignalOptions,
     CallableSignal,
     Listener, 
     ExtractSignalType, 
