@@ -1,5 +1,5 @@
 
-import { createSignal } from 'sig';
+import { createSignal, If } from 'sig';
 import { Link } from 'sig/router';
 import Menu from '/assets/icons/menu.svg';
 import X from '/assets/icons/x.svg';
@@ -7,6 +7,8 @@ import UtensilsCrossed from '/assets/icons/utensils-crossed.svg';
 
 export function Layout() {
   const [isMenuOpen, setIsMenuOpen] = createSignal(false);
+
+  const visibleMenuClass$ = isMenuOpen.derive<string>((isOpen) => isOpen ? 'block' : 'hidden');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -45,18 +47,18 @@ export function Layout() {
                 className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-indigo-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
               >
                 <span className="sr-only">Open main menu</span>
-                {X({ className: "block h-6 w-6" })}
-                {/* <If
+                {/* {X({ className: "block h-6 w-6" })} */}
+                <If
                   condition={isMenuOpen} 
                   then={X({ className: "block h-6 w-6" }) as any}
                   fallback={Menu({ className: "block h-6 w-6" }) as any}
-                /> */}
+                />
               </button>
             </div>
           </div>
 
           {/* Mobile Navigation */}
-          <div className={`sm:hidden ${isMenuOpen ? 'block' : 'hidden'}`}>
+          <div className={['sm:hidden', visibleMenuClass$]}>
             <div className="px-2 pt-2 pb-3 space-y-1">
               <Link
                 to="/categories"
