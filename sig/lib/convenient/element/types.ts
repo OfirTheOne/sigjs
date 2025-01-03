@@ -1,3 +1,4 @@
+import type { Signal } from '@/core/signal/signal.types';
 import type * as CSS from 'csstype';
 
 
@@ -80,7 +81,7 @@ export type HTMLElementEventHandlersExtendsConcurrency = {
 
 interface NonNativeElementAttributes {
     ref?: any;
-    className?: string;
+    className?: string | (Signal<string> | string)[] | Record<string, boolean> ;
     style?: CSSProperties;
 }
 

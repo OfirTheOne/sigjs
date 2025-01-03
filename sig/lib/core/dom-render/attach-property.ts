@@ -1,13 +1,18 @@
 import { ElementRef } from "@/types";
 import { isSignal, Signal, subscribeSignal } from "../signal";
 import { registerSignalSubscription } from "../global/global-hook-executioner";
+import { DOM } from "../html";
 
 function attachPropertyToElement(dom: HTMLElement, name: string, value: unknown): unknown {
     if (name === 'children') {
         return;
     }
     if (name === 'className') {
-        name = 'class';
+        attachClassComplexValueToElementClass(
+            dom,
+            value as string | Signal<string> | (string | Signal<string>)[] | Record<string, boolean /* | Signal<boolean> */>
+        );
+        return;
     }
     if (name === 'ref') {
         if (typeof value === 'function') {
@@ -51,7 +56,7 @@ function attachStyleToElement(
     }
 }
 
-function attachStylePropertyToElement(dom: HTMLElement, styleProperty: string, value: string | number): void { 
+function attachStylePropertyToElement(dom: HTMLElement, styleProperty: string, value: string | number): void {
     const validStyleKey = styleProperty.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
     dom.style.setProperty(validStyleKey, value as string);
 }
@@ -97,6 +102,46 @@ function attachSignalToElementStyle(
     });
     registerSignalSubscription(element, unsubscribe);
     return unsubscribe;
+}
+
+function attachSignalToElementClass(
+    signal: Signal<string>,
+    element: HTMLElement
+): void {
+    const currentSidClass = element.getAttribute(`sid:class`);
+    const sidClass = currentSidClass ? `${currentSidClass};${signal.id}` : signal.id;
+    element.setAttribute(`sid:class`, sidClass);
+    let lastValue: string = signal.value;
+    const unsubscribe = subscribeSignal(signal, (value: string) => {
+        DOM.classListRemove(element, lastValue);
+        DOM.classListAdd(element, value);
+        lastValue = value;
+    });
+    registerSignalSubscription(element, unsubscribe);
+}
+
+function attachClassComplexValueToElementClass(
+    dom: HTMLElement,
+    value: string | Signal<string> | (string | Signal<string>)[] | Record<string, boolean /* | Signal<boolean> */>
+): void {
+    if (typeof value === 'string') {
+        DOM.classListAdd(dom, value);
+    } else if (isSignal<string>(value)) {
+        attachSignalToElementClass(value, dom);
+    } else if (Array.isArray(value)) {
+        value.forEach((item) => {
+            if (typeof item === 'string') {
+                DOM.classListAdd(dom, item);
+            } else if (isSignal(item)) {
+                attachSignalToElementClass(item, dom);
+            }
+        });
+    } else {
+        for (const key in value) {
+            const item = value[key];
+            dom.classList.toggle(key, Boolean(item));
+        }
+    }
 }
 
 
