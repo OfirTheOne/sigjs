@@ -116,7 +116,7 @@ export function Recipe({ params }: RouteComponentProps) {
                                     type="text"
                                     placeholder="Your name"
                                     value={commentAuthor$}
-                                    onChange={(e: any) => setComment((currentComment) => ({ ...currentComment, author: e.target.value }))}
+                                    onChange={(e) => setComment((currentComment) => ({ ...currentComment, author: e.target.value }))}
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                 />
                             </div>
@@ -124,7 +124,7 @@ export function Recipe({ params }: RouteComponentProps) {
                                 <textarea
                                     placeholder="Your comment"
                                     value={commentContent$}
-                                    onChange={(e: any) => setComment((currentComment) => ({ ...currentComment, content: e.target.value }))}
+                                    onChange={(e) => setComment((currentComment) => ({ ...currentComment, content: e.target.value }))}
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                     rows={4}
                                 />
