@@ -1,3 +1,4 @@
+import { createElement } from "@/jsx";
 import { KeyBuilder } from "@/common/key-builder/key-builder";
 import { registerSignalSubscription } from "@/core/global/global-hook-executioner";
 import { DOM } from "@/core/html";
@@ -14,6 +15,8 @@ interface IfProps {
     then: Renderable;
     fallback?: Renderable;
     memo?: boolean
+    as?: string;
+    asProps?: { [key: string]: unknown };
 }
 
 function If(props: IfProps): VirtualElement {
@@ -37,41 +40,44 @@ function renderIf(
     render: RenderFunction,
     key: KeyBuilder,
 ): HTMLElement | Text {
-    const { condition, then, fallback, memo = true } = (element.props as unknown as IfProps);
+    const { condition, then, fallback, memo = true, as, asProps } = (element.props as unknown as IfProps);
     const currentKey = key.clone().push(element.props.controlTag as string);
-    const placeholder = DOM.createElement('if-ph', currentKey);
+    const placeholderDom = (as ? 
+        render(createElement(as, { ...asProps, role: 'if-ph' }), undefined, key) :
+        DOM.createElement('for-ph', currentKey)) as HTMLElement;
+        
     let thenElementDom: HTMLElement | Text;
     let fallbackElementDom: HTMLElement | Text;
     if (isSignal(condition)) {
         const conditionSignal = condition;
-        DOM.appendChild(container, placeholder);
-        placeholder.setAttribute('signal', conditionSignal.id);
+        DOM.appendChild(container, placeholderDom);
+        placeholderDom.setAttribute('signal', conditionSignal.id);
 
         const unsubscribe = subscribeSignal(conditionSignal, (conditionValue) => {
-            placeholder.childNodes.forEach(child => child.remove());
+            placeholderDom.childNodes.forEach(child => child.remove());
             if (conditionValue) {
                 if(memo && thenElementDom) {
-                    DOM.appendChild(placeholder, thenElementDom);
+                    DOM.appendChild(placeholderDom, thenElementDom);
                     return;
                 }
                 const thenKey = currentKey.clone().push('if-then');
-                thenElementDom = render(adaptVirtualElementChild(then), placeholder, thenKey);
-                DOM.appendChild(placeholder, thenElementDom);
+                thenElementDom = render(adaptVirtualElementChild(then), placeholderDom, thenKey);
+                DOM.appendChild(placeholderDom, thenElementDom);
             } else if (fallback) {
                 if(memo && fallbackElementDom) {
-                    DOM.appendChild(placeholder, fallbackElementDom);
+                    DOM.appendChild(placeholderDom, fallbackElementDom);
                     return;
                 }
                 const fallbackKey = currentKey.clone().push('if-fallback');
-                fallbackElementDom = render(adaptVirtualElementChild(fallback), placeholder, fallbackKey);
-                DOM.appendChild(placeholder, fallbackElementDom);
+                fallbackElementDom = render(adaptVirtualElementChild(fallback), placeholderDom, fallbackKey);
+                DOM.appendChild(placeholderDom, fallbackElementDom);
             } else {
                 return container;
             }
         });
-        registerSignalSubscription(placeholder, unsubscribe);
+        registerSignalSubscription(placeholderDom, unsubscribe);
     }
-    return placeholder;
+    return placeholderDom;
 }
 
 export type { IfProps };
