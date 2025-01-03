@@ -9,7 +9,10 @@ import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt
 import type { RenderFunction } from "@/core/dom-render/render";
 import type { VirtualElement, Renderable } from "@/types";
 
-
+/**
+ * @publicApi
+ * For control flow element props
+ */ 
 interface ForProps<T = unknown> {
     list: Array<T> | Signal<Array<T>>;
     factory: Renderable | ((item: T, index: number, list: T[]) => Renderable);
@@ -18,7 +21,11 @@ interface ForProps<T = unknown> {
     as?: string;
     asProps?: { [key: string]: unknown };
 }
-
+/**
+ * For control flow element
+ * @param {ForProps} props - For control flow element props
+ * @publicApi
+ */
 function For<T = unknown>(props: ForProps<T>): VirtualElement {
     return {
         type: ELEMENT_TYPE.CONTROL_FLOW,

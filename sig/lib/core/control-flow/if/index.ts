@@ -10,6 +10,10 @@ import type { RenderFunction } from "@/core/dom-render/render";
 import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
 
 
+/**
+ * @publicApi
+ * If control flow element props
+ */ 
 interface IfProps {
     condition: Signal<any>;
     then: Renderable;
@@ -19,6 +23,11 @@ interface IfProps {
     asProps?: { [key: string]: unknown };
 }
 
+/**
+ * If control flow element
+ * @param {IfProps} props - If control flow element props
+ * @publicApi
+ */
 function If(props: IfProps): VirtualElement {
     return {
         type: ELEMENT_TYPE.CONTROL_FLOW,
