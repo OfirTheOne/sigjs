@@ -1,11 +1,20 @@
 {
-    "entryPoints": ["./lib/index.ts"],
+    "entryPoints": [
+      "./lib/index.ts",
+      "./lib/router/index.ts",
+      "./lib/store/index.ts",
+    ],
     "out": "docs",
     "plugin": ["typedoc-plugin-markdown"],
-    "exclude": ["**/__tests__/**", "**/*.spec.ts"],
+    "exclude": ["**/__tests__/**", "**/*.spec.ts", "**/*.test.ts"],
     "excludeExternals": true,
     "excludePrivate": true,
     "excludeProtected": true,
+    "excludeInternal": true,
+    "excludeNotDocumented": true,
+    "compilerOptions": {
+      "excludeInternal": true,
+    },
     "hideGenerator": true,
     "readme": "none"
   }
