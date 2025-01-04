@@ -11,6 +11,23 @@ interface Middleware<T> {
     (newState: T, state: Partial<T>, store: Store<T>): void;
 }
 
+/**
+ * Store is a class that holds the state of the application and notifies subscribers when the state changes.
+ * 
+ * @example
+ * const store = new Store({ count: 0 });
+ * store.subscribe(state => console.log(state.count));
+ * store.setState({ count: 1 });
+ * // console logs:
+ * // > 1
+ * @example
+ * const store = new Store({ count: 0 });
+ * const count$ = store.select(state => state.count);
+ * count$.subscribe(count => console.log(count));
+ * count$.setValue((prevCount) => prevCount + 1);
+ * // console logs:
+ * // > 1
+ */
 export class Store<T> {
     private state: T;
     private signals: Map<Selector<T, unknown>, {

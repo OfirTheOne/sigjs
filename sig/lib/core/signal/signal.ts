@@ -2,12 +2,14 @@ import { Signal, CoreSignalCapabilities, EnhancedSignalCapabilities, StaleSignal
 
 let signalCounter = 0
 
+/** @internal */
 type BuildSignalResult<T> 
     = CoreSignalCapabilities<T> 
     & EnhancedSignalCapabilities<T>
     & RememberPreviousValueSignalCapabilities<T> 
     & StaleSignalCapabilities;
 
+/** @internal */
 function buildSignal<T>(value: T, options?: SignalOptions): BuildSignalResult<T> {
     let listeners: Listener<T>[] = [];
     let staleMode = false;
@@ -83,6 +85,34 @@ function buildSignal<T>(value: T, options?: SignalOptions): BuildSignalResult<T>
     return nonCallableSignal;
 }
 
+
+/**
+ * Create a signal
+ * @param {T} value  The initial value of the signal
+ * @param {SignalOptions} options Options for the signal
+ * @returns {Signal<T>} A signal
+ * @example
+ * const counter = signal(0);
+ * counter.subscribe(value => console.log(value));
+ * counter.setValue(1);
+ * counter.setValue((prevValue) => prevValue + 1);
+ * // console logs:
+ * // > 0
+ * // > 1
+ * // > 2
+ * @example
+ * const counter = signal(0, { id: 'counter' });
+ * console.log(counter.id);
+ * // > 'counter'
+ * @example
+ * const counter = signal(0, { rememberPrevValue: true });
+ * console.log(counter.previousValue);
+ * counter.setValue(1);
+ * console.log(counter.previousValue);
+ * // console logs:
+ * // > undefined
+ * // > 0
+ */
 function signal<T>(value: T, options?: SignalOptions): Signal<T> {
 
     const nonCallableSignal = buildSignal(value, options);
@@ -130,6 +160,12 @@ function signal<T>(value: T, options?: SignalOptions): Signal<T> {
     return callableSignal as Signal<T>;
 }
 
+/**
+ * Create a signal and a function to set the value of the signal
+ * @param {T} value  The initial value of the signal
+ * @param {SignalOptions} options Options for the signal 
+ * @returns {[Signal<T>, Signal<T>['setValue']]} A tuple containing the signal and a function to set the value of the signal
+ */ 
 function createSignal<T>(value: T, options?: SignalOptions): [Signal<T>, Signal<T>['setValue']] {
     const callableSignal = signal(value, options);
     return [callableSignal as Signal<T>, callableSignal.setValue];

@@ -1,5 +1,5 @@
 
-import logger from   "@/common/logger/logger";
+import logger from "@/common/logger/logger";
 import { uniqueId } from "@/common/unique-id";
 import { getRenderedRoot } from "@/core/global";
 import { createElement } from "@/jsx";
@@ -20,7 +20,16 @@ customElements.define('router-outlet', class extends HTMLElement { });
 
 const history = window.history;
 
-/** @publicApi **/
+/**
+ * Get the current router instance
+ * @returns The current router instance, must be called within a router context
+ * @throws {Error} If called outside of a router context  
+ * @example
+ * const router = getRouter();
+ * console.log(router);
+ * // console logs:
+ * // > { container: HTMLElement, push: Function, replace: Function, navigate: Function, ... }
+ */
 function getRouter(): Router {
     const renderedRootId = getRenderedRoot();
     if (!renderedRootId) {
@@ -32,7 +41,19 @@ function getRouter(): Router {
     }
     return router;
 }
-/** @publicApi **/
+
+/**
+ * Get the params of the current route
+ * @returns The params of the current route
+ * @throws {Error} If called outside of a router context
+ * @example
+ * // Assume the current route is '/user/1'
+ * // And the route path is defined as '/user/:id',
+ * const params = getParams();
+ * console.log(params);
+ * // console logs:
+ * // > { id: '1' }
+ */
 function getParams(): Record<string, string> {
     const router = getRouter();
     if (router.navigationMatchMetadata) {
@@ -179,7 +200,27 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
     navigate(window.location.pathname);
     return router;
 }
-/** @publicApi **/
+
+/**
+ * Create a router
+ * @param config The router configuration
+ * @returns The root router element
+ * 
+ * @example
+ * createRouter({
+ *    routes: [
+ *        { 
+ *            path: '/', component: () => <Layout />,
+ *            children: [
+ *                { index: true, component: () => <Navigate to="/categories" />, memo: false },
+ *                { path: '/categories', component: Categories },
+ *                { path: '/recipes', component: Recipes, memo: false },
+ *                { path: '/recipe/:id', component: Recipe }
+ *            ]
+ *        }
+ *    ]
+ * });
+ */
 function createRouter(config: RouterConfig): VirtualElement {
     const renderedRoot = getRenderedRoot();
     if (!renderedRoot) {

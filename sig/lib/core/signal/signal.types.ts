@@ -3,9 +3,8 @@ type SignalOptions = {
     rememberPrevValue?: boolean;
 }
 
-
+/** @internal */
 type Listener<T = unknown> = (value: T) => void;
-
 
 interface CoreSignalCapabilities<T> {
     id: string;
@@ -93,7 +92,7 @@ type ExtractSignalType<T> = T extends Signal<infer U> ? U : never;
  * @example 
  * type NumberOrSignal = Signalize<number>; // Signal<number> | number
  */
-type Signalize<T> =  T extends object ? {
+type Signalize  <T> =  T extends object ? {
     [P in keyof T]: T[P] | Signal<T[P]>;
 } : (Signal<T> | T);
 
@@ -104,8 +103,8 @@ type Signalize<T> =  T extends object ? {
  * type Object = { a: Signal<number>, b: Signal<string> };
  * type UnsignalizedObject = Unsignalize<Object>; // { a: number, b: string }
  * @example
- * type NumberOrSignal = Signal<number>;
- * type Number = Unsignalize<NumberOrSignal>; // number
+ * type NumberSignal = Signal<number>;
+ * type Number = Unsignalize<NumberSignal>; // number
  */
 type Unsignalize<T> = T extends object ? {
     [P in keyof T]: T[P] extends Signal<infer U> ? U : T[P];

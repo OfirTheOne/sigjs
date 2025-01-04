@@ -7,6 +7,17 @@ export interface LinkProps {
     className?: string;
 }
 
+/**
+ * A link component that navigates using the app router, preventing the default behavior.
+ * Anchor elements resulting from this component will have the class 'router-link'.
+ * @param {LinkProps} props The props of the component
+ * @throws {Error} If being called outside of a router context
+ * 
+ * @example
+ * <Link to="/categories">Categories</Link> // A link to the categories route
+ * <Link to="/categories" className="link">Categories</Link> // A link to the categories route with a class of link
+ * 
+ */
 export function Link({ 
     to, 
     onClick,
