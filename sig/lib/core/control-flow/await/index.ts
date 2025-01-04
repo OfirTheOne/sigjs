@@ -4,12 +4,12 @@ import { getRenderedRoot, setRenderedRoot } from "@/core/global";
 import { DOM } from "@/core/html";
 import { AwaitControlFlow } from "@/symbols";
 import { CONTROL_FLOW_TAG, ELEMENT_TYPE } from "@/constants";
-import type { RenderFunction } from "@/core/dom-render/render";
-import type { AsyncComponentFunction, VirtualElement } from "@/types";
 import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
+import type { RenderFunction } from "@/core/dom-render/render";
+import type { AsyncComponentFunction, Renderable, VirtualElement } from "@/types";
 
 interface AwaitProps {
-    fallback: VirtualElement,
+    fallback: Renderable,
     component: AsyncComponentFunction;
 }
 
@@ -40,7 +40,8 @@ function renderAwait(
     }
     const currentKey = key.clone().push(element.props.controlTag as string);
     const { fallback } = (element.props as unknown as AwaitProps);
-    const fallbackDom = render(fallback, container, currentKey);
+    
+    const fallbackDom = render(adaptVirtualElementChild(fallback), container, currentKey);
     DOM.appendChild(container, fallbackDom);
     Promise.resolve(component())
         .then((componentElement) => {
