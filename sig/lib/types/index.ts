@@ -1,4 +1,4 @@
-import { CONTROL_FLOW_TAG, ELEMENT_TYPE } from "../constants/constants";
+import { CONTROL_FLOW_TAG, ELEMENT_TYPE } from "@/constants";
 
 interface ComponentFunction<T = any /* Record<string, unknown> */> {
     (props?: T): Renderable;
