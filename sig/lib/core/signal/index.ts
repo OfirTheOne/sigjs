@@ -1,6 +1,6 @@
 
 
-export { createSignal } from "./signal";
+export { createSignal, signal } from "./signal";
 export type { Signal, Listener } from "./signal.types";
 export { 
     getSignalValue, 
