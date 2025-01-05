@@ -5,7 +5,7 @@
       "./lib/store/index.ts",
     ],
     "out": "docs",
-    "plugin": ["typedoc-plugin-markdown"],
+    "plugin": ["typedoc-github-theme"],
     "exclude": ["**/__tests__/**", "**/*.spec.ts", "**/*.test.ts"],
     "excludeExternals": true,
     "excludePrivate": true,

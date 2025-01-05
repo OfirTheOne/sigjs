@@ -61,6 +61,9 @@ devDependencies:
   typedoc:
     specifier: ^0.27.6
     version: 0.27.6(typescript@5.3.3)
+  typedoc-github-theme:
+    specifier: ^0.2.1
+    version: 0.2.1(typedoc@0.27.6)
   typedoc-plugin-markdown:
     specifier: ^4.4.1
     version: 4.4.1(typedoc@0.27.6)
@@ -4145,6 +4148,15 @@ packages:
   /type-fest@2.19.0:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
     engines: {node: '>=12.20'}
+    dev: true
+
+  /typedoc-github-theme@0.2.1(typedoc@0.27.6):
+    resolution: {integrity: sha512-pOgsS9CVAOO3JxQ1V0ocDkrPCULpoWg1OzRmn/mOlyG+vEYwUAp5DAoKrGECdNIomycxcisc8ovcMX0nHDgWTA==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      typedoc: ^0.27.6
+    dependencies:
+      typedoc: 0.27.6(typescript@5.3.3)
     dev: true
 
   /typedoc-plugin-markdown@4.4.1(typedoc@0.27.6):
