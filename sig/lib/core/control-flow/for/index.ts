@@ -10,21 +10,54 @@ import type { RenderFunction } from "@/core/dom-render/render";
 import type { VirtualElement, Renderable } from "@/types";
 
 /**
- * @publicApi
  * For control flow element props
+ * 
+ * used in {@link For}
+ * 
  */ 
 interface ForProps<T = unknown> {
+    /**
+     * The list of items to iterate over
+     */ 
     list: Array<T> | Signal<Array<T>>;
+    /**
+     * The factory function to create the elements
+     */ 
     factory: Renderable | ((item: T, index: number, list: T[]) => Renderable);
+    /**
+     * The index of the item
+     */
     index?: string | ((item: T, i: number) => string);
+    /**
+     * The element to render when the list is empty
+     */
     empty?: Renderable;
+    /**
+     * The tag of the element to render
+     * if not provided, it will render a custom element with the tag 'for-ph'
+     */
     as?: string;
+    /**
+     * The props of the element to render
+     */
     asProps?: { [key: string]: unknown };
 }
 /**
  * For control flow element
  * @param {ForProps} props - For control flow element props
- * @publicApi
+ *
+ * using {@link ForProps}
+ * 
+ * @category Control-Flow
+ * 
+ * @example
+ *  <For 
+ *      as='div'
+ *      asProps={{ className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" }} 
+ *      list={recipes$}
+ *      index={(recipe) => recipe.id}
+ *      factory={(recipe) => <RecipeCard recipe={recipe} />}
+ *  />
  */
 function For<T = unknown>(props: ForProps<T>): VirtualElement {
     return {

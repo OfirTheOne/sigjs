@@ -11,22 +11,46 @@ import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt
 
 
 /**
- * @publicApi
+ * 
  * If control flow element props
+ * 
+ * used in {@link If}
+ * 
  */ 
 interface IfProps {
+    /**
+     * The condition to check
+     */
     condition: Signal<any>;
+    /**
+     * The element to render when the condition is true
+     */
     then: Renderable;
+    /**
+     * The element to render when the condition is false
+     */
     fallback?: Renderable;
+    /**
+     * Memoize the elements
+     * @default true
+     */
     memo?: boolean
+    /**
+     * The tag of the element to render
+     * if not provided, it will render a custom element with the tag 'if-ph'
+     */
     as?: string;
+    /**
+     * The props of the element to render
+     */
     asProps?: { [key: string]: unknown };
 }
 
 /**
  * If control flow element
  * @param {IfProps} props - If control flow element props
- * @publicApi
+ * 
+ * @category Control-Flow
  */
 function If(props: IfProps): VirtualElement {
     return {
