@@ -24,6 +24,9 @@ const history = window.history;
  * Get the current router instance
  * @returns The current router instance, must be called within a router context
  * @throws {Error} If called outside of a router context  
+ * 
+ * using {@link Router}
+ * 
  * @example
  * const router = getRouter();
  * console.log(router);
@@ -203,8 +206,10 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
 
 /**
  * Create a router
- * @param config The router configuration
+ * @param {RouterConfig} config The router configuration
  * @returns The root router element
+ * 
+ * using {@link RouterConfig}
  * 
  * @example
  * createRouter({

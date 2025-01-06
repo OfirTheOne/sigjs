@@ -1,6 +1,6 @@
 import { VirtualElement } from "@/types";
-import { getRouter } from "./router.v2";
 import { createFragment } from "@/jsx";
+import { getRouter } from "./router.v2";
 
 export interface NavigateProps {
     to: string;
@@ -11,6 +11,8 @@ export interface NavigateProps {
  * Navigate to a new route
  * @param {NavigateProps} props The props of the component
  * @throws {Error} If being called outside of a router context
+ * 
+ * using {@link NavigateProps}
  * 
  * @example
  * <Navigate to="/categories" /> // Navigate to the categories route using push

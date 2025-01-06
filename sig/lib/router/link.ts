@@ -13,6 +13,8 @@ export interface LinkProps {
  * @param {LinkProps} props The props of the component
  * @throws {Error} If being called outside of a router context
  * 
+ * using {@link LinkProps}
+ * 
  * @example
  * <Link to="/categories">Categories</Link> // A link to the categories route
  * <Link to="/categories" className="link">Categories</Link> // A link to the categories route with a class of link
