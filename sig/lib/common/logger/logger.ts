@@ -13,21 +13,21 @@ class Logger {
         return Logger.instance;
     }
 
-    log(message: string): void {
+    log(...args: Parameters<typeof console.log>): void {
         if (this.debugMode) {
-            console.log(message);
+            console.log(...args);
         }
     }
     
-    warn(message: string): void {
+    warn(...args: Parameters<typeof console.warn>): void {
         if (this.debugMode) {
-            console.warn(message);
+            console.warn(...args);
         }
     }
 
-    error(message: string): void {
-        console.error(message);
+    error(...args: Parameters<typeof console.error>): void {
+        console.error(...args);
     }
 }
 
-export default Logger.getInstance(true);
+export default Logger.getInstance(false);
