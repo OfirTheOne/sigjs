@@ -19,7 +19,7 @@ You can pass props & children as arguments for a component.
 An "instance" of a component is being rendered only once, (instance refers to a appearance in the DOM tree), unless it was unmount from the DOM then it being constructed once again there for "run" again.
 Changes in signals received from outside or created inside the component do not causing rerendering.
 
-```tsx
+```tsx frame="code" title="my-test-file.js"
 import { createSignal, Signal } from 'sig';
 
 interface MyButtonComponentProps {
@@ -51,8 +51,8 @@ export function App() {
         </div>
     );
 }
-
 ```
+
 
 Heres the `MyButtonComponents` screen record showing ui changes & interactivity without rerendering.
 
