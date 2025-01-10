@@ -48,7 +48,7 @@ export const DOM = {
     classListRemove(dom: HTMLElement, value: string | string[]) {
         let values: string[] = [];
         if (typeof value === 'string') {
-            values = value.split(' ')
+            values = value.trim().split(' ')
         } 
         values = values.map(v => v.trim());
         dom.classList.remove(...values);
@@ -57,7 +57,7 @@ export const DOM = {
     classListAdd(dom: HTMLElement, value: string | string[]) {
         let values: string[] = [];
         if (typeof value === 'string') {
-            values = value.split(' ')
+            values = value.trim().split(' ')
         } 
         values = values.map(v => v.trim());
         dom.classList.add(...values);
