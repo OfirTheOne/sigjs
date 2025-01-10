@@ -1,3 +1,5 @@
+import logger from "@/common/logger/logger";
+
 export function appendQueryParams(url: string, params: Record<string, string | number>): string {
     try {
         const urlObj = new URL(url, 'http://dummy.com');
@@ -9,7 +11,7 @@ export function appendQueryParams(url: string, params: Record<string, string | n
 
         return urlObj.pathname + urlObj.search + urlObj.hash;
     } catch (error) {
-        console.error(`Failed to append query parameters: ${error}`);
+        logger.error(`Failed to append query parameters: ${error}`);
         return url;
     }
 }

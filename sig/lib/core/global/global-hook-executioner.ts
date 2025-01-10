@@ -5,6 +5,7 @@ import { getAllSubContexts } from "../dom-render/component-context/component-con
 import { runOnDisconnectHooks } from "../dom-render/component-context/hooks/on-disconnect";
 import { ElementKeySymbol } from "@/symbols";
 import { runOnConnectHooks } from "../dom-render/component-context/hooks/on-connect";
+import logger from "@/common/logger/logger";
 
 const globalSubscribersMap = new Map<Node, {
     signals: Signal[],
@@ -29,12 +30,12 @@ function createHookExecutioner() {
             mutations.forEach((mutation) => {
                 mutation.addedNodes.forEach((node) => {
                     const elementKey = node[ElementKeySymbol];
-                    console.log('createHookExecutioner ', elementKey, node.nodeName);
+                    logger.log('createHookExecutioner ', elementKey, node.nodeName);
 
                     if(elementKey) {
                         const contexts = getAllSubContexts(elementKey);
                         contexts.forEach(context => {
-                            console.log(context.elementKey, 'Element was added to the DOM');
+                            logger.log(context.elementKey, 'Element was added to the DOM');
                             if (context) {
                                 runOnConnectHooks(context);
                             }
@@ -54,14 +55,14 @@ function createHookExecutioner() {
                     if(elementKey) {
                         const contexts = getAllSubContexts(elementKey);
                         contexts.forEach(context => {
-                            console.log(context.elementKey, 'Element was removed from the DOM');
+                            logger.log(context.elementKey, 'Element was removed from the DOM');
                             if (context) {
                                 runOnDisconnectHooks(context);
                             }
                             const element = context.element;
                             const subEntry = element && globalSubscribersMap.get(element)
                             if (subEntry) {
-                                console.log('Element was removed from the DOM');
+                                logger.log('Element was removed from the DOM');
                                 subEntry.signals.forEach(signal => {
                                     signal.enterStaleMode();
                                 });

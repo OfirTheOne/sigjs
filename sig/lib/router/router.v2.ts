@@ -79,7 +79,7 @@ const appendIdToAllRouteTree = (routes: RouteConfig[]): RouteConfig[] => {
 
 function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata): Router {
     window.addEventListener('popstate', (event) => {
-        console.log(event.state);
+        logger.log(event.state);
         navigate(window.location.pathname);
     });
     

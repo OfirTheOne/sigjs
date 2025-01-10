@@ -35,7 +35,7 @@ export const DOM = {
                 parent.append(...child);
             }
         } catch (error) {
-            console.log(error);
+            logger.log(error);
 
         }
     },
