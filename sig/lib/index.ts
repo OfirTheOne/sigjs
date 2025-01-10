@@ -1,6 +1,7 @@
 /**
  *
  * @module core (index)
+ * @showCategories
  */
 
 export type * from './types';

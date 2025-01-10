@@ -1,3 +1,10 @@
+/**
+ * @groupDescription Control Flow Components,
+ * Components that dynamically control the rendering of other components based on conditions or loops.
+ * @showGroups
+ * @module
+ */
+
 
 
 export { If } from './if';

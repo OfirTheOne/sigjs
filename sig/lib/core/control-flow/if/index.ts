@@ -51,6 +51,7 @@ interface IfProps {
  * @param {IfProps} props - If control flow element props
  * 
  * @category Control-Flow
+ * @group Control-Flow
  */
 function If(props: IfProps): VirtualElement {
     return {
