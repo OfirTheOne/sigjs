@@ -74,7 +74,7 @@ Heres the `MyButtonComponents` screen record showing ui changes & interactivity 
 Events in components are handled using the `on` prefix. You can listen to events like `onClick`, `onInput`, etc.
 Events are handled by passing a callback function to the event listener property of the element.
 
-```tsx frame="code" title="MouseMovementPad.tsx"
+```tsx frame="code" title="MouseMovementPad.tsx" "onMouseMove" {12-16}
 import { createSignal } from 'sig';
 
 interface MouseMovementPadProps {
