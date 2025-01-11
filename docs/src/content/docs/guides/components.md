@@ -19,7 +19,9 @@ function Component(props: ComponentProps, children: unknown) {
 }
 ```
 
-### Rendering
+---
+
+### Rendering Components
 
 An "instance" of a component is being rendered only once, (instance refers to a appearance in the DOM tree), unless it was unmount from the DOM then it being constructed once again there for "run" again.
 Changes in signals received from outside or created inside the component do not causing rerendering.
@@ -63,18 +65,18 @@ export function App() {
 ```
 
 
-Heres the `MyButtonComponents` screen record showing ui changes & interactivity without rerendering.
+Here's the `MyButtonComponents` screen record showing ui changes & interactivity without rerendering.
 
 ![alt text](../../../assets/MyButtonComponent_480.gif)
 
+---
 
 ### Event Handling
-
 
 Events in components are handled using the `on` prefix. You can listen to events like `onClick`, `onInput`, etc.
 Events are handled by passing a callback function to the event listener property of the element.
 
-```tsx frame="code" title="MouseMovementPad.tsx" "onMouseMove" {12-16}
+```tsx frame="code" title="MouseMovementPad.tsx" "onMouseMove" {12-}
 import { createSignal } from 'sig';
 
 interface MouseMovementPadProps {
@@ -102,5 +104,8 @@ export function App() {
     </div>
 }
 ```
+
+Here's the `MouseMovementPad` screen record showing the random hex value generated on mouse movement.
+
 
 ![MouseMovementPad component](../../../assets/MouseMovementPad_480.gif)
