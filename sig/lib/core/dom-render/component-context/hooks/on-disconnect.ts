@@ -3,7 +3,7 @@ import { getActiveContext } from "../component-context";
 import type { ComponentContext } from "../component-context";
 
 export interface OnDisconnectHook {
-    (): void
+    (ctx: ComponentContext): void
 }
 
 export function onDisconnect(cb: OnDisconnectHook)  {
@@ -17,7 +17,7 @@ export function onDisconnect(cb: OnDisconnectHook)  {
 export function runOnDisconnectHooks(context: ComponentContext) {
     context.hooks.disconnect.forEach(cb => {
         try {
-            cb();
+            cb(context);
         } catch (error) {
             logger.error(error);
         }

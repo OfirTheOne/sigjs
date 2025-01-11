@@ -3,7 +3,7 @@ import { getActiveContext } from "../component-context";
 import type { ComponentContext } from "../component-context";
 
 export interface OnConnectHook {
-    (): void
+    (ctx: ComponentContext): void
 }
 
 export function onConnect(cb: OnConnectHook)  {
@@ -17,7 +17,7 @@ export function onConnect(cb: OnConnectHook)  {
 export function runOnConnectHooks(context: ComponentContext) {
     context.hooks.connect.forEach(cb => {
         try {
-            cb();
+            cb(context);
         } catch (error) { 
             logger.error(error);
         }

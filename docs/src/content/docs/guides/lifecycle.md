@@ -1,11 +1,14 @@
 ---
-title: Lifecycle
-description: A guide in my new Starlight docs site.
+title: Component Lifecycle
+description: Component Lifecycle
 ---
 
-Guides lead a user through a specific task they want to accomplish, often with a sequence of steps.
-Writing a good guide requires thinking about what your users are trying to do.
+A component's lifecycle refers to the stages it goes through from when it is first created to when it is destroyed. Understanding the lifecycle of a component is essential for managing state, side effects, and performance optimization.
 
-## Further reading
+### Render Stage
 
-- Read [about how-to guides](https://diataxis.fr/how-to-guides/) in the Diátaxis framework
+### Connect Stage
+
+### Disconnect Stage (memoized component)
+
+### Destroy Stage

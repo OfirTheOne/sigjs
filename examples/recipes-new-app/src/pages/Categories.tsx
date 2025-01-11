@@ -1,8 +1,18 @@
 import { getRouter } from 'sig/router';
 import { store } from '../store';
-import { For } from 'sig';
+import { For, onConnect, onDisconnect } from 'sig';
 
 export function Categories() {
+
+    onConnect((ctx) => {
+        console.log('Categories connected');
+        console.log(ctx);
+    });
+
+    onDisconnect(() => {
+        console.log('Categories disconnected');
+    });
+
     const router = getRouter();
     const categories$ = store.select((state) => state.categories);
 

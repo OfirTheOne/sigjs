@@ -7,7 +7,7 @@ title: "getRouter"
 
 > **getRouter**(): [`Router`](/api/router/type-aliases/router/)
 
-Defined in: [router/router.v2.ts:36](https://github.com/OfirTheOne/sigjs/blob/990f9c2a70d38ca041cbd102a37f74a99eedb608/sig/lib/router/router.v2.ts#L36)
+Defined in: [router/router.v2.ts:36](https://github.com/OfirTheOne/sigjs/blob/ddb97c5d4e7cc6153de1e1e2da19d6ed536582d2/sig/lib/router/router.v2.ts#L36)
 
 Get the current router instance
 
