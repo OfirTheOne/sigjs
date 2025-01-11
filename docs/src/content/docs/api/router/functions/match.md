@@ -7,7 +7,7 @@ title: "match"
 
 > **match**(`toMatch`, `matchTo`): [`MatchResult`](/api/router/interfaces/matchresult/)
 
-Defined in: [router/match-algorithm/match.ts:30](https://github.com/OfirTheOne/sigjs/blob/ddb97c5d4e7cc6153de1e1e2da19d6ed536582d2/sig/lib/router/match-algorithm/match.ts#L30)
+Defined in: router/match-algorithm/match.ts:30
 
 Match the given path to the given route path
 

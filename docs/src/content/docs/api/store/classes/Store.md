@@ -5,7 +5,7 @@ prev: false
 title: "Store"
 ---
 
-Defined in: [store/store.ts:31](https://github.com/OfirTheOne/sigjs/blob/ddb97c5d4e7cc6153de1e1e2da19d6ed536582d2/sig/lib/store/store.ts#L31)
+Defined in: store/store.ts:31
 
 Store is a class that holds the state of the application and notifies subscribers when the state changes.
 
