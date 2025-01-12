@@ -1,11 +1,113 @@
 ---
 title: Signals
-description: A guide in my new Starlight docs site.
+description: Basic guide on signals.
 ---
 
-Guides lead a user through a specific task they want to accomplish, often with a sequence of steps.
-Writing a good guide requires thinking about what your users are trying to do.
+## Introduction
 
-## Further reading
+In the context of visual rendering, Signals are a way to represent dynamic content in a component. They are used to update the component's output when the signal value changes with out rerendering (or rerunning) the component.
 
-- Read [about how-to guides](https://diataxis.fr/how-to-guides/) in the Diátaxis framework
+
+## Understanding Signals
+
+Signals are simple objects that hold a value, that value can be changed over time. When a signal value changes any registered listeners will be notified with the new value. 
+
+:::tip 
+Signals are not limited to be used in components, they can be used in any part of your application.
+:::
+
+On top of that basic concept, signals can be connected to the DOM elements or attributes, when the signal value changes the connected DOM element or attribute will be updated with the new value.
+
+
+To create a signal, you can use the `createSignal` function from the `sig` package, for convenience, that function returns a tuple with the signal object and a function to update the signal value.
+Its possible to create a signal with the `signal` function as well, that function returns a signal object.
+
+:::note
+Signals are callables objects, that means you can use them as a function to get the current value.
+:::
+
+Here is an example of how to create a signal and use it :
+
+```ts
+
+import { createSignal } from 'sig';
+
+const [signal$, setSignal] = createSignal([1, 2, 3]);
+console.log(signal$()); // [1, 2, 3]
+
+setSignal([1, 2, 3, 4]);
+console.log(signal$()); // [1, 2, 3, 4]
+
+setSignal((prev) => [...prev, 5]);
+console.log(signal$()); // [1, 2, 3, 4, 5]
+
+```
+
+```ts
+import { signal } from 'sig';
+
+const signal$ = signal([1, 2, 3]);
+console.log(signal$()); // [1, 2, 3]
+
+signal$.setValue([1, 2, 3, 4]);
+console.log(signal$()); // [1, 2, 3, 4]
+
+signal$.setValue((prev) => [...prev, 5]);
+console.log(signal$()); // [1, 2, 3, 4, 5]
+```
+
+
+
+## Connecting Signals
+
+Signals can be connected to the DOM elements or attributes, when the signal value changes the connected DOM element or attribute will be updated with the new value.
+
+
+
+
+Lets see a bad example of signal usage:
+
+```tsx {8}
+import { createSignal } from 'sig';
+
+function FiveClickButton() {
+    const [count$, setCount] = createSignal(0);
+    return (<div>
+        <button 
+            className="bg-indigo-600 text-white px-4 py-2 rounded-md"
+            disabled={count$() >= 5} ❌
+            onClick={() => setCount(count$() + 1)}>
+            Increment clicks {count$}
+        </button>
+    </div>);
+}
+```
+
+Here the signal `count$` is connected correctly to the button text, it will be updated as expected when the signal value changes. 
+**But the button `disabled` attribute is not connected to the signal, it simply receives the evaluated value of the expression `count$() >= 5` when the component is first rendered**, (which is `false` in this case), and it will not be updated when the signal value changes. 
+
+
+To fix this issue, we need to connect the signal to the `disabled` attribute, so the button will be disabled when the signal value is greater than or equal to 5.
+
+```tsx  del={8} ins={9}
+import { createSignal } from 'sig';
+
+function FiveClickButton() {
+    const [count$, setCount] = createSignal(0);
+    return (<div>
+        <button 
+            className="bg-indigo-600 text-white px-4 py-2 rounded-md"
+            disabled={count$() >= 5}
+            disabled={count$.derive((count) => count >= 5)} ✅
+            onClick={() => setCount(count$() + 1)}>
+            Increment clicks {count$}
+        </button>
+    </div>);
+}
+```
+
+
+:::caution
+Using the signal value in an expression directly will not make the expression reactive, the expression will be evaluated only once when the component is first rendered.
+This is a common mistake when using signals, the `derive` function should be used to create the reactive expression.
+:::
