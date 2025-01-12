@@ -1,4 +1,4 @@
-import type { Signal } from '@/core/signal/signal.types';
+import type { Signal, Signalize } from '@/core/signal/signal.types';
 import type * as CSS from 'csstype';
 
 
@@ -206,7 +206,7 @@ export interface BrElementAttributes extends HTMLElementAttributes {
     clear: string;
 }
 
-export interface ButtonElementAttributes extends HTMLElementAttributes {
+export type ButtonElementAttributes = HTMLElementAttributes & Signalize<{
     disabled?: boolean;
     form?: string;
     formaction?: string;
@@ -220,7 +220,7 @@ export interface ButtonElementAttributes extends HTMLElementAttributes {
     // Custom attributes
     popovertarget?: string;
     popovertargetaction?: string;
-}
+}>;
 
 export interface CanvasElementAttributes extends HTMLElementAttributes {
     height: number;
