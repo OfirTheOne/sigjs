@@ -81,7 +81,7 @@ export type HTMLElementEventHandlersExtendsConcurrency = {
 
 interface NonNativeElementAttributes {
     ref?: any;
-    className?: string | (Signal<string> | string)[] | Record<string, boolean> ;
+    className?: string | Signal<string> | (Signal<string> | string)[] | Record<string, boolean> ;
     style?: CSSProperties;
 }
 
@@ -389,7 +389,7 @@ export interface IframeElementAttributes extends HTMLElementAttributes {
     width?: string;
 }
 
-export interface ImgElementAttributes extends HTMLElementAttributes {
+export type ImgElementAttributes = HTMLElementAttributes & Signalize<{
     alt: string;
     crossorigin?: "anonymous" | "use-credentials";
     decoding?: "sync" | "async" | "auto";
@@ -404,7 +404,7 @@ export interface ImgElementAttributes extends HTMLElementAttributes {
     srcset?: string;
     usemap?: string;
     width?: string;
-}
+}>;
 
 export interface InputElementAttributes extends HTMLElementAttributes<HTMLInputElement> {
     accept?: string;
