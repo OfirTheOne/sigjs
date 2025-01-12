@@ -2,14 +2,14 @@ import { Signal, CoreSignalCapabilities, EnhancedSignalCapabilities, StaleSignal
 
 let signalCounter = 0
 
-/** @internal */
+/** @internal @ignore */
 type BuildSignalResult<T> 
     = CoreSignalCapabilities<T> 
     & EnhancedSignalCapabilities<T>
     & RememberPreviousValueSignalCapabilities<T> 
     & StaleSignalCapabilities;
 
-/** @internal */
+/** @internal @ignore */
 function buildSignal<T>(value: T, options?: SignalOptions): BuildSignalResult<T> {
     let listeners: Listener<T>[] = [];
     let staleMode = false;
