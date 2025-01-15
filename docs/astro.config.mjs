@@ -6,10 +6,12 @@ import expressiveCode from 'astro-expressive-code';
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
 // https://astro.build/config
 import mdx from '@astrojs/mdx';
+import netlify from '@astrojs/netlify';
 const [createDocumentation, documentation] = createStarlightTypeDocPlugin();
 
 export default defineConfig({
     site: 'https://github.com/OfirTheOne/sigjs',
+
     // base: 'my-repo',
     integrations: [
         expressiveCode({
@@ -124,4 +126,6 @@ export default defineConfig({
                 },
             ],
         })],
+
+    adapter: netlify(),
 });
