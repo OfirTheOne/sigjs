@@ -1,0 +1,28 @@
+# Exclude node_modules
+node_modules
+
+# Exclude build tools and configs
+*.log
+*.tsbuildinfo
+*.swp
+*.swo
+*.DS_Store
+
+# Exclude test files
+__tests__/
+*.spec.ts
+*.test.ts
+
+# Exclude documentation
+docs/
+*.md
+*.mdx
+
+# Exclude configuration files
+.vscode/
+.idea/
+*.config.js
+*.config.ts
+*.config.json
+*.config.mjs
+*.config.cjs
