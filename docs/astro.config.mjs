@@ -5,18 +5,19 @@ import { createStarlightTypeDocPlugin } from 'starlight-typedoc'
 import expressiveCode from 'astro-expressive-code';
 import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers'
 // https://astro.build/config
+import mdx from '@astrojs/mdx';
 const [createDocumentation, documentation] = createStarlightTypeDocPlugin();
 
 export default defineConfig({
+    site: 'https://github.com/OfirTheOne/sigjs',
+    // base: 'my-repo',
     integrations: [
         expressiveCode({
             plugins: [pluginLineNumbers()],
         }),
+        mdx(),
         starlight({
-            title: 'My Docs',
-            social: {
-                github: 'https://github.com/withastro/starlight',
-            },
+            title: 'Sig',
             customCss: [
                 '/src/styles/custom.css',
             ],
@@ -91,6 +92,31 @@ export default defineConfig({
                             slug: 'guides/store'
                         },
                     ],
+                },
+                {
+                    label: 'Routing Guides',
+                    items: [
+                        {
+                            label: 'Configure Routes',
+                            slug: 'routing-guides/configure-routes'
+                        },
+                        {
+                            label: 'Nested Routes',
+                            slug: 'routing-guides/route'
+                        },
+                        {
+                            label: 'Router Outlet',
+                            slug: 'routing-guides/router-outlet'
+                        },
+                        {
+                            label: 'Redirect',
+                            slug: 'routing-guides/redirect'
+                        },
+                        {
+                            label: 'Link',
+                            slug: 'routing-guides/link'
+                        },
+                    ]
                 },
                 {
                     label: 'Reference',
