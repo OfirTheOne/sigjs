@@ -88,12 +88,12 @@ function renderFor(
     
     const factoryFn = typeof factory === 'function' ? factory : () => factory;
     const indexFn = typeof index === 'function' ? index : ((item: unknown, i: number) => {
-        if (typeof index === 'undefined') return String(i);
+        if (typeof index === 'undefined' || index === null) {
+            return typeof item === 'object' ? String(i) : String(item);
+        }
         return item?.[index as string] as string;
     });
-    const indexItems = new Map<string, {
-        dom: HTMLElement | Text;
-    }>();
+    const indexItems = new Map<string, { dom: HTMLElement | Text; }>();
     while (placeholderDom.lastChild) {
         placeholderDom.lastChild.remove();
     }
@@ -104,13 +104,13 @@ function renderFor(
         const listSignal = list;
         placeholderDom.setAttribute('signal', listSignal.id);
         const unsubscribe = subscribeSignal(listSignal, (list) => {
+            DOM.removeAllChildren(placeholderDom);
             if(list.length === 0) {
                 if(empty !== undefined) {
-                    render(adaptVirtualElementChild(empty), placeholderDom, key);
+                    const emptyDom = render(adaptVirtualElementChild(empty), placeholderDom, key);
+                    DOM.appendChild(placeholderDom, emptyDom);
                 }
-            }
-            while (placeholderDom.lastChild) {
-                placeholderDom.lastChild.remove();
+                return;
             }
             const elementsDom = list.map((item, i) => {
                 const indexValue = indexFn(item, i);
@@ -124,9 +124,7 @@ function renderFor(
                 indexItems.set(indexValue, { dom: elementDom });
                 return elementDom;
             });
-            elementsDom.forEach(elementDom => {
-                placeholderDom.appendChild(elementDom);
-            });
+            DOM.appendChild(placeholderDom, elementsDom);
         });
 
         registerSignalSubscription(placeholderDom, unsubscribe);
