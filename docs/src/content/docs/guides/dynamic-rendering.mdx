@@ -3,6 +3,8 @@ title: Dynamic Rendering
 description: A comprehensive guide on dynamic rendering.
 ---
 
+import { Image } from 'astro:assets';
+
 ## Introduction
 
 Dynamic rendering is the process of updating the visual representation of a component based on signals. 
@@ -62,7 +64,14 @@ function MenuButton() {
 }
 ```
 
-![MenuButton_720](../../../assets/MenuButton_720.gif)
+import MenuButton_720 from '../../../assets/MenuButton_720.gif';
+
+<Image
+    style={{ margin: 'auto', display: 'block', padding: '1rem' }}
+    src={MenuButton_720} alt="MenuButton" />
+
+
+{/* ![MenuButton_720](../../../assets/MenuButton_720.gif) */}
 
 ---
 
@@ -107,7 +116,13 @@ function SearchList() {
 :::
 
 
-![SearchList_480.gif](../../../assets/SearchList_480.gif)
+import SearchList_480 from '../../../assets/SearchList_480.gif';
+
+<Image
+    style={{ margin: 'auto', display: 'block', padding: '1rem' }}
+    src={SearchList_480} alt="SearchList" />
+
+{/* ![SearchList_480.gif](../../../assets/SearchList_480.gif) */}
 
 
 #### `For` Item Indexing

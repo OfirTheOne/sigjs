@@ -4,6 +4,8 @@ description: A comprehensive guide on using components in your library.
 
 ---
 
+import { Image } from 'astro:assets';
+
 ## Introduction
 
 Components are the building blocks of your application. They encapsulate logic, structure, and styling, making it easier to manage and reuse code. 
@@ -67,7 +69,13 @@ export function App() {
 
 Here's the `MyButtonComponents` screen record showing ui changes & interactivity without rerendering.
 
-![alt text](../../../assets/MyButtonComponent_480.gif)
+import MyButtonComponentImage from '../../../assets/MyButtonComponent_480.gif';
+
+<Image
+    style={{ margin: 'auto', display: 'block', padding: '1rem' }}
+    src={MyButtonComponentImage} alt="MyButtonComponent" />
+
+{/* ![alt text](../../../assets/MyButtonComponent_480.gif) */}
 
 ---
 
@@ -108,4 +116,10 @@ export function App() {
 Here's the `MouseMovementPad` screen record showing the random hex value generated on mouse movement.
 
 
-![MouseMovementPad component](../../../assets/MouseMovementPad_480.gif)
+import MouseMovementPadImage from '../../../assets/MouseMovementPad_480.gif';
+
+<Image
+    style={{ margin: 'auto', display: 'block', padding: '1rem' }}
+    src={MouseMovementPadImage} alt="MouseMovementPad" />
+
+{/* ![MouseMovementPad component](../../../assets/MouseMovementPad_480.gif) */}

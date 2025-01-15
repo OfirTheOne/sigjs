@@ -5,9 +5,13 @@ description: A comprehensive guide on routing.
 ---
 
 import { LinkButton } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
 
 Routing is the process of determining which component to display based on the current URL. 
 It is a fundamental part of building single-page applications (SPAs) that have multiple views.
+
+The router has many features like nested routes, route parameters, ranked route matching, 
+route guards, navigation events, data loading and more. those features are explained in the "routeing guide" section.
 
 ## Creating A Router
 
@@ -72,7 +76,7 @@ function Layout() {
 }
 ```
 
-## Render The Router.
+## Render the router
 
 Now, let's create the router and define the routes:
 
@@ -103,7 +107,12 @@ function App() {
 }
 ```
 
-![SimpleRouterApp](../../../assets/SimpleRouterApp_480.gif)
+import SimpleRouterAppImage from '../../../assets/SimpleRouterApp_480.gif';
+
+<Image 
+    style={{ margin: 'auto', display: 'block' }}
+    src={SimpleRouterAppImage} 
+    alt="A bird sitting on a nest of eggs." />;
 
 ---
 
