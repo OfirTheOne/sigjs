@@ -78,7 +78,7 @@ function renderIf(
     const currentKey = key.clone().push(element.props.controlTag as string);
     const placeholderDom = (as ? 
         render(createElement(as, { ...asProps, role: 'if-ph' }), undefined, key) :
-        DOM.createElement('for-ph', currentKey)) as HTMLElement;
+        DOM.createElement('if-ph', currentKey)) as HTMLElement;
         
     let thenElementDom: HTMLElement | Text;
     let fallbackElementDom: HTMLElement | Text;
