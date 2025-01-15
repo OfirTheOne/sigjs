@@ -13,7 +13,10 @@ export const DOM = {
         return document.createComment(comment);
     },
 
-    appendChild(parent: HTMLElement, child: Node | Node[]): void {
+    appendChild(parent: HTMLElement, child?: Node | Node[]): void {
+        if(child === null || child === undefined) {
+            return;
+        }
         if (parent === null || parent === undefined) {
             logger.error('Parent is null or undefined');
             return;
@@ -48,7 +51,7 @@ export const DOM = {
     classListRemove(dom: HTMLElement, value: string | string[]) {
         let values: string[] = [];
         if (typeof value === 'string') {
-            values = value.trim().split(' ')
+            values = value.trim().split(/\s+/);
         } 
         values = values.map(v => v.trim());
         dom.classList.remove(...values);
@@ -57,9 +60,15 @@ export const DOM = {
     classListAdd(dom: HTMLElement, value: string | string[]) {
         let values: string[] = [];
         if (typeof value === 'string') {
-            values = value.trim().split(' ')
+            values = value.trim().split(/\s+/);
         } 
         values = values.map(v => v.trim());
         dom.classList.add(...values);
     },
+
+    removeAllChildren(dom: HTMLElement) {
+        while (dom.lastChild) {
+            dom.lastChild.remove();
+        }
+    }
 }
