@@ -1,11 +1,8 @@
 {
-  "name": "sig",
-  "version": "1.0.0",
-  "description": "",
+  "name": "sigjs",
+  "version": "0.0.1",
+  "description": "A rendering, functional, reactive, and composable library for building web applications",
   "type": "module",
-  "files": [
-    "dist"
-  ],
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "module": "./dist/index.umd.cjs",
@@ -64,7 +61,7 @@
     "docs": "typedoc"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ofir G.",
   "license": "ISC",
   "dependencies": {
     "events": "^3.3.0"
@@ -93,5 +90,12 @@
     "vite": "^4.4.4",
     "vite-plugin-dts": "^3.5.3",
     "vitest": "^0.33.0"
-  }
+  },
+  "files": [
+    "dist/",
+    "lib/",
+    "typings/",
+    "index.js",
+    "README.md"
+  ]
 }
