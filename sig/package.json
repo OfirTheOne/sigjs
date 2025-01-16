@@ -1,5 +1,5 @@
 {
-  "name": "sigjs",
+  "name": "@sigjs/sig",
   "version": "0.0.1",
   "description": "A rendering, functional, reactive, and composable library for building web applications",
   "type": "module",
