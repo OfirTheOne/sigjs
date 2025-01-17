@@ -1,0 +1,19 @@
+{
+  "name": "create-sigjs-app",
+  "version": "1.0.0",
+  "description": "CLI tool to create a new SigJS app",
+  "main": "bin/create-sigjs-app.js",
+  "bin": {
+    "create-sigjs-app": "bin/create-sigjs-app.js"
+  },
+  "dependencies": {
+    "fs-extra": "^10.0.0",
+    "inquirer": "^8.2.0"
+  },
+  "author": "Your Name",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.7"
+  }
+}
