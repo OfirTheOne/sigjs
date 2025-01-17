@@ -2,7 +2,7 @@
 editUrl: false
 next: false
 prev: false
-title: "sig"
+title: "@sigjs/sig"
 ---
 
 ## Modules
