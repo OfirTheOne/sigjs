@@ -11,7 +11,7 @@ Sig JS is a powerful and flexible JavaScript library for building web applicatio
 - **TypeScript Support**: Fully typed with TypeScript to provide a better development experience and catch errors early.
 - **Routing**: Built-in routing support to create single-page applications with multiple views.
 - **Store Management**: Built-in store management to manage global state and share data between components.
-- **Interopaerability**: Sig JS can render simple HTML elements, there for any libraries or frameworks can be used with it.
+- **Interoperability**: Sig JS can render simple HTML elements, there for any libraries or frameworks can be used with it.
 - **SSR (Server-Side Rendering)**: Support for server-side rendering to improve performance. [experimental]
 
 ## Installation
