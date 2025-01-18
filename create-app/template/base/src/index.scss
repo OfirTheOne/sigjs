@@ -1,10 +1,7 @@
 
-@font-face {
-    font-family: 'Cardo';
-    src: url('/fonts/Cardo/Cardo-Bold.ttf');
-}
-
-@font-face {
-    font-family: 'Roboto_Serif';
-    src: url('/fonts/Roboto_Serif/RobotoSerif-Italic-VariableFont_GRAD,opsz,wdth,wght.ttf');
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 20px;
+    padding: 20px;
+    background-color: #f0f0f0;
 }
