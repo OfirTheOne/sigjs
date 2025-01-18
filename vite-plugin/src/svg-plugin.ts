@@ -6,7 +6,7 @@ import path from 'path';
 export function svgPlugin() {
     return {
       name: 'svg-plugin',
-      transform(code: string, id: string) {
+      transform(_code: string, id: string) {
         if (id.endsWith('.svg')) {
           const svgContent = fs.readFileSync(id, 'utf-8');
           const escapedSvgContent = JSON.stringify(svgContent);
