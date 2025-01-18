@@ -1,6 +1,6 @@
 {
   "name": "@sigjs/vite-plugin",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A Vite plugin for Sig.JS",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
