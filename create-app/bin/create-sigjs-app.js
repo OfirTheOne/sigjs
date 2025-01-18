@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-import { prompt } from 'inquirer';
-import { join } from 'path';
-import { copy } from 'fs-extra';
+const { prompt } = require('inquirer');
+const { join } = require('path');
+const { copy } = require('fs-extra');
+
 
 async function createSigJsApp() {
   const answers = await prompt([
