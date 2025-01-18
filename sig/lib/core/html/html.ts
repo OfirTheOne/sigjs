@@ -49,20 +49,26 @@ export const DOM = {
     },
 
     classListRemove(dom: HTMLElement, value: string | string[]) {
-        let values: string[] = [];
-        if (typeof value === 'string') {
-            values = value.trim().split(/\s+/);
-        } 
-        values = values.map(v => v.trim());
+        let values: string[] = typeof value === 'string' ? 
+            value.trim().split(/\s+/) : value;
+        values = values
+            .map(v => v.trim())            
+            .filter(v => v.length > 0);
+        if (values.length === 0) {
+            return;
+        }
         dom.classList.remove(...values);
     },
 
     classListAdd(dom: HTMLElement, value: string | string[]) {
-        let values: string[] = [];
-        if (typeof value === 'string') {
-            values = value.trim().split(/\s+/);
-        } 
-        values = values.map(v => v.trim());
+        let values: string[] = typeof value === 'string' ? 
+            value.trim().split(/\s+/) : value;  
+        values = values
+            .map(v => v.trim())
+            .filter(v => v.length > 0);
+        if (values.length === 0) {
+            return;
+        }
         dom.classList.add(...values);
     },
 
