@@ -1,14 +1,13 @@
 {
   "name": "@sigjs/vite-plugin",
-  "version": "0.0.1",
-  "description": "A Vite plugin for SigJS",
-  "main": "dist/index.js",    
+  "version": "0.0.2",
+  "description": "A Vite plugin for Sig.JS",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "dependencies": {
-  },
+  "dependencies": {},
   "scripts": {
     "build": "tsc"
   },
