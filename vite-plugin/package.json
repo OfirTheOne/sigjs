@@ -1,18 +1,22 @@
 {
-    "name": "@sigjs/vite-plugin",
-    "version": "1.0.0",
-    "description": "A Vite plugin for SigJS",
-    "main": "src/index.ts",
-    "type": "module",
-    "scripts": {
-      "build": "tsc"
-    },
-    "dependencies": {
-      "vite": "^4.4.4"
-    },
-    "devDependencies": {
-      "typescript": "^5.0.4"
-    },
-    "author": "Ofir G.",
-    "license": "ISC"
+  "name": "@sigjs/vite-plugin",
+  "version": "0.0.1",
+  "description": "A Vite plugin for SigJS",
+  "main": "dist/index.js",    
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "typescript": "^5.7.3",
+    "vite": "^4.5.5"
   }
+}

@@ -6,7 +6,7 @@ import path from 'path';
 export function svgPlugin() {
     return {
       name: 'svg-plugin',
-      transform(code, id) {
+      transform(code: string, id: string) {
         if (id.endsWith('.svg')) {
           const svgContent = fs.readFileSync(id, 'utf-8');
           const escapedSvgContent = JSON.stringify(svgContent);
@@ -28,12 +28,12 @@ export function svgPlugin() {
           `;
         }
       },
-      resolveId(source) {
+      resolveId(source: string) {
         if (source.endsWith('.svg')) {
           return path.resolve(process.cwd(), source);
         }
       },
-      load(id) {
+      load(id: string) {
         if (id.endsWith('.svg')) {
           return fs.readFileSync(id, 'utf-8');
         }

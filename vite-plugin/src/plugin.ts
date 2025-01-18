@@ -2,18 +2,24 @@ import { Plugin } from 'vite';
 import path from 'path';
 import { svgPlugin } from './svg-plugin';
 
-export default function sigjsPlugin(): Plugin {
+export interface SigjsPluginOptions { 
+  publicDir?: string; 
+}
+
+export default function sigjsPlugin(options?: SigjsPluginOptions): Plugin {
+
+  const publicDir = options?.publicDir || path.resolve(__dirname, './assets');
   return {
     name: 'vite-plugin-sigjs',
-    config() {
+    config() {  
       return {
         plugins: [svgPlugin()],
-        publicDir: path.resolve(__dirname, './assets'),
+        publicDir,
         css: { modules: { localsConvention: 'camelCase' } },
         esbuild: {
           jsxFactory: 'createElement',
           jsxFragment: 'createFragment',
-          jsxInject: `import { createFragment, createElement } from 'sig/jsx'`,
+          jsxInject: `import { createFragment, createElement } from '@sigjs/sig/jsx'`,
         },
         optimizeDeps: {
           disabled: true,
