@@ -1,5 +1,5 @@
 {
-  "name": "create-sigjs-app",
+  "name": "@sigjs/create-sigjs-app",
   "version": "0.0.1",
   "description": "CLI tool to create a new Sig.JS app",
   "main": "bin/create-sigjs-app.js",
