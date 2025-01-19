@@ -12,7 +12,7 @@
   "scripts": {
     "build": "unbuild"
   },
-  "author": "",
+  "author": "Ofir G.",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^22.10.7",
