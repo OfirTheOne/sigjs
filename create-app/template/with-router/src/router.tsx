@@ -1,6 +1,7 @@
-import { createRouter } from '@sigjs/sig/router';
+import { createRouter, Navigate } from '@sigjs/sig/router';
 import { Layout } from './components/Layout';
-import { HomePage } from './pages/HomePage';
+import { PlaygroundPage } from './pages/PlaygroundPage';
+import { AboutPage } from './pages/AboutPage';
 
 export function Router() {
     return createRouter({
@@ -9,7 +10,9 @@ export function Router() {
                 path: '/',
                 component: Layout,
                 children: [
-                    { index: true, component: HomePage }
+                    { index: true, component: () => <Navigate to="/playground" /> },
+                    { path: '/playground', component: PlaygroundPage },
+                    { path: '/about', component: AboutPage }
                 ]
             }
         ]
