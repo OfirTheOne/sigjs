@@ -82,7 +82,7 @@ export type HTMLElementEventHandlersExtendsConcurrency = {
 interface NonNativeElementAttributes {
     ref?: any;
     className?: string | Signal<string> | (Signal<string> | string)[] | Record<string, boolean> ;
-    style?: CSSProperties;
+    style?: Signalize<CSSProperties> | Signal<CSSProperties>;
 }
 
 export interface HTMLElementAttributes<E = HTMLElement> extends 
@@ -113,7 +113,6 @@ export interface HTMLElementAttributes<E = HTMLElement> extends
     popover?: string;
     slot?: string;
     spellcheck?: boolean;
-    // style?: string;
     tabindex?: number;
     title?: string;
     translate?: 'yes' | 'no';
