@@ -42,10 +42,20 @@ function attachPropertyToElement(dom: HTMLElement, name: string, value: unknown)
 
 function attachStyleToElement(
     dom: HTMLElement,
-    style: Record<
-        string,
-        string | number | Signal<string | number>
-    >): void {
+    style: 
+        Record<string, string | number | Signal<string | number>> | 
+        Signal<Record<string, string | number>>
+    ): void {
+    if(isSignal<Record<string, string | number>>(style)) {
+        const unsubscribe = subscribeSignal(style, (value: Record<string, string | number>) => {
+            Object.keys(value).forEach((key) => {
+                const styleValue = value[key];
+                attachStylePropertyToElement(dom, key, styleValue);
+            });
+        });
+        registerSignalSubscription(dom, unsubscribe);
+        return;
+    }
     for (const key in style) {
         const value = style[key];
         if (isSignal<string | number>(value)) {
