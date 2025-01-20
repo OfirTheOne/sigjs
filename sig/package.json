@@ -1,6 +1,6 @@
 {
   "name": "@sigjs/sig",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A rendering, functional, reactive, and composable library for building web applications",
   "type": "module",
   "types": "./dist/index.d.ts",
@@ -53,12 +53,14 @@
     "format": "yarn prettier --write .",
     "dev": "vite",
     "dev:app": "vite",
-    "build": "tsc && vite build",
+    "build": "npm run clean && tsc && vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "test": "vitest",
     "coverage": "vitest run --coverage",
-    "docs": "typedoc"
+    "docs": "typedoc",
+    "pre:release": "npm version patch -m \"release v%s\" && git push && git push --tags",
+    "release": "npm publish --access public"
   },
   "keywords": [],
   "author": "Ofir G.",
