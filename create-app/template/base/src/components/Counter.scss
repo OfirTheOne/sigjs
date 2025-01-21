@@ -1,147 +1,90 @@
-/* Modern CSS reset and base styles */
-:root {
-    --primary: #618cac;
-    --primary-dark: #407196;
-    --background: #f8fafc;
-    --text: #1e293b;
-  }
-  
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: system-ui, -apple-system, sans-serif;
-    background-color: var(--background);
-    color: var(--text);
-  }
-  
-  .container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 4rem 2rem;
-    gap: 2rem;
-  }
-  
-  .logo-container {
-    display: flex;
-    align-items: end;
-    // gap: 1rem;
-    animation: fadeIn 0.5s ease-out;
+.fun-card {
+  margin: 2rem auto;
+  max-width: 300px;
+  background: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.1);
+  transition: all 0.3s ease;
+  text-align: center;
+}
 
-    img {
-      width: 80px;
-      height: 80px;
-    }
-  }
-  
-  .logo {
-    color: var(--primary);
-    width: 48px;
-    height: 48px;
-  }
-  
-  .title {
-    font-size: 2.8rem;
-    font-weight: 700;
-    margin-left: -0.6rem;
-    margin-bottom: 0.5rem;
-    background: var(--primary);
-    -webkit-background-clip: text;
-    color: transparent;
-    font-family: monospace;
-  }
-  
-  .counter-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    min-width: 300px;
-    text-align: center;
-    animation: slideUp 0.5s ease-out;
-  }
-  
-  .counter-value {
-    font-size: 4rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin: 1rem 0;
-    transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  }
-  
-  .counter-value.bounce-up {
-    animation: bounceUp 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  }
-  
-  .counter-value.bounce-down {
-    animation: bounceDown 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  }
-  
-  .counter-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-  }
-  
-  button {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 0.5rem;
-    background-color: var(--primary);
-    color: white;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.1s ease-in-out, background-color 0.2s ease;
-  }
-  
-  button:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-1px);
-  }
-  
-  button:active {
-    transform: translateY(0);
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
+.fun-card:hover {
+  transform: translateY(-5px) rotate(2deg);
+}
+
+.fun-card h3 {
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+/* Counter */
+.counter {
+  font-size: 4rem;
+  font-weight: bold;
+  color: var(--primary);
+  margin: 1rem 0;
+  transition: all 0.2s ease;
+}
+
+.counter.up {
+  animation: bounceUp 0.5s ease;
+}
+
+.counter.down {
+  animation: bounceDown 0.5s ease;
+}
+
+.counter-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.counter-buttons button {
+  font-size: 1.5rem;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--primary);
+  border: 2px solid ;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.counter-buttons button:hover {
+  transform: scale(1.1);
+  background: var(--primary-dark);
+}
+
+
+
+  /* Animations */
+  @keyframes bounce {
+    0%, 100% {
       transform: translateY(0);
+    }
+    50% {
+      transform: translateY(40px);
     }
   }
   
   @keyframes bounceUp {
     0%, 100% {
-      transform: translateY(0);
+      transform: scale(1);
     }
     50% {
-      transform: translateY(-15px);
+      transform: scale(1.2) translateY(-10px);
     }
   }
   
   @keyframes bounceDown {
     0%, 100% {
-      transform: translateY(0);
+      transform: scale(1);
     }
     50% {
-      transform: translateY(15px);
+      transform: scale(1.2) translateY(10px);
     }
   }
+  
