@@ -85,11 +85,8 @@ interface NonNativeElementAttributes {
     style?: Signalize<CSSProperties> | Signal<CSSProperties>;
 }
 
-export interface HTMLElementAttributes<E = HTMLElement> extends 
-    HTMLElementEventHandlers<E>, 
-    NonNativeElementAttributes,
-    HTMLElementEventHandlersExtendsBasic,
-    HTMLElementEventHandlersExtendsConcurrency {
+
+interface HTMLElementCommonAttributes {
     accesskey?: string;
     autocapitalize?: "off" | "none" | "on" | "sentences" | "words" | "characters";
     autofocus?: boolean;
@@ -118,7 +115,14 @@ export interface HTMLElementAttributes<E = HTMLElement> extends
     translate?: 'yes' | 'no';
 }
 
-export interface AnchorElementAttributes extends HTMLElementAttributes {
+export interface HTMLElementAttributes<E = HTMLElement> extends 
+    HTMLElementEventHandlers<E>, 
+    NonNativeElementAttributes,
+    HTMLElementEventHandlersExtendsBasic,
+    HTMLElementEventHandlersExtendsConcurrency,
+    Signalize<HTMLElementCommonAttributes> {} 
+
+export type AnchorElementAttributes = HTMLElementAttributes<HTMLAnchorElement> & Signalize<{
     // Deprecated attributes
     // charset?: string;
     // coords?: string;
@@ -135,9 +139,9 @@ export interface AnchorElementAttributes extends HTMLElementAttributes {
     rel?: string;
     target?: "_self" | "_blank" | "_parent" | "_top" | string;
     type?: string;
-}
+}>;
 
-export interface AppletElementAttributes extends HTMLElementAttributes {
+export type AppletElementAttributes = HTMLElementAttributes & Signalize<{
     align: string;
     alt: string;
     archive: string;
@@ -149,9 +153,9 @@ export interface AppletElementAttributes extends HTMLElementAttributes {
     object: string;
     vspace: string;
     width: string;
-}
+}>;
 
-export interface AreaElementAttributes extends HTMLElementAttributes {
+export type AreaElementAttributes = HTMLElementAttributes & Signalize<{
     alt: string;
     coords: string;
     download: string;
@@ -164,9 +168,9 @@ export interface AreaElementAttributes extends HTMLElementAttributes {
     shape: string;
     target: string;
     type: string;
-}
+}>;
 
-export interface AudioElementAttributes extends HTMLElementAttributes {
+export type AudioElementAttributes = HTMLElementAttributes<HTMLAudioElement> & Signalize<{
     autoplay: boolean;
     controls: boolean;
     crossorigin: "" | "anonymous" | "use-credentials";
@@ -174,24 +178,24 @@ export interface AudioElementAttributes extends HTMLElementAttributes {
     muted: boolean;
     preload: "" | "none" | "metadata" | "auto";
     src: string;
-}
+}>;
 
-export interface BaseElementAttributes extends HTMLElementAttributes {
+export type BaseElementAttributes = HTMLElementAttributes & Signalize<{
     href: string;
     target: string;
-}
+}>;
 
-export interface BasefontElementAttributes extends HTMLElementAttributes {
+export type BasefontElementAttributes = HTMLElementAttributes & Signalize<{
     color: string;
     face: string;
     size: string;
-}
+}>;
 
-export interface BlockquoteElementAttributes extends HTMLElementAttributes {
+export type BlockquoteElementAttributes = HTMLElementAttributes & Signalize<{
     cite: string;
-}
+}>;
 
-export interface BodyElementAttributes extends HTMLElementAttributes {
+export type BodyElementAttributes = HTMLElementAttributes<HTMLBodyElement> & Signalize<{
     // Deprecated attributes
     alink?: string;
     background?: string;
@@ -199,13 +203,13 @@ export interface BodyElementAttributes extends HTMLElementAttributes {
     link?: string;
     text?: string;
     vlink?: string;
-}
+}>;
 
-export interface BrElementAttributes extends HTMLElementAttributes {
+export type BrElementAttributes = HTMLElementAttributes & Signalize<{
     clear: string;
-}
+}>;
 
-export type ButtonElementAttributes = HTMLElementAttributes & Signalize<{
+export type ButtonElementAttributes = HTMLElementAttributes<HTMLButtonElement> & Signalize<{
     disabled?: boolean;
     form?: string;
     formaction?: string;
@@ -221,86 +225,82 @@ export type ButtonElementAttributes = HTMLElementAttributes & Signalize<{
     popovertargetaction?: string;
 }>;
 
-export interface CanvasElementAttributes extends HTMLElementAttributes {
+export type CanvasElementAttributes = HTMLElementAttributes<HTMLCanvasElement> & Signalize<{
     height: number;
     width: number;
-}
+}>;
 
-export interface CaptionElementAttributes extends HTMLElementAttributes {
+export type CaptionElementAttributes = HTMLElementAttributes & Signalize<{
     align: string;
-}
+}>;
 
-export interface ColElementAttributes extends HTMLElementAttributes {
-    align: string;
-    char: string;
-    charoff: string;
-    span: string;
-    valign: string;
-    width: string;
-}
-
-export interface ColgroupElementAttributes extends HTMLElementAttributes {
+export type ColElementAttributes = HTMLElementAttributes & Signalize<{
     align: string;
     char: string;
     charoff: string;
     span: string;
     valign: string;
     width: string;
-}
+}>;
 
-export interface DataElementAttributes extends HTMLElementAttributes {
+export type ColgroupElementAttributes = HTMLElementAttributes & Signalize<{
+    align: string;
+    char: string;
+    charoff: string;
+    span: string;
+    valign: string;
+    width: string;
+}>;
+
+export type DataElementAttributes = HTMLElementAttributes & Signalize<{
     value: string;
-}
+}>;
 
-export interface DelElementAttributes extends HTMLElementAttributes {
+export type DelElementAttributes = HTMLElementAttributes & Signalize<{
     cite: string;
     datetime: string;
-}
+}>;
 
-export interface DetailsElementAttributes extends HTMLElementAttributes {
+export type DetailsElementAttributes = HTMLElementAttributes & Signalize<{
     name: string;
     open: boolean;
-}
+}>;
 
-export interface DialogElementAttributes extends HTMLElementAttributes {
+export type DialogElementAttributes = HTMLElementAttributes & Signalize<{
     open: boolean;
     onclose?: (event: Event) => void;
-}
+}>;
 
-export interface DirElementAttributes extends HTMLElementAttributes {
+export type DirElementAttributes = HTMLElementAttributes & Signalize<{
     compact: boolean;
-}
+}>;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface DivElementAttributes extends HTMLElementAttributes {
-    // Deprecated attributes
-    // align?: string;
-}
+export type DivElementAttributes = HTMLElementAttributes<HTMLDivElement>;
 
-export interface DlElementAttributes extends HTMLElementAttributes {
+export type DlElementAttributes = HTMLElementAttributes & Signalize<{
     compact: boolean;
-}
+}>;
 
-export interface EmbedElementAttributes extends HTMLElementAttributes {
+export type EmbedElementAttributes = HTMLElementAttributes & Signalize<{
     height?: string;
     src?: string;
     type?: string;
     width?: string;
-}
+}>;
 
-export interface FieldsetElementAttributes extends HTMLElementAttributes {
+export type FieldsetElementAttributes = HTMLElementAttributes & Signalize<{
     disabled?: boolean;
     form?: string;
     name?: string;
-}
+}>;
 
-export interface FontElementAttributes extends HTMLElementAttributes {
+export type FontElementAttributes = HTMLElementAttributes & Signalize<{
     color: string;
     face: string;
     size: string;
-}
+}>;
 
-export interface FormElementAttributes extends HTMLElementAttributes {
+export type FormElementAttributes = HTMLElementAttributes<HTMLFormElement> & Signalize<{
     accept?: string;
     'accept-charset'?: string;
     action?: string;
@@ -310,9 +310,9 @@ export interface FormElementAttributes extends HTMLElementAttributes {
     name?: string;
     novalidate?: boolean;
     target?: string;
-}
+}>;
 
-export interface FrameElementAttributes extends HTMLElementAttributes {
+export type FrameElementAttributes = HTMLElementAttributes & Signalize<{
     frameborder: string;
     longdesc: string;
     marginheight: string;
@@ -321,54 +321,54 @@ export interface FrameElementAttributes extends HTMLElementAttributes {
     noresize: boolean;
     scrolling: string;
     src: string;
-}
+}>;
 
-export interface FramesetElementAttributes extends HTMLElementAttributes {
+export type FramesetElementAttributes = HTMLElementAttributes & Signalize<{
     cols: string;
     rows: string;
-}
+}>;
 
-export interface H1ElementAttributes extends HTMLElementAttributes {
+export type H1ElementAttributes = HTMLElementAttributes & Signalize<{
     align: string;
-}
+}>;
 
-export interface H2ElementAttributes extends HTMLElementAttributes {
+export type H2ElementAttributes = HTMLElementAttributes & Signalize<{
     align: string;
-}
+}>;
 
-export interface H3ElementAttributes extends HTMLElementAttributes {
+export type H3ElementAttributes = HTMLElementAttributes & Signalize<{
     align: string;
-}
+}>;
 
-export interface H4ElementAttributes extends HTMLElementAttributes {
+export type H4ElementAttributes = HTMLElementAttributes & Signalize<{
     align: string;
-}
+}>;
 
-export interface H5ElementAttributes extends HTMLElementAttributes {
+export type H5ElementAttributes = HTMLElementAttributes & Signalize<{
     align: string;
-}
+}>;
 
-export interface H6ElementAttributes extends HTMLElementAttributes {
+export type H6ElementAttributes = HTMLElementAttributes & Signalize<{
     align: string;
-}
+}>;
 
-export interface HeadElementAttributes extends HTMLElementAttributes {
+export type HeadElementAttributes = HTMLElementAttributes & Signalize<{
     profile: string;
-}
+}>;
 
-export interface HrElementAttributes extends HTMLElementAttributes {
+export type HrElementAttributes = HTMLElementAttributes & Signalize<{
     align: string;
     noshade: boolean;
     size: string;
     width: string;
-}
+}>;
 
-export interface HtmlElementAttributes extends HTMLElementAttributes {
+export type HtmlElementAttributes = HTMLElementAttributes & Signalize<{
     manifest: string;
     version: string;
-}
+}>;
 
-export interface IframeElementAttributes extends HTMLElementAttributes {
+export type IframeElementAttributes = HTMLElementAttributes<HTMLIFrameElement> & Signalize<{
     allow?: string;
     allowfullscreen?: boolean;
     allowpaymentrequest?: boolean;
@@ -386,7 +386,7 @@ export interface IframeElementAttributes extends HTMLElementAttributes {
     src?: string;
     srcdoc?: string;
     width?: string;
-}
+}>;
 
 export type ImgElementAttributes = HTMLElementAttributes & Signalize<{
     alt: string;
@@ -405,7 +405,7 @@ export type ImgElementAttributes = HTMLElementAttributes & Signalize<{
     width?: string;
 }>;
 
-export interface InputElementAttributes extends HTMLElementAttributes<HTMLInputElement> {
+export type InputElementAttributes = HTMLElementAttributes<HTMLInputElement> & Signalize<{
     accept?: string;
     alt?: string;
     autocomplete?: "on" | "off";
@@ -436,37 +436,33 @@ export interface InputElementAttributes extends HTMLElementAttributes<HTMLInputE
     type?: "button" | "checkbox" | "color" | "date" | "datetime-local" | "email" | "file" | "hidden" | "image" | "month" | "number" | "password" | "radio" | "range" | "reset" | "search" | "submit" | "tel" | "text" | "time" | "url" | "week";
     value?: string;
     width?: string;
-}
+}>;
 
-export interface InsElementAttributes extends HTMLElementAttributes {
+export type InsElementAttributes = HTMLElementAttributes & Signalize<{
     cite: string;
     datetime: string;
-}
+}>;
 
-export interface IsindexElementAttributes extends HTMLElementAttributes {
+export type IsindexElementAttributes = HTMLElementAttributes & Signalize<{
     prompt: string;
-}
+}>;
 
-export interface LabelElementAttributes extends HTMLElementAttributes {
+export type LabelElementAttributes = HTMLElementAttributes & Signalize<{
     for?: string;
     form?: string;
-}
+}>;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface LegendElementAttributes extends HTMLElementAttributes {
-    // Deprecated attributes
-    // align?: string;
-}
+export type LegendElementAttributes = HTMLElementAttributes;
 
-export interface LiElementAttributes extends HTMLElementAttributes {
+export type LiElementAttributes = HTMLElementAttributes & Signalize<{
     // Deprecated attributes
     // type?: string;
 
     // Attributes
     value?: number;
-}
+}>;
 
-export interface LinkElementAttributes extends HTMLElementAttributes {
+export type LinkElementAttributes = HTMLElementAttributes & Signalize<{
     as?: "audio" | "document" | "embed" | "fetch" | "font" | "image" | "object" | "script" | "style" | "track" | "video" | "worker";
     charset?: string;
     color?: string;
@@ -482,35 +478,35 @@ export interface LinkElementAttributes extends HTMLElementAttributes {
     rel?: "alternate" | "author" | "dns-prefetch" | "help" | "license" | "next" | "pingback" | "preconnect" | "prefetch" | "preload" | "prerender" | "prev" | "search" | "stylesheet";
     sizes?: string;
     type?: string;
-}
+}>;
 
-export interface MapElementAttributes extends HTMLElementAttributes {
+export type MapElementAttributes = HTMLElementAttributes & Signalize<{
     name: string;
-}
+}>;
 
-export interface MenuElementAttributes extends HTMLElementAttributes {
+export type MenuElementAttributes = HTMLElementAttributes & Signalize<{
     compact: boolean;
-}
+}>;
 
-export interface MetaElementAttributes extends HTMLElementAttributes {
+export type MetaElementAttributes = HTMLElementAttributes & Signalize<{
     charset: string;
     content: string;
     'http-equiv': string;
     media: string;
     name: string;
     scheme: string;
-}
+}>;
 
-export interface MeterElementAttributes extends HTMLElementAttributes {
+export type MeterElementAttributes = HTMLElementAttributes & Signalize<{
     high?: number;
     low?: number;
     max?: number;
     min?: number;
     optimum?: number;
     value?: number;
-}
+}>;
 
-export interface ObjectElementAttributes extends HTMLElementAttributes {
+export type ObjectElementAttributes = HTMLElementAttributes & Signalize<{
     // Deprecated attributes
     // align?: string;
     // archive?: string;
@@ -532,9 +528,9 @@ export interface ObjectElementAttributes extends HTMLElementAttributes {
     typemustmatch?: boolean;
     usemap?: string;
     width?: string;
-}
+}>;
 
-export interface OlElementAttributes extends HTMLElementAttributes {
+export type OlElementAttributes = HTMLElementAttributes & Signalize<{
     // Deprecated attributes
     // compact?: boolean;
     // type?: string;
@@ -542,51 +538,47 @@ export interface OlElementAttributes extends HTMLElementAttributes {
     // Attributes
     reversed?: boolean;
     start?: number;
-}
+}>;
 
-export interface OptgroupElementAttributes extends HTMLElementAttributes {
+export type OptgroupElementAttributes = HTMLElementAttributes & Signalize<{
     disabled?: boolean;
     label?: string;
-}
+}>;
 
-export interface OptionElementAttributes extends HTMLElementAttributes {
+export type OptionElementAttributes = HTMLElementAttributes & Signalize<{
     disabled?: boolean;
     label?: string;
     selected?: boolean;
     value?: string;
-}
+}>;
 
-export interface OutputElementAttributes extends HTMLElementAttributes {
+export type OutputElementAttributes = HTMLElementAttributes & Signalize<{
     for?: string;
     form?: string;
     name?: string;
-}
+}>;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface PElementAttributes extends HTMLElementAttributes {
-    // Deprecated attributes
-    // align?: string;
-}
+export type PElementAttributes = HTMLElementAttributes;
 
-export interface ParamElementAttributes extends HTMLElementAttributes {
+export type ParamElementAttributes = HTMLElementAttributes & Signalize<{
     name: string;
     value: string;
-}
+}>;
 
-export interface PreElementAttributes extends HTMLElementAttributes {
+export type PreElementAttributes = HTMLElementAttributes & Signalize<{
     width: string;
-}
+}>;
 
-export interface ProgressElementAttributes extends HTMLElementAttributes {
+export type ProgressElementAttributes = HTMLElementAttributes & Signalize<{
     max?: number;
     value?: number;
-}
+}>;
 
-export interface QElementAttributes extends HTMLElementAttributes {
+export type QElementAttributes = HTMLElementAttributes & Signalize<{
     cite: string;
-}
+}>;
 
-export interface ScriptElementAttributes extends HTMLElementAttributes {
+export type ScriptElementAttributes = HTMLElementAttributes & Signalize<{
     async?: boolean;
     // blocking: boolean; // Not a standard attribute
     charset?: string;
@@ -599,9 +591,9 @@ export interface ScriptElementAttributes extends HTMLElementAttributes {
     referrerpolicy?: string;
     src?: string;
     type?: string;
-}
+}>;
 
-export interface SelectElementAttributes extends HTMLElementAttributes {
+export type SelectElementAttributes = HTMLElementAttributes & Signalize<{
     autocomplete?: "on" | "off";
     disabled?: boolean;
     form?: string;
@@ -609,26 +601,26 @@ export interface SelectElementAttributes extends HTMLElementAttributes {
     name?: string;
     required?: boolean;
     size?: number;
-}
+}>;
 
-export interface SlotElementAttributes extends HTMLElementAttributes {
+export type SlotElementAttributes = HTMLElementAttributes & Signalize<{
     name: string;
-}
+}>;
 
-export interface SourceElementAttributes extends HTMLElementAttributes {
+export type SourceElementAttributes = HTMLElementAttributes & Signalize<{
     media?: string;
     sizes?: string;
     src?: string;
     srcset?: string;
     type?: string;
-}
+}>;
 
-export interface StyleElementAttributes extends HTMLElementAttributes {
+export type StyleElementAttributes = HTMLElementAttributes & Signalize<{
     media?: string;
     type?: string;
-}
+}>;
 
-export interface TableElementAttributes extends HTMLElementAttributes {
+export type TableElementAttributes = HTMLElementAttributes & Signalize<{
     // Deprecated attributes
     // align?: string;
     // bgcolor?: string;
@@ -642,18 +634,11 @@ export interface TableElementAttributes extends HTMLElementAttributes {
 
     // Modern attributes
     'aria-describedby'?: string;
-}
+}>;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface TbodyElementAttributes extends HTMLElementAttributes {
-    // Deprecated attributes
-    // align?: string;
-    // char?: string;
-    // charoff?: string;
-    // valign?: string;
-}
+export type TbodyElementAttributes = HTMLElementAttributes;
 
-export interface TdElementAttributes extends HTMLElementAttributes {
+export type TdElementAttributes = HTMLElementAttributes & Signalize<{
     // Deprecated attributes
     // abbr?: string;
     // align?: string;
@@ -671,14 +656,13 @@ export interface TdElementAttributes extends HTMLElementAttributes {
     // Modern attributes
     headers?: string;
     height?: string;
-}
+}>;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface TemplateElementAttributes extends HTMLElementAttributes {
+export type TemplateElementAttributes = HTMLElementAttributes & Signalize<{
     // No specific attributes for <template>
-}
+}>;
 
-export interface TextareaElementAttributes extends HTMLElementAttributes<HTMLTextAreaElement> {
+export type TextareaElementAttributes = HTMLElementAttributes<HTMLTextAreaElement> & Signalize<{
     autocomplete?: "on" | "off";
     cols?: number;
     value?: string;
@@ -693,18 +677,11 @@ export interface TextareaElementAttributes extends HTMLElementAttributes<HTMLTex
     required?: boolean;
     rows?: number;
     wrap?: "hard" | "soft";
-}
+}>;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface TfootElementAttributes extends HTMLElementAttributes {
-    // Deprecated attributes
-    // align?: string;
-    // char?: string;
-    // charoff?: string;
-    // valign?: string;
-}
+export type TfootElementAttributes = HTMLElementAttributes;
 
-export interface ThElementAttributes extends HTMLElementAttributes {
+export type ThElementAttributes = HTMLElementAttributes & Signalize<{
     // Deprecated attributes
     // abbr?: string;
     // align?: string;
@@ -722,47 +699,27 @@ export interface ThElementAttributes extends HTMLElementAttributes {
     // Modern attributes
     headers?: string;
     height?: string;
-}
+}>;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface TheadElementAttributes extends HTMLElementAttributes {
-    // Deprecated attributes
-    // align?: string;
-    // char?: string;
-    // charoff?: string;
-    // valign?: string;
-}
+export type TheadElementAttributes = HTMLElementAttributes;
 
-export interface TimeElementAttributes extends HTMLElementAttributes {
+export type TimeElementAttributes = HTMLElementAttributes & Signalize<{
     datetime: string;
-}
+}>;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface TrElementAttributes extends HTMLElementAttributes {
-    // Deprecated attributes
-    // align?: string;
-    // bgcolor?: string;
-    // char?: string;
-    // charoff?: string;
-    // valign?: string;
-}
+export type TrElementAttributes = HTMLElementAttributes;
 
-export interface TrackElementAttributes extends HTMLElementAttributes {
+export type TrackElementAttributes = HTMLElementAttributes & Signalize<{
     default?: boolean;
     kind?: "subtitles" | "captions" | "descriptions" | "chapters" | "metadata";
     label?: string;
     src: string;
     srclang?: string;
-}
+}>;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface UlElementAttributes extends HTMLElementAttributes {
-    // Deprecated attributes
-    // compact?: boolean;
-    // type?: string;
-}
+export type UlElementAttributes = HTMLElementAttributes;
 
-export interface VideoElementAttributes extends HTMLElementAttributes {
+export type VideoElementAttributes = HTMLElementAttributes<HTMLVideoElement> & Signalize<{
     autoplay?: boolean;
     controls?: boolean;
     crossorigin?: "anonymous" | "use-credentials";
@@ -774,8 +731,8 @@ export interface VideoElementAttributes extends HTMLElementAttributes {
     preload?: "none" | "metadata" | "auto";
     src?: string;
     width?: number;
-}
+}>;
 
-export interface CustomElementAttributes extends HTMLElementAttributes {
+export type CustomElementAttributes = HTMLElementAttributes & {
     is: string;
-}
+};
