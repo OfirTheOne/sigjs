@@ -1,7 +1,6 @@
 
 import "./Counter.scss";
 import { createSignal } from "@sigjs/sig";
-// import Logo from "/assets/sig-logo.svg";
 
 export function CounterCard() {
     const [count$, setCount] = createSignal(0);
@@ -20,7 +19,6 @@ export function CounterCard() {
         <button onClick={() => handleCount(false)}>-</button>
         <button onClick={() => handleCount(true)}>+</button>
       </div>
-    </div>
-    );
+    </div>);
   }
   

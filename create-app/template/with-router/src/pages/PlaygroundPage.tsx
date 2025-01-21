@@ -1,7 +1,7 @@
 import './PlaygroundPage.scss';
 import { createSignal, Signal } from "@sigjs/sig";
 
-const colors = ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'];
+const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
 function CounterCard( { color$ }: { color$: Signal<string> }) {
   const [count$, setCount] = createSignal(0);
@@ -83,11 +83,8 @@ export function PlaygroundPage() {
   
   return (
     <div>
-      <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        Welcome to the Sig.JS Playground!
-        <p>Explore the interactive components below to see how you can build dynamic web applications using Sig.JS. </p>
-        <p>Navigate to the <strong>src/pages/PlaygroundPage.tsx</strong> file to see the code for this page.</p>
-      </h1>
+      <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>Hello Sig.JS</h1>
+      <p style={{ textAlign: 'center' }}>Welcome to the Sig.JS Playground!</p>
       <div className="playground">
         <CounterCard color$={color$} />
         <ColorChangerCard  color$={color$} onChangeColor={randomColor} />
