@@ -1,6 +1,6 @@
 import type * as CSS from 'csstype';
-import type { VirtualElement, Renderable, Signalize } from 'sig';
-import type * as HEA from "sig/convenient";
+import type { VirtualElement, Renderable, Signalize } from '@sigjs/sig';
+import type * as HEA from "@sigjs/sig/convenient";
 
 declare global {
 
@@ -945,7 +945,7 @@ declare global {
       dialog: HEA.DialogElementAttributes;
       slot: HEA.HTMLElementAttributes;
       template: HEA.TemplateElementAttributes;
-      // [elemName: string]: any;
+      strong: HEA.HTMLElementAttributes;
     }
 
     export type Element
