@@ -1,7 +1,6 @@
 import { Link } from "@sigjs/sig/router";
 import './Layout.scss';
 
-
 function NavBar() {
     return (
         <div className="nav-header">
@@ -19,12 +18,10 @@ function NavBar() {
 }
 
 export function Layout() {
-    return (
-        <div>
+    return (<div>
         <NavBar />
         <main className="main-content">
-          <router-outlet />
+            <router-outlet />
         </main>
-      </div>
-    );
+    </div>);
 }
