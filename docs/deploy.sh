@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check for changes in the docs folder
-if git diff --quiet --exit-code docs; then
+if git diff --quiet --exit-code -- docs; then
   echo "No changes in the docs folder. Proceeding with deployment..."
   npm run deploy
 else
