@@ -12,7 +12,7 @@ hero:
 import { LinkButton } from '@astrojs/starlight/components';
 
 
-<div style={{ marginTop: '-12rem' }}>
+<div class="md:-mt-48">
 	<LinkButton
 		style={{ marginBottom: '2rem' }}
 		iconPlacement='end'
@@ -24,29 +24,19 @@ import { LinkButton } from '@astrojs/starlight/components';
 
 	Run `npx @sigjs/create-sigjs-app` to get started quickly with Sig.JS.
 	
-	There're two available templates, basic template and a router template :
-	
-	<div class="flex flex-wrap justify-around items-baseline">
-		<iframe
-			src="https://stackblitz.com/edit/sig-js-base-template?embed=1&file=src%2Fapp.tsx&view=preview"
-			style={{ 
-				width: "49%",
-				height: "400px"
-			}}
-			frameborder="0"
-			allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-			allowfullscreen
-		></iframe>
-
-		<iframe
-			src="https://stackblitz.com/edit/sig-js-router-template-bjexmu7w?embed=1&file=src%2Frouter.tsx&view=preview"
-			style={{ 
-				width: "49%",
-				height: "400px"
-			}}
-			frameborder="0"
-			allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-			allowfullscreen
-		></iframe>
+	<div style={{ marginTop: '0' }}
+		class="flex flex-wrap gap-2 justify-start items-baseline">
+		<div class="flex gap-2 w-80 justify-around items-center border p-2">
+			<div>Base template - </div>
+			<a href="https://stackblitz.com/edit/sig-js-base-template?file=src%2Fapp.tsx" target="_blank">
+				<img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open Base template in StackBlitz" />
+			</a>
+		</div>
+		<div class="flex gap-2 w-80 justify-around items-center border p-2">
+			<div>Router template - </div>
+			<a href="https://stackblitz.com/edit/sig-js-router-template-bjexmu7w?file=src%2Frouter.tsx" target="_blank">
+				<img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt="Open Router template in StackBlitz" />
+			</a>
+		</div>
 	</div>
 </div>
