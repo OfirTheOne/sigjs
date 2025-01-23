@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sigjs/sig": "^0.0.5",
+    "@sigjs/sig": "^0.0.6",
     "autoprefixer": "^10.4.16",
     "css-loader": "^6.7.3",
     "events": "^3.3.0",
