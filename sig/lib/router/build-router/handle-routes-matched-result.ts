@@ -14,7 +14,8 @@ export async function handleRoutesMatchedResult(
     path: string,
     _base: string,
     memoRenderedRoute: Record<string, HTMLElement | Text | ChildNode[]>,
-    renderKey: KeyBuilder
+    renderKey: KeyBuilder,
+    onRouteChange: () => void
 ) {
     let rootComponentDom: HTMLElement | Text | ChildNode[] | undefined | null = null;
     let componentDom: HTMLElement | Text | ChildNode[] | undefined;
@@ -107,6 +108,9 @@ export async function handleRoutesMatchedResult(
             componentContainer.innerHTML = '';
             DOM.appendChild(componentContainer, componentDomToRender);
         }
+    }
+    if (renderedComponentList.length > 0) {
+        onRouteChange();
     }
     return rootComponentDom;
 }

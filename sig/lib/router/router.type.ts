@@ -186,6 +186,13 @@ export type RouterPushParameters = {
     path: string | URL, state?: Record<string, unknown>
 }
 
+export type OnRouteChangeCallbackParameters = {
+    path: string; 
+    params: Record<string, string>; 
+    state: Record<string, unknown>;
+}
+
+export type OnRouteChangeCallback = (params: OnRouteChangeCallbackParameters) => void;
 
 /**
  * The router object
@@ -232,4 +239,8 @@ export type Router = {
      * The metadata of the matched route
      */
     navigationMatchMetadata?: NavigationMatchMetadata
+
+    events: {
+        onRouteChange: (callback: OnRouteChangeCallback) => void;
+    }
 };

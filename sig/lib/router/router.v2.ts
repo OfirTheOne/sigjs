@@ -10,7 +10,7 @@ import { getActiveContext } from "@/core/dom-render/component-context/component-
 import { handleRoutesMatchedResult } from "./build-router/handle-routes-matched-result";
 import type { RootElementWithMetadata } from "@/core/dom-render/create-root";
 import type { VirtualElement } from "@/types";
-import type { Router, RouterConfig, RouteConfig } from "./router.type";
+import type { Router, RouterConfig, RouteConfig, OnRouteChangeCallback } from "./router.type";
 
 const routersStore: Record<string, Router> = {};
 
@@ -83,6 +83,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         navigate(window.location.pathname);
     });
     
+    const _onRouteChangeCallbacks: OnRouteChangeCallback[] = [];
     const { routes, base = '', onNoMatch, useViewTransition = true } = config;
     const context = getActiveContext();
     if(!context) {
@@ -105,6 +106,11 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         navigate,
         get state() { return history.state; },
         matchedRouteId: '',
+        events: {
+            onRouteChange: (callback) => {
+                _onRouteChangeCallbacks.push(callback);
+            }
+        }
     };
     routersStore[router.rootId] = router;
     
@@ -172,6 +178,12 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
             return;
         }
 
+        function onRouteChange() {
+            _onRouteChangeCallbacks.forEach(callback => {
+                callback({ path, params, state: history.state });
+            });
+        }
+
         const delayedHandleRoutesMatchedResult = () => {
             handleRoutesMatchedResult(
                 router,
@@ -180,7 +192,8 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
                 path,
                 base,
                 memoRenderedRoute,
-                renderKey
+                renderKey,
+                onRouteChange
             ).then(() => {
                 if(redirectStack.length) {
                     const redirectParameters = redirectStack.at(-1);
@@ -227,6 +240,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
  * });
  */
 function createRouter(config: RouterConfig): VirtualElement {
+    
     const renderedRoot = getRenderedRoot();
     if (!renderedRoot) {
         throw new Error('Out of a root context');
