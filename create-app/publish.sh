@@ -10,10 +10,6 @@ cd "$SCRIPT_DIR"
 if git diff --quiet --exit-code -- .; then
     echo "No changes detected in the 'create-app' folder."
 
-    # Build the package
-    echo "Building the package..."
-    npm run build
-
     # Bump the package version with a patch
     echo "Bumping the package version..."
     npm version patch
@@ -35,5 +31,5 @@ if git diff --quiet --exit-code -- .; then
 
     echo "Done."
 else
-    echo "There are changes in the 'sig' folder. Please commit or stash them before running this script."
+    echo "There are changes in the 'create-app' folder. Please commit or stash them before running this script."
 fi
