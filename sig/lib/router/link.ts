@@ -1,11 +1,19 @@
-import { getRouter } from '@/router';
+import { getRouter, match } from '@/router';
 import { createElement } from '@/jsx';
+import { createSignal } from '@/core/signal';
 
 export interface LinkProps {
     to: string;
     onClick?: (e: MouseEvent) => void;
     className?: string;
+    /**
+     * The class to apply when the link is active
+     * @default 'active'
+     */
+    activeClass?: string;
 }
+
+const DEFAULT_ACTIVE_CLASS = 'active';
 
 /**
  * A link component that navigates using the app router, preventing the default behavior.
@@ -23,12 +31,23 @@ export interface LinkProps {
 export function Link({ 
     to, 
     onClick,
-    className
+    className,
+    activeClass
 }: LinkProps, children?: any) {
     const router = getRouter();
+    const [activeClass$, setActiveClass] = createSignal('');
+    router.events.onRouteChange((e) => {
+        const matchResult = match(to, e.path);
+        if(matchResult.isMatch) {
+            setActiveClass(activeClass ?? DEFAULT_ACTIVE_CLASS);
+        } else {
+            setActiveClass('');
+        }
+    });
+
     return (createElement('a',{ 
         href: to,
-        className: 'router-link ' + (className ?? ''),
+        className: ['router-link', (className ?? ''), activeClass$],
         onClick: (e: MouseEvent) => {
             e.preventDefault();
             router.push(to);
