@@ -25,7 +25,7 @@ if git diff --quiet --exit-code -- .; then
     echo "Setting git tag and pushing..."
     git add .
     git commit -m "Bump version to $VERSION"
-    git tag "v$VERSION"
+    git tag "sig/v$VERSION"
     git push origin main
     git push origin "v$VERSION"
 
