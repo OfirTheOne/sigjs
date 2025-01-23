@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { matchRoute } from './nested-match-route';
+import { matchRoute, matchRoutePaths } from './nested-match-route';
 import { RouteConfig } from './match-route.type';
 
 describe('matchRoute', () => {
@@ -208,3 +208,31 @@ describe('matchRoute two matching routes', () => {
 
 });
 
+describe('matchRoutePaths', () => {
+
+  describe('matching paths', () => {
+    it('should match paths', () => {
+      const { isMatch, params } = matchRoutePaths(['contact'], ['contact']);
+      expect(isMatch).toBe(true);
+      expect(params).toStrictEqual({});
+    });
+
+    it('should match paths with parameter', () => {
+      const { isMatch, params } = matchRoutePaths(['contact', ':id'], ['contact', '123']);
+      expect(isMatch).toBe(true);
+      expect(params).toStrictEqual({ id: '123' });
+    });
+
+    it('should match paths with multiple parameters', () => {
+      const { isMatch, params } = matchRoutePaths(['contact', ':id', 'overview'], ['contact', '123', 'overview']);
+      expect(isMatch).toBe(true);
+      expect(params).toStrictEqual({ id: '123' });
+    });
+
+    it('should not match paths where route contained the path and more parts', () => {
+      const { isMatch, params } = matchRoutePaths(['contact', 'overview'], ['contact']);
+      expect(isMatch).toBe(false);
+      expect(params).toStrictEqual({});
+    })
+  });
+});

@@ -9,6 +9,7 @@ export function matchRoutePaths(
 ): { 
   isMatch: boolean; 
   params?: Record<string, string>; 
+  isExactMatch?: boolean;
   firstMatchedParamIndex?: number 
 } {
   const params: Record<string, string> = {};
@@ -27,8 +28,8 @@ export function matchRoutePaths(
     }
     return part === pathParts[index];
   });
-
-  return { isMatch, params, firstMatchedParamIndex };
+  const isExactMatch = isMatch && routePathParts.length === pathParts.length;
+  return { isMatch, params, isExactMatch, firstMatchedParamIndex };
 }
 
 
