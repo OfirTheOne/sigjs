@@ -1,6 +1,10 @@
 ---
 title: Component Lifecycle
 description: Component Lifecycle
+banner:
+  content: |
+    <strong>Note:</strong> The library is in Beta stage.
+    
 ---
 
 A component's lifecycle refers to the stages it goes through from when it is first created to when it is destroyed. Understanding the lifecycle of a component is essential for managing state, side effects, and performance optimization.
