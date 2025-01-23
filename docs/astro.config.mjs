@@ -89,7 +89,8 @@ export default defineConfig({
                     },
                     {
                         label: 'Store',
-                        slug: 'guides/store'
+                        slug: 'guides/store',
+                        badge: 'Coming Soon',
                     },
                 ],
             },
@@ -98,23 +99,33 @@ export default defineConfig({
                 items: [
                     {
                         label: 'Configure Routes',
-                        slug: 'routing-guides/configure-routes'
+                        slug: 'routing-guides/configure-routes',
+                        badge: 'Coming Soon',
+
                     },
                     {
                         label: 'Nested Routes',
-                        slug: 'routing-guides/route'
+                        slug: 'routing-guides/route',
+                        badge: 'Coming Soon',
+
                     },
                     {
                         label: 'Router Outlet',
-                        slug: 'routing-guides/router-outlet'
+                        slug: 'routing-guides/router-outlet',
+                        badge: 'Coming Soon',
+
                     },
                     {
                         label: 'Redirect',
-                        slug: 'routing-guides/redirect'
+                        slug: 'routing-guides/redirect',
+                        badge: 'Coming Soon',
+
                     },
                     {
                         label: 'Link',
-                        slug: 'routing-guides/link'
+                        slug: 'routing-guides/link',
+                        badge: 'Coming Soon',
+
                     },
                 ]
             },
