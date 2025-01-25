@@ -83,7 +83,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         navigate(window.location.pathname);
     });
     
-    const _onRouteChangeCallbacks: OnRouteChangeCallback[] = [];
+    const _onRouteChangeCbs: OnRouteChangeCallback[] = [];
     const { routes, base = '', onNoMatch, useViewTransition = true } = config;
     const context = getActiveContext();
     if(!context) {
@@ -107,15 +107,12 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         get state() { return history.state; },
         matchedRouteId: '',
         events: {
-            onRouteChange: (callback) => {
-                _onRouteChangeCallbacks.push(callback);
-            }
+            onRouteChange: (cb) => { _onRouteChangeCbs.push(cb); }
         }
     };
     routersStore[router.rootId] = router;
     
     function replace(path: string | URL, state?: Record<string, unknown>) {
-
         if (router.navigateState.isNavigating) {
             logger.warn('Router is currently navigating');
             redirectStack.push([path, state]);
@@ -129,7 +126,6 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
     }
 
     function push(path: string | URL, state?: Record<string, unknown>) {
-
         if (router.navigateState.isNavigating) {
             logger.warn('Router is currently navigating');
             redirectStack.push([path, state]);
@@ -179,9 +175,7 @@ function buildRouter(config: RouterConfig, renderedRoot: RootElementWithMetadata
         }
 
         function onRouteChange() {
-            _onRouteChangeCallbacks.forEach(callback => {
-                callback({ path, params, state: history.state });
-            });
+            _onRouteChangeCbs.forEach(cb => cb({ path, params, state: history.state }));
         }
 
         const delayedHandleRoutesMatchedResult = () => {
