@@ -82,6 +82,15 @@ export function matchRoute<R extends RouteConfig = RouteConfig>(path: string, ro
           routePathParts: prevRoutePathParts,
           isIndex: true,
         });
+        break;
+      } 
+      else if ('path' in routePart && routePart.path === '*') {
+        processedRouteParts.push({
+          route: routePart,
+          fullPath: fullPathToCurrentRoutePart,
+          routePathParts: splitPath(fullPathToCurrentRoutePart),
+        });
+        break;
       } else {
         fullPathToCurrentRoutePart = resolvePath(fullPathToCurrentRoutePart, routePart.path);
         const routePathParts = splitPath(fullPathToCurrentRoutePart); //  == '/' ? [''] : fullPathToCurrentRoutePart.split('/');
@@ -120,7 +129,7 @@ export function matchRoute<R extends RouteConfig = RouteConfig>(path: string, ro
   }
 
 
-  const postProcessedMatchedRoutes = processedMatchedRoutes.map(({
+  let postProcessedMatchedRoutes = processedMatchedRoutes.map(({
     routeParts,
     firstMatchedParamIndex,
     matchParams
@@ -130,6 +139,10 @@ export function matchRoute<R extends RouteConfig = RouteConfig>(path: string, ro
     const depth = overallRouteParts.length;
     const isFullMatch = depth === pathParts.length;
     const isExactMatch = firstMatchedParamIndex === -1 && isFullMatch;
+    const isNotFound 
+      = mostSpecificRoute 
+      && 'path' in mostSpecificRoute?.route 
+      && mostSpecificRoute.route.path === '*';
 
     return {
       params: matchParams,
@@ -138,8 +151,12 @@ export function matchRoute<R extends RouteConfig = RouteConfig>(path: string, ro
       depth,
       isFullMatch,
       isExactMatch,
+      isNotFound
     };
   });
+
+  const notFoundMatch = postProcessedMatchedRoutes.find(({ isNotFound }) => isNotFound);
+  postProcessedMatchedRoutes = postProcessedMatchedRoutes.filter(({ isNotFound }) => !isNotFound);
 
   const exactMatch = postProcessedMatchedRoutes.find(({ isExactMatch }) => isExactMatch);
   if (exactMatch) {
@@ -158,6 +175,13 @@ export function matchRoute<R extends RouteConfig = RouteConfig>(path: string, ro
   }
 
   const mostDepthMatch = postProcessedMatchedRoutes.reduce((acc, curr) => acc.depth > curr.depth ? acc : curr);
+  if (notFoundMatch && (mostDepthMatch.depth <= notFoundMatch.depth)) {
+    return {
+      routes: notFoundMatch.routeParts.map(({ route }) => route),
+      params: notFoundMatch.params
+    };
+  }
+  
   return {
     routes: mostDepthMatch.routeParts.map(({ route }) => route),
     params: mostDepthMatch.params
