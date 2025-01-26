@@ -7,7 +7,7 @@ title: "createRouter"
 
 > **createRouter**(`config`): `VirtualElement`
 
-Defined in: router/router.v2.ts:229
+Defined in: router/router.v2.ts:236
 
 Create a router
 

@@ -7,7 +7,7 @@ title: "Router"
 
 > **Router**: `object`
 
-Defined in: router/router.type.ts:195
+Defined in: router/router.type.ts:202
 
 The router object
 
@@ -20,6 +20,24 @@ used in [getRouter](../../../../../../../api/router/functions/getrouter)
 > **container**: `HTMLElement`
 
 The container element of the router
+
+### events
+
+> **events**: `object`
+
+#### events.onRouteChange()
+
+> **onRouteChange**: (`callback`) => `void`
+
+##### Parameters
+
+###### callback
+
+`OnRouteChangeCallback`
+
+##### Returns
+
+`void`
 
 ### matchedRouteId
 

@@ -1,0 +1,65 @@
+---
+title: Catch-All Route
+description: A guide on how to handle routes that do not match any defined paths using the * route.
+
+---
+
+## Introduction
+
+In this section, we will discuss how to handle routes that do not match any defined paths using the `*` route, also known as a catch-all route.
+
+This pattern is useful for rendering a "404 Not Found" page when a user navigates to a path that doesn't exist in your application.
+
+## Defining a Catch-All Route
+
+To define a catch-all route, you can use the `*` wildcard in your route configuration. This route will match any path that hasn't been matched by previous routes.
+
+```jsx
+{
+  path: '/', component: () => <Layout />,
+  children: [
+    { index: true, component: () => <Navigate to="/categories" />, memo: false },
+    { path: '/categories', component: Categories },
+    { path: '/recipes', component: Recipes, memo: false },
+    { 
+      path: 'recipe',
+      component: () => <Navigate to="/recipes" />,
+      children: [
+        { path: ':id', component: Recipe },
+      ]
+    },
+    { path: '*', component: () => <div>404 Not Found</div> }
+  ]
+}
+```
+
+In this example, the * route is used to define a catch-all route that renders a "404 Not Found" page when no other routes match the current path.
+
+Nested Catch-All Routes
+
+You can also define nested catch-all routes to handle 404 pages within specific sections of your application.
+
+```jsx
+{
+  path: '/', component: () => <Layout />,
+  children: [
+    { index: true, component: () => <Navigate to="/categories" />, memo: false },
+    { path: '/categories', component: Categories },
+    { path: '/recipes', component: Recipes, memo: false },
+    { 
+      path: 'recipe',
+      component: () => <Navigate to="/recipes" />,
+      children: [
+        { path: ':id', component: Recipe },
+        { path: 'overview', component: () => <div>Overview</div> },
+        { path: '*', component: () => <div>Recipe Not Found</div> }
+      ]
+    },
+    { path: '*', component: () => <div>404 Not Found</div> }
+  ]
+}
+```
+
+
+In this example, there is a nested catch-all route within the recipe path that renders a "Recipe Not Found" page when no other routes match within the recipe section.
+

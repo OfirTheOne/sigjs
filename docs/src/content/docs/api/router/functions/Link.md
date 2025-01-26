@@ -7,7 +7,7 @@ title: "Link"
 
 > **Link**(`__namedParameters`, `children`?): `VirtualElement`
 
-Defined in: router/link.ts:23
+Defined in: router/link.ts:31
 
 A link component that navigates using the app router, preventing the default behavior.
 Anchor elements resulting from this component will have the class 'router-link'.
