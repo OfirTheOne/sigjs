@@ -11,7 +11,21 @@ interface CoreSignalCapabilities<T> {
     value: T;
     setValue(value: T | ((value: T) => T)): void;
     emit(value: T): void;
-    subscribe(listener: Listener<T>): () => void;
+    /**
+     *  Subscribe to the signal
+     *  
+     * @param listener  The listener function
+     * @param options   Options for the subscription
+     * @param options.emitOnSubscribe Emit the current value when subscribing, run the listener immediately on subscribe
+     *                
+     * @returns A function that unsubscribes the listener
+     */
+    subscribe(
+        listener: Listener<T>, 
+        options?: {
+            emitOnSubscribe?: boolean;
+        }
+    ): () => void;
     readonly listeners: Listener<T>[];
     disconnect(): void;
 }
@@ -36,6 +50,8 @@ interface EnhancedSignalCapabilities<T> {
      * // > '2'
      */ 
     derive<L = T>(pipe: (value: T) => L): Signal<L>;
+    derive<L = T>(pipe: (value: T) => L, condition: ((value: T) => boolean) | ((value: T) => boolean)[]): Signal<L|T>;
+    derive<L = T>(pipe: (value: T) => L, condition?: ((value: T) => boolean) | ((value: T) => boolean)[]): Signal<L> | Signal<L|T>;
     /**
      * Link the current signal to another signal
      * @param signal The signal to link to
