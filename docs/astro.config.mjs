@@ -116,6 +116,11 @@ export default defineConfig({
 
                     },
                     {
+                        label: 'Catch-All Route',
+                        slug: 'routing-guides/catch-all-route',
+                        badge: 'Coming Soon',
+                    },
+                    {
                         label: 'Redirect',
                         slug: 'routing-guides/redirect',
                         badge: 'Coming Soon',
