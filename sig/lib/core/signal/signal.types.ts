@@ -1,6 +1,7 @@
 type SignalOptions = {
     id?: string;
     rememberPrevValue?: boolean;
+    emitOnExitStaleMode?: boolean;
 }
 
 /** @internal */
