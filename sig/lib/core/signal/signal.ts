@@ -11,27 +11,32 @@ type BuildSignalResult<T>
     & StaleSignalCapabilities;
 
 /** @internal @ignore */
+type NonCallableSignal<T> = Pick<Signal<T>
+, 'id'
+| 'link'
+| 'derive'
+| 'listeners'
+| 'subscribe'
+| 'linkedSubscriptions'
+| 'disconnect'
+| 'emit'
+| 'value'
+| 'previousValue'
+| 'setValue'
+| 'enterStaleMode'
+| 'exitStaleMode'
+>;
+
+/** @internal @ignore */
 function buildSignal<T>(value: T, options?: SignalOptions): BuildSignalResult<T> {
     let listeners: Listener<T>[] = [];
     let staleMode = false;
     let _prevValue: T | undefined;
     const linkedSubscriptions: (() => void)[] = [];
-    const nonCallableSignal: Pick<Signal<T>
-        , 'id'
-        | 'link'
-        | 'derive'
-        | 'listeners'
-        | 'subscribe'
-        | 'linkedSubscriptions'
-        | 'disconnect'
-        | 'emit'
-        | 'value'
-        | 'previousValue'
-        | 'setValue'
-        | 'enterStaleMode'
-        | 'exitStaleMode'
-    > = {
+    const nonCallableSignal: NonCallableSignal<T> = {
         id: options?.id || String(signalCounter),
+        get listeners() { return listeners; },
+        get linkedSubscriptions() { return linkedSubscriptions; },
         get previousValue() { return _prevValue; },
         get value() { return value; },
         set value(newValue: T) {
@@ -46,12 +51,18 @@ function buildSignal<T>(value: T, options?: SignalOptions): BuildSignalResult<T>
                 listeners.forEach(listener => listener(value));
             }
         },
-        setValue(newValue: ((value: T) => T) | T) {
-            if (typeof newValue === 'function') {
-                this.value = (newValue as (value: T) => T)(this.value);
-            } else {
-                this.value = newValue;
+        enterStaleMode() { staleMode = true; },
+        exitStaleMode() { 
+            if (!staleMode) return;
+            staleMode = false; 
+            if (options?.emitOnExitStaleMode) {
+                this.emit(value);
             }
+        },
+        setValue(newValue: ((value: T) => T) | T) {
+            this.value = (typeof newValue === 'function') ? 
+                (newValue as (value: T) => T)(this.value) :
+                newValue;
         },
         subscribe(listener: Listener<T>, options) {
             if (options?.emitOnSubscribe) {
@@ -60,8 +71,6 @@ function buildSignal<T>(value: T, options?: SignalOptions): BuildSignalResult<T>
             listeners.push(listener);
             return () => { listeners = listeners.filter(l => l !== listener); };
         },
-        enterStaleMode() { staleMode = true; },
-        exitStaleMode() { staleMode = false; },
         disconnect() {
             listeners = [];
             this.linkedSubscriptions.forEach(unsubscribe => unsubscribe());
@@ -69,11 +78,7 @@ function buildSignal<T>(value: T, options?: SignalOptions): BuildSignalResult<T>
         },
         link<L = T>(signal: Signal<L>, pipe?: (value: L) => T) {
             const unsubscribe = signal.subscribe((value) => {
-                if (pipe) {
-                    this.value = pipe(value);
-                } else {
-                    this.value = value as unknown as T;
-                }
+                this.value = pipe ? pipe(value) : value as unknown as T;
             });
             this.linkedSubscriptions.push(unsubscribe);
             return unsubscribe;
@@ -84,17 +89,13 @@ function buildSignal<T>(value: T, options?: SignalOptions): BuildSignalResult<T>
                 condition(_value));
             
             const pipedValue = shouldPipe(this.value) ? pipe(this.value) : this.value;
-            
             const [derivedSignal, setDerivedSignal] = createSignal(pipedValue);
-            
             this.subscribe((value) => {
                 const _pipedValue = shouldPipe(value) ? pipe(value) : value;
                 setDerivedSignal(_pipedValue);
             });
             return derivedSignal;
-        },
-        get listeners() { return listeners; },
-        get linkedSubscriptions() { return linkedSubscriptions; }
+        }
     };
     return nonCallableSignal;
 }
