@@ -115,7 +115,7 @@ import type { Signal } from './signal.types';
             });
 
             it('should emit the last value set while in stale mode when exiting stale mode', () => {
-                const signal = signalBuilderFn(10);
+                const signal = signalBuilderFn(10, { emitOnExitStaleMode: true });
                 const listener = vitest.fn();
                 signal.subscribe(listener);
                 signal.enterStaleMode();
