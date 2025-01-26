@@ -1,3 +1,4 @@
+import { reduce } from "@/common/reduce";
 import { Signal, CoreSignalCapabilities, EnhancedSignalCapabilities, StaleSignalCapabilities, Listener, RememberPreviousValueSignalCapabilities, SignalOptions } from "./signal.types";
 
 let signalCounter = 0
@@ -52,7 +53,10 @@ function buildSignal<T>(value: T, options?: SignalOptions): BuildSignalResult<T>
                 this.value = newValue;
             }
         },
-        subscribe(listener: Listener<T>) {
+        subscribe(listener: Listener<T>, options) {
+            if (options?.emitOnSubscribe) {
+                listener(this.value);
+            }
             listeners.push(listener);
             return () => { listeners = listeners.filter(l => l !== listener); };
         },
@@ -74,9 +78,19 @@ function buildSignal<T>(value: T, options?: SignalOptions): BuildSignalResult<T>
             this.linkedSubscriptions.push(unsubscribe);
             return unsubscribe;
         },
-        derive<L = T>(pipe: (value: T) => L) {
-            const [derivedSignal, setDerivedSignal] = createSignal(pipe(this.value));
-            this.subscribe((value) => setDerivedSignal(pipe(value)));
+        derive<L = T>(pipe: (value: T) => L, condition?: ((value: T) => boolean) | ((value: T) => boolean)[]): Signal<L | T> | Signal<L> {
+            const shouldPipe = (_value: T) => !condition || (Array.isArray(condition) ? 
+                reduce(condition)(_value) : 
+                condition(_value));
+            
+            const pipedValue = shouldPipe(this.value) ? pipe(this.value) : this.value;
+            
+            const [derivedSignal, setDerivedSignal] = createSignal(pipedValue);
+            
+            this.subscribe((value) => {
+                const _pipedValue = shouldPipe(value) ? pipe(value) : value;
+                setDerivedSignal(_pipedValue);
+            });
             return derivedSignal;
         },
         get listeners() { return listeners; },
