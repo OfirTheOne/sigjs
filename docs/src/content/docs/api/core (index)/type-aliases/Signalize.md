@@ -7,7 +7,7 @@ title: "Signalize"
 
 > **Signalize**\<`T`\>: `T` *extends* `object` ? \{ \[P in keyof T\]: T\[P\] \| Signal\<T\[P\]\> \} : `Signal`\<`T`\> \| `T`
 
-Defined in: core/signal/signal.types.ts:111
+Defined in: core/signal/signal.types.ts:112
 
 Converts an object type to a type where all properties are either the original type or a Signal of the original type
 Convert a non object type to a type that is either the original type or a Signal of the original type

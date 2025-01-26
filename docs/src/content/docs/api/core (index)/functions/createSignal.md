@@ -7,7 +7,7 @@ title: "createSignal"
 
 > **createSignal**\<`T`\>(`value`, `options`?): \[`Signal`\<`T`\>, `Signal`\<`T`\>\[`"setValue"`\]\]
 
-Defined in: core/signal/signal.ts:183
+Defined in: core/signal/signal.ts:184
 
 Create a signal and a function to set the value of the signal
 
