@@ -1,4 +1,3 @@
-// @ts-check
 import type * as CSS from 'csstype';
 import type { Signalize } from '@/core/signal/signal.types';
 import type { Renderable } from '@/types/common';
