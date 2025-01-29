@@ -6,3 +6,4 @@
 
 export type * from './types';
 export * from './core';
+export type * from './types/typings';
