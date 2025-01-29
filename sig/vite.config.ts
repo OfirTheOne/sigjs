@@ -33,5 +33,8 @@ export default defineConfig({
     }
   },
   css: { modules: { localsConvention: 'camelCase' } },
-  plugins: [dts()],
+  plugins: [dts({
+    outDir: 'dist',
+    copyDtsFiles: true,
+  })],
 });
