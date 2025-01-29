@@ -1,6 +1,8 @@
+// @ts-check
 import type * as CSS from 'csstype';
-import type { VirtualElement, Renderable, Signalize } from '@sigjs/sig';
-import type * as HEA from "@sigjs/sig/convenient";
+import type { Signalize } from '@/core/signal/signal.types';
+import type { Renderable } from '@/types/common';
+import type * as HEA from "@/types/element-attributes";
 
 declare global {
 
@@ -12,10 +14,6 @@ declare global {
 
 declare global {
 
-  export namespace Sig {
-    export type ClassList = Array<Trackable<unknown> | string | string[] | Record<string, boolean | Trackable<unknown>>>;
-
-  }
   export namespace JSX {
 
     type NativeElement = globalThis.Element;
@@ -549,10 +547,6 @@ declare global {
        * Assigns a CSS class to an element.
        * */
       className?: string;
-      /**
-       * Assigns a CSS class to an element.
-       * */
-      'class:list'?: Sig.ClassList;
       /**
        * Assigns a CSS class to an element.
        * */
