@@ -37,7 +37,7 @@ export function createComponentElement(component: ComponentFunction | AsyncCompo
         props: {
             ...props,
             component,
-            children, // : children.map(adaptVirtualElementChild)
+            children,
         }
     };
 }
@@ -59,7 +59,7 @@ export function createDomElement(tagName: string, props: Props, ...children: Ren
         props: {
             ...props,
             tagName,
-            children, // : children.map(adaptVirtualElementChild)
+            children,
         }
     };
 }

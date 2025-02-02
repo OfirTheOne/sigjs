@@ -33,9 +33,7 @@ function render(element: VirtualElement | VirtualElement[], container: HTMLEleme
             ELEMENT_TYPE.RAW:
             if (!element.props.rawElement)
                 throw new Error('Invalid raw element for raw rendering');
-            // key.push((element.props.rawElement as HTMLElement).tagName);
             return rawRender(element, key, render);
-            // return element.props.rawElement as HTMLElement;
 
         case /* edge node */
             ELEMENT_TYPE.EMPTY:
