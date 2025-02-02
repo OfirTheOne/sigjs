@@ -2,6 +2,10 @@ import type * as CSS from 'csstype';
 import type { Signalize } from '@/core/signal/signal.types';
 import type { Renderable } from '@/types/common';
 import type * as HEA from "@/types/element-attributes";
+import type { createFragment } from '@/jsx';
+
+
+type Fragment = typeof createFragment;
 
 declare global {
 
@@ -12,6 +16,8 @@ declare global {
 }
 
 declare global {
+  export const Fragment: Fragment;
+  export const createFragment: Fragment;
 
   export namespace JSX {
 
