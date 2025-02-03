@@ -1,25 +1,33 @@
-import { createSignal, For, If } from 'sig';
-import type { RouteComponentProps } from 'sig/router';
+import { createSignal, For, If, Signal } from 'sig';
+import { getRouter, type RouteComponentProps } from 'sig/router';
 import Users from '/assets/icons/users.svg';
 import Mail from '/assets/icons/mail.svg';
 import Clock from '/assets/icons/clock.svg';
 import Share2 from '/assets/icons/share2.svg';
 import { store } from '../store';
-
+import { Recipe as RecipeType } from '../types/recipe';
 
 export function Recipe({ params }: RouteComponentProps) {
     const { id } = params;
-    const recipe$ = store
+    const recipe$: Signal<RecipeType | undefined> = store
         .select((state) => state.recipes)
         .derive(recipes => recipes.find((r) => r.id === id));
-    const addComment = store.getState().addComment
+    const addComment = store.getState().addComment;
+
+    const router = getRouter();
+
+    recipe$.subscribe((recipe) => {
+        if (!recipe) {
+            router.push('/recipe/not-found');   
+        }
+    }, { emitOnSubscribe: true });
 
     const [comment$, setComment] = createSignal({ author: '', content: '' });
 
-    const recipeImages$ = recipe$.derive(r => r.images)
-    const commentAuthor$ = comment$.derive(c => c.author);
-    const commentContent$ = comment$.derive(c => c.content);
-    const recipeComments$ = recipe$.derive(r => r.comments)
+    const recipeImages$ = recipe$.derive(r => r?.images);
+    const commentAuthor$ = comment$.derive(c => c?.author);
+    const commentContent$ = comment$.derive(c => c?.content);
+    const recipeComments$ = recipe$.derive(r => r?.comments);
 
     const handleSubmitComment = (e) => {
         e.preventDefault();
@@ -37,18 +45,18 @@ export function Recipe({ params }: RouteComponentProps) {
                 <div className="max-w-4xl mx-auto">
                     <div className="mb-8">
                         <h1 className="text-4xl font-bold text-gray-900 mb-4">{recipe$.derive(r => r.title)}</h1>
-                        <p className="text-lg text-gray-600 mb-6">{recipe$.derive(r => r.description)}</p>
+                        <p className="text-lg text-gray-600 mb-6">{recipe$.derive(r => r?.description)}</p>
         
                         <div className="flex items-center space-x-6 mb-6">
                             <div className="flex items-center">
                                 {Clock({ className: "h-5 w-5 text-gray-400 mr-2" })}
                                 <span className="text-sm text-gray-600">
-                                    Prep: {recipe$.derive(r => r.prepTime)} | Cook: {recipe$.derive(r => r.cookTime)}
+                                    Prep: {recipe$.derive(r => r?.prepTime)} | Cook: {recipe$.derive(r => r?.cookTime)}
                                 </span>
                             </div>
                             <div className="flex items-center">
                                 {Users({ className: "h-5 w-5 text-gray-400 mr-2" })}
-                                <span className="text-sm text-gray-600">Serves {recipe$.derive(r => r.servings)}</span>
+                                <span className="text-sm text-gray-600">Serves {recipe$.derive(r => r?.servings)}</span>
                             </div>
                         </div>
         
@@ -76,7 +84,7 @@ export function Recipe({ params }: RouteComponentProps) {
                         // index={(image, index) => index}
                         factory={(image, index) => <img 
                             src={image} 
-                            alt={`${recipe$.value.title} ${index + 1}`} 
+                            alt={`${recipe$.value?.title} ${index + 1}`} 
                             className='rounded-lg shadow-md w-full h-64 object-cover'
                         />}
                     />
@@ -86,7 +94,7 @@ export function Recipe({ params }: RouteComponentProps) {
                             <h2 className="text-2xl font-bold text-gray-900 mb-4">Ingredients</h2>
                             <ul className="space-y-2">
         
-                                {recipe$.value.ingredients.map((ingredient) => (
+                                {recipe$.value?.ingredients.map((ingredient) => (
                                     <li className="flex items-center">
                                         <span className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>
                                         {ingredient}
@@ -98,7 +106,7 @@ export function Recipe({ params }: RouteComponentProps) {
                         <div>
                             <h2 className="text-2xl font-bold text-gray-900 mb-4">Instructions</h2>
                             <ol className="space-y-4">
-                                {recipe$.value.instructions.map((instruction, index) => (
+                                {recipe$.value?.instructions.map((instruction, index) => (
                                     <li className="flex">
                                         <span className="font-bold text-indigo-500 mr-3">{index + 1}.</span>
                                         {instruction}

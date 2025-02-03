@@ -22,7 +22,16 @@ const AppRouter = () => createRouter({
                 { index: true, component: () => <Navigate to="/categories" />, memo: false },
                 { path: '/categories', component: Categories },
                 { path: '/recipes', component: Recipes, memo: false },
-                { path: '/recipe/:id', component: Recipe }
+                { 
+                    path: '/recipe',
+                    component: () => null,
+                    children: [
+                        { path: '/:id', component: Recipe },
+                        { path: '/not-found', component: () => <div>Recipe Not Found</div> }
+                    ]
+                },
+                { path: '/404', component: () => <div>Nonexistent</div> },
+                { path: '*', component: () => <Navigate to="/404" />},
             ]
         }
     ]
