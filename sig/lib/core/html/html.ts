@@ -14,32 +14,36 @@ export const DOM = {
     },
 
     appendChild(parent: HTMLElement, child?: Node | Node[]): void {
-        if(child === null || child === undefined) {
-            return;
-        }
-        if (parent === null || parent === undefined) {
-            logger.error('Parent is null or undefined');
-            return;
-        }
-        if (parent === child) {
-            logger.error('Parent is the same as child');
-            return;
-        }
-        if (parent instanceof Text) {
-            logger.error('Parent is a text node');
-            return;
-        }
         try {
-            if (!Array.isArray(child)) {
-                if (child.parentElement !== parent) {
-                    parent.appendChild(child);
-                }
-            } else {
-                parent.append(...child);
+            if(child === null || child === undefined) {
+                return;
             }
+            if (parent === null || parent === undefined) {
+                logger.error('Parent is null or undefined');
+                return;
+            }
+            if (parent === child) {
+                logger.error('Parent is the same as child');
+                return;
+            }
+            if (parent instanceof Text) {
+                logger.error('Parent is a text node');
+                return;
+            }
+            try {
+                if (!Array.isArray(child)) {
+                    if (child.parentElement !== parent) {
+                        parent.appendChild(child);
+                    }
+                } else {
+                    parent.append(...child);
+                }
+            } catch (error) {
+                logger.log(error);
+    
+            }            
         } catch (error) {
-            logger.log(error);
-
+            console.error(error);
         }
     },
 
