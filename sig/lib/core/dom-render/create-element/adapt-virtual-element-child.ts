@@ -2,6 +2,7 @@ import { isSignal } from "@/core/signal";
 import { Renderable, VirtualElement } from "@/types";
 import { createSignalElement, createEmptyElement, createTextElement } from "../create-element";
 import { createRawElement } from "./element-factory";
+import { isRawElement } from "@/core/utils";
 
 
 
@@ -13,7 +14,7 @@ export function adaptVirtualElementChild(child: Renderable): VirtualElement {
         case child === undefined:
         case child === false:
             return createEmptyElement();
-        case child instanceof Element:
+        case isRawElement(child):
             return createRawElement(child, {});
         case typeof child === 'object':
             return <VirtualElement>child ;
