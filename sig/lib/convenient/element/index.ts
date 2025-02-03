@@ -1,6 +1,6 @@
 import { createElement } from "@/core/dom-render/create-element";
 import { VirtualElement, Props } from "@/types";
-import * as HEA from "./types";
+import * as HEA from "@/types/element-attributes";
 import { debounce } from "@/common/debounce";
 import { throttle } from "@/common/throttle";
 
