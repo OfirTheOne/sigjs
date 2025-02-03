@@ -1,4 +1,3 @@
-import { ElementRef } from "@/types";
 import { isSignal, Signal, subscribeSignal } from "../signal";
 import { registerSignalSubscription } from "../global/global-hook-executioner";
 import { DOM } from "../html";
@@ -7,21 +6,16 @@ function attachPropertyToElement(dom: HTMLElement, name: string, value: unknown)
     if (name === 'children') {
         return;
     }
+    /** ref is handled in `runPostRenderLogic` - after the element & his children being rendered */
+    if (name === 'ref') {
+        return;
+    }
     if (name === 'className') {
         attachClassComplexValueToElementClass(
             dom,
             value as string | Signal<string> | (string | Signal<string>)[] | Record<string, boolean /* | Signal<boolean> */>
         );
         return;
-    }
-    if (name === 'ref') {
-        if (typeof value === 'function') {
-            value(dom);
-            return;
-        } else if (typeof value === 'object') {
-            (value as ElementRef).current = dom;
-            return;
-        }
     }
     if (name === 'style') {
         if (typeof value === 'object') {
