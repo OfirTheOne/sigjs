@@ -1,5 +1,4 @@
-import { createRoot } from '@sigjs/sig';
-import { App } from './app';
+import { createRoot } from "@sigjs/sig";
+import { App } from "./app";
 
-createRoot(document.getElementById('root'))
-    .render(<App />);
+createRoot(document.getElementById("root")).render(<App />);

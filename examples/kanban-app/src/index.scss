@@ -8,7 +8,8 @@
     opacity: 1;
   }
   100% {
-    transform: translate(var(--tx, 100px), calc(var(--ty, 100px) + 200px)) rotate(720deg);
+    transform: translate(var(--tx, 100px), calc(var(--ty, 100px) + 200px))
+      rotate(720deg);
     opacity: 0;
   }
 }
@@ -41,4 +42,11 @@
   100% {
     clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
   }
+}
+
+/* Shrink mode transitions */
+
+/* Shrink mode transitions */
+.shrink-mode .group {
+  @apply transition-all duration-300;
 }

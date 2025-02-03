@@ -6,8 +6,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "lint": "yarn eslint ./src/index.ts  --ext .ts,.tsx",
-    "format": "yarn prettier --write .",
+    "lint": "eslint ./src/index.ts  --ext .ts,.tsx",
+    "format": "prettier --write .",
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
