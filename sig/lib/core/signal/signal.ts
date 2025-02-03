@@ -1,5 +1,5 @@
-import { reduce } from "@/common/reduce";
-import { Signal, CoreSignalCapabilities, EnhancedSignalCapabilities, StaleSignalCapabilities, Listener, RememberPreviousValueSignalCapabilities, SignalOptions } from "./signal.types";
+import { Signal, CoreSignalCapabilities, EnhancedSignalCapabilities, StaleSignalCapabilities, Listener, RememberPreviousValueSignalCapabilities, SignalOptions, CreateSignalFn, Selector } from "./signal.types";
+import { extractValue } from "@/common/extract-value";
 
 let signalCounter = 0
 
@@ -15,10 +15,12 @@ type NonCallableSignal<T> = Pick<Signal<T>
 , 'id'
 | 'link'
 | 'derive'
+| 'select'
 | 'listeners'
 | 'subscribe'
 | 'linkedSubscriptions'
 | 'disconnect'
+| 'updateOptions'
 | 'emit'
 | 'value'
 | 'previousValue'
@@ -28,75 +30,106 @@ type NonCallableSignal<T> = Pick<Signal<T>
 >;
 
 /** @internal @ignore */
-function buildSignal<T>(value: T, options?: SignalOptions): BuildSignalResult<T> {
-    let listeners: Listener<T>[] = [];
-    let staleMode = false;
-    let _prevValue: T | undefined;
-    const linkedSubscriptions: (() => void)[] = [];
-    const nonCallableSignal: NonCallableSignal<T> = {
+function buildSignal<T>(value: T, options?: SignalOptions<T>): BuildSignalResult<T> {
+    const usedOptions = {
         id: options?.id || String(signalCounter),
-        get listeners() { return listeners; },
-        get linkedSubscriptions() { return linkedSubscriptions; },
+        compare: options?.compare || defaultCompare,
+        rememberPrevValue: options?.rememberPrevValue || true,
+        emitOnExitStaleMode: options?.emitOnExitStaleMode || false,
+        emitOnValueNotChanged: options?.emitOnValueNotChanged || false,
+    };
+    let _listeners: Listener<T>[] = [];
+    let _staleMode = false;
+    let _prevValue: T | undefined;
+    
+    const _linkedSubscriptions: (() => void)[] = [];
+
+    const nonCallableSignal: NonCallableSignal<T> = {
+        id: usedOptions.id,
+        get listeners() { return _listeners; },
+        get linkedSubscriptions() { return _linkedSubscriptions; },
         get previousValue() { return _prevValue; },
         get value() { return value; },
         set value(newValue: T) {
-            if(options?.rememberPrevValue) {
+            if(usedOptions?.rememberPrevValue) {
                 _prevValue = value;
             }
             value = newValue;
-            this.emit(newValue);
+            self.emit(newValue);
+        },
+        updateOptions(newOptions: Partial<Omit<SignalOptions<T>, 'id'>>) {
+            if('id' in newOptions) delete newOptions['id'];
+            Object.assign(usedOptions, newOptions);
         },
         emit(value: T) {
-            if (!staleMode) {
-                listeners.forEach(listener => listener(value));
+            if (!_staleMode) {
+                const shouldEmit = usedOptions.emitOnValueNotChanged || !usedOptions.compare(self.previousValue, value);
+                if (shouldEmit) {
+                    _listeners.forEach(listener => listener(value));
+                }
             }
         },
-        enterStaleMode() { staleMode = true; },
+        enterStaleMode() { _staleMode = true; },
         exitStaleMode() { 
-            if (!staleMode) return;
-            staleMode = false; 
-            if (options?.emitOnExitStaleMode) {
-                this.emit(value);
+            if (!_staleMode) return;
+            _staleMode = false; 
+            if (usedOptions?.emitOnExitStaleMode) {
+                self.emit(value);
             }
         },
         setValue(newValue: ((value: T) => T) | T) {
-            this.value = (typeof newValue === 'function') ? 
-                (newValue as (value: T) => T)(this.value) :
+            self.value = (typeof newValue === 'function') ? 
+                (newValue as (value: T) => T)(self.value) :
                 newValue;
         },
-        subscribe(listener: Listener<T>, options) {
-            if (options?.emitOnSubscribe) {
-                listener(this.value);
+        subscribe(listener: Listener<T>, subscribeOptions) {
+            const usedSubscribeOptions = {
+                emitOnSubscribe: subscribeOptions?.emitOnSubscribe || false,
+                compare: subscribeOptions?.compare || defaultCompare,
+                ignoreCompare: subscribeOptions?.ignoreCompare || false,
+            };
+            if (usedSubscribeOptions?.emitOnSubscribe) {
+                listener(self.value);
             }
-            listeners.push(listener);
-            return () => { listeners = listeners.filter(l => l !== listener); };
+
+            const usedListener = usedSubscribeOptions.ignoreCompare ? listener : (value: T) => {
+                const invokeListener 
+                    = usedOptions.emitOnValueNotChanged 
+                    || !usedSubscribeOptions.compare(self.previousValue, value);
+                if (invokeListener) {
+                    listener(value);
+                }
+            };
+
+            _listeners.push(usedListener);
+            return () => { _listeners = _listeners.filter(l => l !== usedListener); };
         },
         disconnect() {
-            listeners = [];
-            this.linkedSubscriptions.forEach(unsubscribe => unsubscribe());
-            this.linkedSubscriptions.length = 0;
+            _listeners = [];
+            self.linkedSubscriptions.forEach(unsubscribe => unsubscribe());
+            self.linkedSubscriptions.length = 0;
         },
         link<L = T>(signal: Signal<L>, pipe?: (value: L) => T) {
             const unsubscribe = signal.subscribe((value) => {
-                this.value = pipe ? pipe(value) : value as unknown as T;
+                self.value = pipe ? pipe(value) : value as unknown as T;
             });
-            this.linkedSubscriptions.push(unsubscribe);
+            self.linkedSubscriptions.push(unsubscribe);
             return unsubscribe;
         },
-        derive<L = T>(pipe: (value: T) => L, condition?: ((value: T) => boolean) | ((value: T) => boolean)[]): Signal<L | T> | Signal<L> {
-            const shouldPipe = (_value: T) => !condition || (Array.isArray(condition) ? 
-                reduce(condition)(_value) : 
-                condition(_value));
-            
-            const pipedValue = shouldPipe(this.value) ? pipe(this.value) : this.value;
-            const [derivedSignal, setDerivedSignal] = createSignal(pipedValue);
-            this.subscribe((value) => {
-                const _pipedValue = shouldPipe(value) ? pipe(value) : value;
-                setDerivedSignal(_pipedValue);
-            });
-            return derivedSignal;
+        derive<L = T> (pipe: (value: T) => L, options?: SignalOptions<L>): Signal<L> {
+            return derive(self, createSignal, pipe, options);
+        },
+        /**
+         * Select a property from the current signal using the key of the property.
+         * Using `derive` internally. 
+         * @param keysAndSelectors The keys or selectors to select the property
+         * @returns A signal containing the selected property 
+         */
+        select(...keysAndSelectors: (keyof any | Selector<any, any>)[]): Signal<any> {
+            return self.derive(_value => extractValue(keysAndSelectors, _value));
         }
     };
+    const self = nonCallableSignal
     return nonCallableSignal;
 }
 
@@ -128,7 +161,7 @@ function buildSignal<T>(value: T, options?: SignalOptions): BuildSignalResult<T>
  * // > undefined
  * // > 0
  */
-function signal<T>(value: T, options?: SignalOptions): Signal<T> {
+function signal<T>(value: T, options?: SignalOptions<T>): Signal<T> {
 
     const nonCallableSignal = buildSignal(value, options);
 
@@ -167,8 +200,10 @@ function signal<T>(value: T, options?: SignalOptions): Signal<T> {
     callableSignal.disconnect = nonCallableSignal.disconnect;
     callableSignal.link = nonCallableSignal.link;
     callableSignal.derive = nonCallableSignal.derive;
+    callableSignal.select = nonCallableSignal.select;
     callableSignal.setValue = nonCallableSignal.setValue.bind(nonCallableSignal);
     callableSignal.emit = nonCallableSignal.emit;
+    callableSignal.updateOptions = nonCallableSignal.updateOptions;
     callableSignal.enterStaleMode = nonCallableSignal.enterStaleMode;
     callableSignal.exitStaleMode = nonCallableSignal.exitStaleMode;
     signalCounter++;
@@ -180,10 +215,33 @@ function signal<T>(value: T, options?: SignalOptions): Signal<T> {
  * @param {T} value  The initial value of the signal
  * @param {SignalOptions} options Options for the signal 
  * @returns {[Signal<T>, Signal<T>['setValue']]} A tuple containing the signal and a function to set the value of the signal
- */ 
-function createSignal<T>(value: T, options?: SignalOptions): [Signal<T>, Signal<T>['setValue']] {
+ */
+const createSignal: CreateSignalFn = <T>(value: T, options?: SignalOptions<T>): [Signal<T>, Signal<T>["setValue"]] => {
     const callableSignal = signal(value, options);
     return [callableSignal as Signal<T>, callableSignal.setValue];
 }
 
 export { createSignal, signal, buildSignal };
+
+
+
+
+/** @internal */
+function derive<T,L = T>(
+    self: NonCallableSignal<T>,
+    createSignalFn: CreateSignalFn,
+    pipe: (value: T) => L, 
+    options?: SignalOptions<L>
+): Signal<L> {
+    const pipedValue =  pipe(self.value);
+    const [derivedSignal, setDerivedSignal] = createSignalFn(pipedValue, options);
+    self.subscribe((value) => {
+        const _pipedValue = pipe(value);
+        setDerivedSignal(_pipedValue);
+    });
+    return derivedSignal;
+}
+
+
+
+const defaultCompare: NonNullable<SignalOptions['compare']> = <T>(prev: T | undefined, next: T) => prev === next;

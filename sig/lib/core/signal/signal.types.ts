@@ -1,7 +1,16 @@
-type SignalOptions = {
+type SignalOptions<T = unknown> = {
     id?: string;
     rememberPrevValue?: boolean;
     emitOnExitStaleMode?: boolean;
+    emitOnValueNotChanged?: boolean;
+    compare?: (prev: T | undefined, next: T) => boolean;
+    condition?: ((value: T) => boolean) | ((value: T) => boolean)[],
+}
+
+type SubscriberOptions<T> = {
+    emitOnSubscribe?: boolean;
+    compare?: (prev: T | undefined, next: T) => boolean;
+    ignoreCompare?: boolean;
 }
 
 /** @internal */
@@ -11,6 +20,7 @@ interface CoreSignalCapabilities<T> {
     id: string;
     value: T;
     setValue(value: T | ((value: T) => T)): void;
+    updateOptions(newOptions: Partial<Omit<SignalOptions<T>, 'id'>>): void; 
     emit(value: T): void;
     /**
      *  Subscribe to the signal
@@ -23,9 +33,7 @@ interface CoreSignalCapabilities<T> {
      */
     subscribe(
         listener: Listener<T>, 
-        options?: {
-            emitOnSubscribe?: boolean;
-        }
+        options?: SubscriberOptions<T>
     ): () => void;
     readonly listeners: Listener<T>[];
     disconnect(): void;
@@ -34,6 +42,13 @@ interface StaleSignalCapabilities {
     enterStaleMode: () => void;
     exitStaleMode: () => void;
 }
+
+export type Selector<T, R> = (value: T) => R;
+
+type KeyOrSelector<T, R> = keyof T | Selector<T, R>;
+
+type Resolve<T, P> = P extends keyof T ? T[P] : P extends Selector<T, infer R> ? R : never;
+
 
 interface EnhancedSignalCapabilities<T> {
     /**
@@ -50,9 +65,22 @@ interface EnhancedSignalCapabilities<T> {
      * // > '1'
      * // > '2'
      */ 
-    derive<L = T>(pipe: (value: T) => L): Signal<L>;
-    derive<L = T>(pipe: (value: T) => L, condition: ((value: T) => boolean) | ((value: T) => boolean)[]): Signal<L|T>;
-    derive<L = T>(pipe: (value: T) => L, condition?: ((value: T) => boolean) | ((value: T) => boolean)[]): Signal<L> | Signal<L|T>;
+    derive<L = T>(pipe: (value: T) => L, options?: SignalOptions<L>): Signal<L>;
+
+    select<K1 extends KeyOrSelector<T, any>>(
+        keyOrSelector1: K1
+    ): Signal<Resolve<T, K1>>;
+    select<K1 extends KeyOrSelector<T, any>, K2 extends KeyOrSelector<Resolve<T, K1>, any>>(
+        keyOrSelector1: K1, keyOrSelector2: K2
+    ): Signal<Resolve<Resolve<T, K1>, K2>>;
+    select<K1 extends KeyOrSelector<T, any>, K2 extends KeyOrSelector<Resolve<T, K1>, any>, K3 extends KeyOrSelector<Resolve<Resolve<T, K1>, K2>, any>>(
+        keyOrSelector1: K1, keyOrSelector2: K2, keyOrSelector3: K3
+    ): Signal<Resolve<Resolve<Resolve<T, K1>, K2>, K3>>;
+    select<K1 extends KeyOrSelector<T, any>, K2 extends KeyOrSelector<Resolve<T, K1>, any>, K3 extends KeyOrSelector<Resolve<Resolve<T, K1>, K2>, any>, K4 extends KeyOrSelector<Resolve<Resolve<Resolve<T, K1>, K2>, K3>, any>>(
+        keyOrSelector1: K1, keyOrSelector2: K2, keyOrSelector3: K3, keyOrSelector4: K4
+    ): Signal<Resolve<Resolve<Resolve<Resolve<T, K1>, K2>, K3>, K4>>;
+    select<R>(...keysAndSelectors: (keyof any | Selector<any, any>)[]): Signal<R>;
+    
     /**
      * Link the current signal to another signal
      * @param signal The signal to link to
@@ -88,6 +116,9 @@ interface Signal<T = unknown> extends
     StaleSignalCapabilities,
     CallableSignal<T> {
 }
+
+
+export type CreateSignalFn= <T>(value: T, options?: SignalOptions<T>) => [Signal<T>, Signal<T>["setValue"]];
 
 
 // ***** Utility types *****
