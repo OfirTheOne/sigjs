@@ -37,6 +37,11 @@ export const initialTasks: Task[] = [
     status: "todo",
     assignee: mockUsers[0],
     createdAt: new Date("2023-01-01T10:00:00Z"),
+    subtasks: [
+      { id: '1-1', title: 'Set up Auth0', completed: true },
+      { id: '1-2', title: 'Implement login flow', completed: false },
+      { id: '1-3', title: 'Add user roles', completed: false }
+    ]
   },
   {
     id: "2",
@@ -45,6 +50,11 @@ export const initialTasks: Task[] = [
     status: "in-progress",
     assignee: mockUsers[1],
     createdAt: new Date("2023-01-02T11:00:00Z"),
+    subtasks: [
+      { id: '2-1', title: 'Create mockups', completed: true },
+      { id: '2-2', title: 'Get feedback', completed: true },
+      { id: '2-3', title: 'Implement design', completed: false }
+    ]
   },
   {
     id: "3",
@@ -53,6 +63,11 @@ export const initialTasks: Task[] = [
     status: "review",
     assignee: mockUsers[2],
     createdAt: new Date("2023-01-03T12:00:00Z"),
+    subtasks: [
+      { id: '3-1', title: 'Define endpoints', completed: true },
+      { id: '3-2', title: 'Write API client', completed: true },
+      { id: '3-3', title: 'Add error handling', completed: true }
+    ]
   },
   ...Array.from({ length: 50 }, (_, i) => {
     const status = statuses[i % statuses.length];
@@ -70,6 +85,7 @@ export const initialTasks: Task[] = [
           "0"
         )}T10:00:00Z`
       ),
+      subtasks: []
     };
   }),
 ];

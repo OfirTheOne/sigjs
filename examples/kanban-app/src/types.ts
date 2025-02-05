@@ -4,13 +4,20 @@ export interface User {
   avatar: string;
 }
 
+export interface SubTask {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
 export interface Task {
   id: string;
   title: string;
   description: string;
-  status: "todo" | "in-progress" | "review" | "done";
+  status: 'todo' | 'in-progress' | 'review' | 'done';
   assignee: User | null;
-  createdAt?: Date;
+  createdAt: Date;
+  subtasks: SubTask[];
 }
 
 export interface Column {

@@ -24,6 +24,8 @@ export function NewTaskModal({ onClose, onSubmit }: NewTaskModalProps) {
       description: description$(),
       status: "todo",
       assignee,
+      createdAt: new Date(),
+      subtasks: [],
     });
     onClose();
   };
