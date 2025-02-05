@@ -2,6 +2,7 @@ import { createElement } from "@/jsx";
 import { DOM } from "@/core/html";
 import { KeyBuilder } from "@/common/key-builder/key-builder";
 import type { RenderFunction } from "@/core/dom-render/render";
+import type { VirtualElement } from "@/types";
 
 export interface DynamicContainerProps {
     /**
@@ -23,7 +24,7 @@ export function createDynamicContainer(
 ) {
     const { as, asProps } = props;
     return (as ? 
-        render(createElement(as, { ...asProps, role: containerTag }), undefined, key) :
+        render(createElement(as, { ...asProps, role: containerTag }) as VirtualElement, undefined, key) :
         DOM.createElement(containerTag, key)) as HTMLElement;
            
 } 
