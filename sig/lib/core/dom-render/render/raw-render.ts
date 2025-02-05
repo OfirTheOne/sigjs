@@ -12,9 +12,9 @@ export function rawRender(
     const dom = rawElement as HTMLElement;
     const currentKey = key.clone().push(dom.tagName as string);
     const isProperty = (propKey: string) => propKey !== 'children';
+    render(children as VirtualElement[], dom, currentKey) as HTMLElement;
     Object.keys(props)
         .filter(isProperty)
         .forEach(name => attachPropertyToElement(dom, name, props[name]));
-    render(children as VirtualElement[], dom, currentKey) as HTMLElement;
     return dom
 }
