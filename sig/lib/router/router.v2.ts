@@ -243,7 +243,7 @@ function createRouter(config: RouterConfig): VirtualElement {
     if (!config.ignoreRouterLink) {
         overrideNativeNavigation(router.container, router);
     }
-    const rootRouterElement: VirtualElement = createElement(router.container, {});
+    const rootRouterElement = createElement(router.container, {}) as VirtualElement;
     return rootRouterElement;
 }
 
