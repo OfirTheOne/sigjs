@@ -1,33 +1,27 @@
 
 
-import { createElement as renderCreateElement } from "../core/dom-render/create-element";
-import * as elements from "@/convenient/element";
+import { createElement as renderCreateElement } from "@/core/dom-render/create-element";
+import { createRawElement } from "@/core/dom-render/create-element/element-factory";
+import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
 import { isNodeElement, isNodeText } from "@/core/utils";
-import { ELEMENT_TYPE } from "@/constants";
+import { createFragment } from "./create-fragment";
 import type { Renderable, VirtualElement, ComponentFunction } from "@/types";
 
 export function createElement(
     tag: string | ComponentFunction | Text | Element,
     props: { [key: string]: unknown },
     ...children: (Renderable | Text | Element)[]
-): VirtualElement {
+): VirtualElement  | VirtualElement[]{
+    if(typeof tag === 'function' && (tag as any) === createFragment) {
+        const fragmentList = createFragment(null, props, ...children) as VirtualElement[];
+        return fragmentList.map(adaptVirtualElementChild);
+    }
+
     const virtualChildren = children.map((child) => {
         if (isNodeElement(child) || isNodeText(child)) {
-            return (<VirtualElement>{
-                type: ELEMENT_TYPE.RAW,
-                props: {
-                    rawElement: child,
-                    children: []
-                }
-            });     
+            return createRawElement(child, props, ...children);
         }
         return child;
     });
-
-    if(typeof tag === 'string' && tag in elements) {
-       return elements[tag](props, ...virtualChildren);
-    }
-
-
     return renderCreateElement(tag, props, ...virtualChildren);
 }
