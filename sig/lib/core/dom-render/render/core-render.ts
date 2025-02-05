@@ -13,6 +13,7 @@ import type { ElementType, VirtualElement } from "@/types";
 
 function render(element: VirtualElement[], container: HTMLElement, key: KeyBuilder): HTMLElement | Text;
 function render(element: VirtualElement, container: HTMLElement | undefined, key: KeyBuilder): HTMLElement | Text;
+function render(element: VirtualElement | VirtualElement[], container: HTMLElement | undefined, key: KeyBuilder): HTMLElement | Text;
 function render(element: VirtualElement | VirtualElement[], container: HTMLElement | undefined, key: KeyBuilder): HTMLElement | Text {
     if (Array.isArray(element)) {
         if (!container)
