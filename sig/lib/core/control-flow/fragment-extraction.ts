@@ -3,7 +3,7 @@ export function fragmentExtraction(
     container: HTMLElement,
 ) {
     if(renderedElement === container) {
-        return Array.from(renderedElement.children) as (HTMLElement | Text)[];
+        return Array.from(renderedElement.childNodes) as (HTMLElement | Text)[];
     }
     return renderedElement;
 }
