@@ -1,10 +1,10 @@
 import { Column } from "./components/Column";
 import { NewTaskModal } from "./components/NewTaskModal";
 import { Task } from "./types";
-import { initialTasks, mockUsers } from "./data";
 import { Plus, Minimize2, Maximize2 } from "lucide";
 import { createSignal, If } from "@sigjs/sig";
 import { lucideSigjs } from "./lucide-adapter/lucide-adapter";
+import { store } from "./store/store";
 
 const PlusComponent = lucideSigjs(Plus);
 const Minimize2Component = lucideSigjs(Minimize2);
@@ -18,46 +18,26 @@ const columns = [
 ];
 
 export function App() {
-  const [tasks$, setTasks] = createSignal<Task[]>(initialTasks);
   const [showNewTaskModal$, setShowNewTaskModal] = createSignal(false);
   const [isShrunk$, setIsShrunk] = createSignal(false);
 
   const tasksByStatus = Object.fromEntries(
     columns.map((column) => [
       column.status,
-      tasks$.derive((tasks) =>
-        tasks.filter((task) => task.status === column.status)
-      ),
+      store.select((state) => Array.from(state.tasks.values()).filter((task) => task.status === column.status)),
     ])
   );
 
   const handleDrop = (taskId: string, newStatus: Task["status"]) => {
-    setTasks((tasks) =>
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, status: newStatus } : task
-      )
-    );
+    store.getState().updateTaskStatus(taskId, newStatus);
   };
 
   const handleAssigneeChange = (taskId: string, userId: string) => {
-    setTasks((tasks) =>
-      tasks.map((task) =>
-        task.id === taskId
-          ? {
-              ...task,
-              assignee: mockUsers.find((u) => u.id === userId) || null,
-            }
-          : task
-      )
-    );
+    store.getState().updateTaskAssignee(taskId, userId);
   };
 
   const handleNewTask = (taskData: Omit<Task, "id">) => {
-    const newTask: Task = {
-      ...taskData,
-      id: Math.random().toString(36).substr(2, 9),
-    };
-    setTasks([...tasks$.value, newTask]);
+    store.getState().createTask(taskData);
   };
 
   return (

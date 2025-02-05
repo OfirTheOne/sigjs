@@ -132,13 +132,13 @@ export function Column({
       </div>
       <For
         as="div"
-        provideItemSignal
+        provideItemSignal={false}
         asProps={{ className: "space-y-3" }}
         list={sortedTasks$}
         index={(task) => task.id}
-        factory={(_task, _index, _tasksList, task$) => (
+        factory={(task) => (
           <TaskCard
-            task$={task$}
+            taskId={task.id}
             onAssigneeChange={onAssigneeChange}
             isShrunk$={isShrunk$}
           />

@@ -4,6 +4,7 @@ import { Trophy, GripVertical, ChevronRight, CheckSquare, Square, Plus, X, Chevr
 import { combineLatest, createSignal, For, If, Signal } from "@sigjs/sig";
 import { lucideSigjs } from "../lucide-adapter/lucide-adapter";
 import { Property } from "@sigjs/sig/types";
+import { store } from "../store/store";
 
 const TrophyComponent = lucideSigjs(Trophy);
 const GripVerticalComponent = lucideSigjs(GripVertical);
@@ -15,7 +16,7 @@ const XComponent = lucideSigjs(X);
 const ChevronDownComponent = lucideSigjs(ChevronDown);
 
 interface TaskCardProps {
-  task$: Signal<Task>;
+  taskId: string;
   isShrunk$: Signal<boolean>;
   onAssigneeChange: (taskId: string, userId: string) => void;
 }
@@ -41,7 +42,7 @@ function onTaskStatus$(
 }
 
 export function TaskCard({
-  task$,
+  taskId,
   onAssigneeChange,
   isShrunk$,
 }: TaskCardProps) {
@@ -50,6 +51,8 @@ export function TaskCard({
   const [newSubtask$, setNewSubtask] = createSignal('');
   const [isAddingSubtask$, setIsAddingSubtask] = createSignal(false);
   const [isSubtasksCollapsed$, setIsSubtasksCollapsed] = createSignal(false);
+
+  const task$ = store.select((state) => state.tasks.get(taskId));
 
   const taskStatus$ = task$.select("status");
   const taskTitle$ = task$.select("title");
@@ -84,11 +87,8 @@ export function TaskCard({
 
 
   const toggleSubtask = (subtask: SubTask) => {
-    const updatedSubtasks = subtasks$().map(st =>
-      st.id === subtask.id ? { ...st, completed: !st.completed } : st
-    );
+    store.getState().updateTaskSubtaskStatus(task$().id, subtask.id, !subtask.completed);
     // You would typically update this through a prop
-    console.log('Updated subtasks:', updatedSubtasks);
   };
 
   const addSubtask = () => {
