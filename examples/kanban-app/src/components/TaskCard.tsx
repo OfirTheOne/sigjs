@@ -261,7 +261,7 @@ export function TaskCard({
                       onChange={(e) => setNewSubtask(e.target.value)}
                       placeholder="Enter subtask..."
                       className="flex-1 text-sm border rounded-md px-2 py-1"
-                      autoFocus
+                      autofocus
                     />
                     <button
                       onClick={addSubtask}
@@ -285,13 +285,14 @@ export function TaskCard({
                 <For
                   as="div" asProps={{ className: "space-y-1" }}
                   list={subtasks$}
+                  index={'id'}
                   provideItemSignal
-                  factory={(subtask, _1, _2, subtask$) => {
+                  factory={(_0, _1, _2, subtask$) => {
                     const completed$ = subtask$.select('completed');
                     return (<button
                       onClick={(e) => {
                         e.stopPropagation();
-                        toggleSubtask(subtask);
+                        toggleSubtask(subtask$());
                       }}
                       className="w-full flex items-center gap-2 p-1 hover:bg-gray-50 rounded text-left group/item"
                     >
