@@ -35,10 +35,7 @@ export function NewTaskModal({ onClose, onSubmit }: NewTaskModalProps) {
       <div className="bg-white rounded-lg p-6 w-96">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">New Task</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <XComponent size={20} />
           </button>
         </div>
@@ -56,9 +53,7 @@ export function NewTaskModal({ onClose, onSubmit }: NewTaskModalProps) {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">
-              Description
-            </label>
+            <label className="block text-sm font-medium mb-1">Description</label>
             <textarea
               value={description$}
               onChange={(e) => setDescription(e.target.value)}

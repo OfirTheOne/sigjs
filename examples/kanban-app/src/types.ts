@@ -14,7 +14,7 @@ export interface Task {
   id: string;
   title: string;
   description: string;
-  status: 'todo' | 'in-progress' | 'review' | 'done';
+  status: "todo" | "in-progress" | "review" | "done";
   assignee: User | null;
   createdAt: Date;
   subtasks: SubTask[];

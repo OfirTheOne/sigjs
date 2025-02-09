@@ -2,7 +2,6 @@ import { ArrowUpDown, Type, User, Calendar } from "lucide";
 import { combineLatest, createSignal, For, Signal } from "@sigjs/sig";
 import { TaskCard } from "./TaskCard";
 import { Column as ColumnType, Task, SortOption } from "../types";
-
 import { lucideSigjs } from "../lucide-adapter/lucide-adapter";
 
 const TypeComponent = lucideSigjs(Type);
@@ -39,15 +38,10 @@ function getSortedTasks$(
   );
 }
 
-const getSortButtonClass = (
-  sortBy$: Signal<SortOption>,
-  option: SortOption
-) => [
+const getSortButtonClass = (sortBy$: Signal<SortOption>, option: SortOption) => [
   "p-1 rounded-md transition-colors",
   sortBy$.derive<string>((by) =>
-    by === option
-      ? "bg-blue-100 text-blue-600"
-      : "hover:bg-gray-100 text-gray-500"
+    by === option ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100 text-gray-500"
   ),
 ];
 
@@ -55,22 +49,13 @@ interface ColumnProps {
   column: ColumnType;
   tasks$: Signal<Task[]>;
   isShrunk$: Signal<boolean>;
-
   onDrop: (taskId: string, status: Task["status"]) => void;
   onAssigneeChange: (taskId: string, userId: string) => void;
 }
 
-export function Column({
-  column,
-  tasks$,
-  onDrop,
-  onAssigneeChange,
-  isShrunk$,
-}: ColumnProps) {
+export function Column({ column, tasks$, onDrop, onAssigneeChange, isShrunk$ }: ColumnProps) {
   const [sortBy$, setSortBy] = createSignal<SortOption>("title");
-  const [sortDirection$, setSortDirection] = createSignal<"asc" | "desc">(
-    "desc"
-  );
+  const [sortDirection$, setSortDirection] = createSignal<"asc" | "desc">("desc");
   const sortedTasks$ = getSortedTasks$(tasks$, sortBy$, sortDirection$);
 
   const handleDragOver = (e) => {
@@ -123,25 +108,17 @@ export function Column({
             <UserComponent size={16} />
           </button>
           <div className="text-gray-400 px-1">
-            <ArrowUpDownComponent
-              size={16}
-              className={`transform transition-transform`}
-            />
+            <ArrowUpDownComponent size={16} className={`transform transition-transform`} />
           </div>
         </div>
       </div>
       <For
-        as="div"
+        as={<div className={"space-y-3"} />}
         provideItemSignal={false}
-        asProps={{ className: "space-y-3" }}
         list={sortedTasks$}
-        index={(task) => task.id}
+        index={"id"}
         factory={(task) => (
-          <TaskCard
-            taskId={task.id}
-            onAssigneeChange={onAssigneeChange}
-            isShrunk$={isShrunk$}
-          />
+          <TaskCard taskId={task.id} onAssigneeChange={onAssigneeChange} isShrunk$={isShrunk$} />
         )}
       />
     </div>

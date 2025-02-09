@@ -24,7 +24,9 @@ export function App() {
   const tasksByStatus = Object.fromEntries(
     columns.map((column) => [
       column.status,
-      store.select((state) => Array.from(state.tasks.values()).filter((task) => task.status === column.status)),
+      store.select((state) =>
+        Array.from(state.tasks.values()).filter((task) => task.status === column.status)
+      ),
     ])
   );
 
@@ -47,24 +49,24 @@ export function App() {
           <h1 className="text-3xl font-bold text-gray-900">Kanban Board</h1>
           <div className="flex gap-2">
             <button
-                onClick={() => setIsShrunk((prev) => !prev)}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
-                title={isShrunk$.derive<string>((isShrunk) =>
+              onClick={() => setIsShrunk((prev) => !prev)}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+              title={isShrunk$.derive<string>((isShrunk) =>
                 isShrunk ? "Expand board" : "Shrink board"
-                )}
+              )}
             >
-                <If
+              <If
                 condition={isShrunk$}
                 then={<Maximize2Component size={20} />}
                 fallback={<Minimize2Component size={20} />}
-                />
+              />
             </button>
             <button
-                onClick={() => setShowNewTaskModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+              onClick={() => setShowNewTaskModal(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
             >
-                <PlusComponent size={20} />
-                New Task
+              <PlusComponent size={20} />
+              New Task
             </button>
           </div>
         </div>
@@ -84,12 +86,7 @@ export function App() {
 
       <If
         condition={showNewTaskModal$}
-        then={
-          <NewTaskModal
-            onClose={() => setShowNewTaskModal(false)}
-            onSubmit={handleNewTask}
-          />
-        }
+        then={<NewTaskModal onClose={() => setShowNewTaskModal(false)} onSubmit={handleNewTask} />}
       />
     </div>
   );
