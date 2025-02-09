@@ -2,14 +2,15 @@ import { createElement } from "@/jsx";
 import { DOM } from "@/core/html";
 import { KeyBuilder } from "@/common/key-builder/key-builder";
 import type { RenderFunction } from "@/core/dom-render/render";
-import type { VirtualElement } from "@/types";
+import { isVirtualElement } from "../utils";
+import { VirtualElement } from "@/types";
 
 export interface DynamicContainerProps {
     /**
      * The tag of the element to render
      * if not provided, it will render a custom element with the tag 'if-ph'
      */
-    as?: string;
+    as?: string | JSX.Element;
     /**
      * The props of the element to render
      */
@@ -23,8 +24,16 @@ export function createDynamicContainer(
     key: KeyBuilder,
 ) {
     const { as, asProps } = props;
-    return (as ? 
-        render(createElement(as, { ...asProps, role: containerTag }) as VirtualElement, undefined, key) :
-        DOM.createElement(containerTag, key)) as HTMLElement;
+    if(as && isVirtualElement(as)) {
+        // @TODO validate to be basic tag
+        const { type, props } = as;
+        const { children: [], ...propsWithoutChildren } = props;
+        const virtualElement = createElement(type, propsWithoutChildren);
+        return render(virtualElement, undefined, key) as HTMLElement;
+    } else if(as && typeof as === 'string') {
+        return render(createElement(as, { ...asProps, role: containerTag }) as VirtualElement, undefined, key) as HTMLElement;
+    } else {
+        return DOM.createElement(containerTag, key) as HTMLElement;
+    } 
            
 } 
