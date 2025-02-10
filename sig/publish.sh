@@ -17,7 +17,6 @@ if git diff --quiet --exit-code -- .; then
 
     echo "----------------------------------------"
 
-
     # Bump the package version with a patch
     echo "Bumping the package version..."
     npm version patch
@@ -40,7 +39,7 @@ if git diff --quiet --exit-code -- .; then
     git add .
     git commit -m "Bump version to $VERSION"
     git tag "sig/v$VERSION"
-    git push origin main
+    git push origin main --tags
     git push origin "v$VERSION"
 
     # Validate that the new tag was actually pushed
@@ -55,7 +54,7 @@ if git diff --quiet --exit-code -- .; then
 
     # Publish the library
     echo "Publishing the library..."
-    # npm publish --access public
+    npm publish --access public
 
     echo "Done."
 else
