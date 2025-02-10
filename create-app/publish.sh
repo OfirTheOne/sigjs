@@ -17,13 +17,33 @@ if git diff --quiet --exit-code -- .; then
     # Get the new version
     VERSION=$(npm pkg get version | tr -d '"')
 
+    # Confirm with the user before proceeding
+    read -p "Are you sure you want to proceed with publishing the new version $VERSION? (y/n) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Publishing aborted."
+        exit 1
+    fi
+
+    echo "----------------------------------------"
+
     # Set git tag with the version and push it
     echo "Setting git tag and pushing..."
     git add .
     git commit -m "Bump version to $VERSION"
     git tag "create-app/v$VERSION"
-    git push origin main
+    git push origin main --tags
     git push origin "v$VERSION"
+
+    # Validate that the new tag was actually pushed
+    if git ls-remote --tags origin | grep -q "refs/tags/sig/v$VERSION"; then
+        echo "Tag v$VERSION was successfully pushed."
+    else
+        echo "Failed to push tag v$VERSION."
+        exit 1
+    fi
+
+    echo "----------------------------------------"
 
     # Publish the library
     echo "Publishing the library..."
