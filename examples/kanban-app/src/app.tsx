@@ -31,15 +31,15 @@ export function App() {
   );
 
   const handleDrop = (taskId: string, newStatus: Task["status"]) => {
-    store.getState().updateTaskStatus(taskId, newStatus);
+    store.updateTaskStatus(taskId, newStatus);
   };
 
   const handleAssigneeChange = (taskId: string, userId: string) => {
-    store.getState().updateTaskAssignee(taskId, userId);
+    store.updateTaskAssignee(taskId, userId);
   };
 
   const handleNewTask = (taskData: Omit<Task, "id">) => {
-    store.getState().createTask(taskData);
+    store.createTask(taskData);
   };
 
   return (

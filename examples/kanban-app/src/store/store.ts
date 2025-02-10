@@ -78,7 +78,8 @@ export const store = new Store({
       store.setState({ tasks });
     }
   },
-});
+})
+.accessStateFunctionsWithStore();
 
 /* 
 

@@ -90,7 +90,7 @@ export function TaskCard({ taskId, onAssigneeChange, isShrunk$ }: TaskCardProps)
   };
 
   const toggleSubtask = (subtask: SubTask) => {
-    store.getState().updateTaskSubtaskStatus(task$().id, subtask.id, !subtask.completed);
+    store.updateTaskSubtaskStatus(task$().id, subtask.id, !subtask.completed);
     // You would typically update this through a prop
   };
 

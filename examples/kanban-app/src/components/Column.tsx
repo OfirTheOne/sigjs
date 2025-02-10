@@ -1,8 +1,8 @@
-import { ArrowUpDown, Type, User, Calendar } from "lucide";
-import { combineLatest, createSignal, For, Signal } from "@sigjs/sig";
-import { TaskCard } from "./TaskCard";
-import { Column as ColumnType, Task, SortOption } from "../types";
-import { lucideSigjs } from "../lucide-adapter/lucide-adapter";
+import { ArrowUpDown, Type, User, Calendar } from 'lucide';
+import { combineLatest, createSignal, For, Signal } from '@sigjs/sig';
+import { TaskCard } from './TaskCard';
+import { Column as ColumnType, Task, SortOption } from '../types';
+import { lucideSigjs } from '../lucide-adapter/lucide-adapter';
 
 const TypeComponent = lucideSigjs(Type);
 const UserComponent = lucideSigjs(User);
@@ -12,36 +12,36 @@ const CalendarComponent = lucideSigjs(Calendar);
 function getSortedTasks$(
   tasks$: Signal<Task[]>,
   sortBy$: Signal<SortOption>,
-  sortDirection$: Signal<"asc" | "desc">
+  sortDirection$: Signal<'asc' | 'desc'>
 ): Signal<Task[]> {
   return combineLatest([tasks$, sortBy$, sortDirection$]).derive(
     ([tasks, sortBy, sortDirection]) => {
       return [...tasks].sort((a, b) => {
         let comparison = 0;
         switch (sortBy) {
-          case "title":
+          case 'title':
             comparison = a.title.localeCompare(b.title);
             break;
-          case "assignee":
-            const aName = a.assignee?.name || "";
-            const bName = b.assignee?.name || "";
+          case 'assignee':
+            const aName = a.assignee?.name || '';
+            const bName = b.assignee?.name || '';
             comparison = aName.localeCompare(bName);
             break;
-          case "date":
+          case 'date':
             comparison = a.createdAt!.getTime() - b.createdAt!.getTime();
             break;
         }
 
-        return sortDirection === "asc" ? comparison : -comparison;
+        return sortDirection === 'asc' ? comparison : -comparison;
       });
     }
   );
 }
 
 const getSortButtonClass = (sortBy$: Signal<SortOption>, option: SortOption) => [
-  "p-1 rounded-md transition-colors",
+  'p-1 rounded-md transition-colors',
   sortBy$.derive<string>((by) =>
-    by === option ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100 text-gray-500"
+    by === option ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100 text-gray-500'
   ),
 ];
 
@@ -49,13 +49,13 @@ interface ColumnProps {
   column: ColumnType;
   tasks$: Signal<Task[]>;
   isShrunk$: Signal<boolean>;
-  onDrop: (taskId: string, status: Task["status"]) => void;
+  onDrop: (taskId: string, status: Task['status']) => void;
   onAssigneeChange: (taskId: string, userId: string) => void;
 }
 
 export function Column({ column, tasks$, onDrop, onAssigneeChange, isShrunk$ }: ColumnProps) {
-  const [sortBy$, setSortBy] = createSignal<SortOption>("title");
-  const [sortDirection$, setSortDirection] = createSignal<"asc" | "desc">("desc");
+  const [sortBy$, setSortBy] = createSignal<SortOption>('title');
+  const [sortDirection$, setSortDirection] = createSignal<'asc' | 'desc'>('desc');
   const sortedTasks$ = getSortedTasks$(tasks$, sortBy$, sortDirection$);
 
   const handleDragOver = (e) => {
@@ -64,16 +64,16 @@ export function Column({ column, tasks$, onDrop, onAssigneeChange, isShrunk$ }: 
 
   const handleDrop = (e) => {
     e.preventDefault();
-    const taskId = e.dataTransfer.getData("taskId");
+    const taskId = e.dataTransfer.getData('taskId');
     onDrop(taskId, column.status);
   };
 
   const toggleSort = (option: SortOption) => {
     if (sortBy$() === option) {
-      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
       setSortBy(option);
-      setSortDirection("asc");
+      setSortDirection('asc');
     }
   };
 
@@ -87,22 +87,22 @@ export function Column({ column, tasks$, onDrop, onAssigneeChange, isShrunk$ }: 
         <h2 className="font-bold text-lg mb-4 text-gray-700">{column.title}</h2>
         <div className="flex gap-1 bg-white rounded-lg p-1 shadow-sm">
           <button
-            onClick={() => toggleSort("date")}
-            className={getSortButtonClass(sortBy$, "date")}
+            onClick={() => toggleSort('date')}
+            className={getSortButtonClass(sortBy$, 'date')}
             title="Sort by date"
           >
             <CalendarComponent size={16} />
           </button>
           <button
-            onClick={() => toggleSort("title")}
-            className={getSortButtonClass(sortBy$, "title")}
+            onClick={() => toggleSort('title')}
+            className={getSortButtonClass(sortBy$, 'title')}
             title="Sort by title"
           >
             <TypeComponent size={16} />
           </button>
           <button
-            onClick={() => toggleSort("assignee")}
-            className={getSortButtonClass(sortBy$, "assignee")}
+            onClick={() => toggleSort('assignee')}
+            className={getSortButtonClass(sortBy$, 'assignee')}
             title="Sort by assignee"
           >
             <UserComponent size={16} />
@@ -113,10 +113,10 @@ export function Column({ column, tasks$, onDrop, onAssigneeChange, isShrunk$ }: 
         </div>
       </div>
       <For
-        as={<div className={"space-y-3"} />}
+        as={<div className={'space-y-3'} />}
         provideItemSignal={false}
         list={sortedTasks$}
-        index={"id"}
+        index={'id'}
         factory={(task) => (
           <TaskCard taskId={task.id} onAssigneeChange={onAssigneeChange} isShrunk$={isShrunk$} />
         )}
