@@ -1,6 +1,6 @@
 {
   "name": "@sigjs/sig",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A rendering, functional, reactive, and composable library for building web applications",
   "type": "module",
   "types": "./dist/index.d.ts",
