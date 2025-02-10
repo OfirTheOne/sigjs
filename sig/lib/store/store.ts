@@ -1,7 +1,7 @@
+import logger from "@/common/logger/logger";
 import { Signal, createSignal } from "@/core/signal";
 import { shallowEqual } from "./comparator";
-import { Middleware, Selector, StoreOptions, Comparator, IStore, StoreWithFunctions, InferStoreType } from "./types";
-import logger from "@/common/logger/logger";
+import type { Middleware, Selector, StoreOptions, Comparator, IStore, StoreWithFunctions } from "./types";
 
 const defaultComparator = shallowEqual;
 
