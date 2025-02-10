@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@sigjs/sig':
-        specifier: ^0.0.6
-        version: 0.0.6
+        specifier: ^0.0.7
+        version: 0.0.7
       autoprefixer:
         specifier: ^10.4.16
         version: 10.4.20(postcss@8.5.1)
@@ -380,8 +380,8 @@ packages:
     resolution: {integrity: sha512-i0GV1yJnm2n3Yq1qw6QrUrd/LI9bE8WEBOTtOkpCXHHdyN3TAGgqAK/DAT05z4fq2x04cARXt2pDmjWjL92iTQ==}
     engines: {node: '>= 10.0.0'}
 
-  '@sigjs/sig@0.0.6':
-    resolution: {integrity: sha512-1gQDj2R7dYtmhvbF+jM9DACvEWIk00jMM0BacLvVSJda2ucsncn07WlZRYtfaGKACcHtL8WQJBdKYwcmNKePEw==}
+  '@sigjs/sig@0.0.7':
+    resolution: {integrity: sha512-XrMhClOPVAxJJDy2S3UA2Xn5SxCPPrgNKe+1HAC7Sn4qEO9tCEjfnXIUS82tW4DiLnnbslknPc2hC4khlZm8Dw==}
 
   '@sigjs/vite-plugin@0.0.5':
     resolution: {integrity: sha512-IFH9DuKgZ7ZL2Jr5rP0gS3Htxu5ikZitoxgWebyG4M/1+BjiErHc3eJs0oBskCqR3UtRKI77jSbRtw/SyPwMaQ==}
@@ -1894,7 +1894,7 @@ snapshots:
       '@parcel/watcher-win32-x64': 2.5.0
     optional: true
 
-  '@sigjs/sig@0.0.6':
+  '@sigjs/sig@0.0.7':
     dependencies:
       events: 3.3.0
 
