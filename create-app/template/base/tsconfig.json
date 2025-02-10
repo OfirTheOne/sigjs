@@ -46,7 +46,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
-    "typeRoots": ["node_modules/@types", "./typings"],
+    "typeRoots": ["node_modules/@types"],
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
   "include": ["types", "typings", "src"],
