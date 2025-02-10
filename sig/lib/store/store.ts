@@ -1,15 +1,9 @@
 import { Signal, createSignal } from "@/core/signal";
-import { Comparator, shallowEqual } from "./comparator";
+import { shallowEqual } from "./comparator";
+import { Middleware, Selector, StoreOptions, Comparator, IStore, StoreWithFunctions, InferStoreType } from "./types";
+import logger from "@/common/logger/logger";
 
 const defaultComparator = shallowEqual;
-
-interface Selector<T, U> {
-    (state: T): U;
-}
-
-interface Middleware<T> {
-    (newState: T, state: Partial<T>, store: Store<T>): void;
-}
 
 /**
  * Store is a class that holds the state of the application and notifies subscribers when the state changes.
@@ -28,7 +22,7 @@ interface Middleware<T> {
  * // console logs:
  * // > 1
  */
-export class Store<T> {
+export class Store<T> implements IStore<T> {
     private state: T;
     private signals: Map<Selector<T, unknown>, {
         signal: Signal<unknown>,
@@ -38,7 +32,8 @@ export class Store<T> {
 
     constructor(
         initialState: T, 
-        middlewares: Middleware<T>[] = []
+        middlewares: Middleware<T>[] = [],
+        _options: StoreOptions<T> = { }
     ) {
         this.state = initialState;
         this.middlewares = middlewares;
@@ -83,5 +78,24 @@ export class Store<T> {
             if (comparator(selector(newState), signal.value)) return;
             signal.setValue(selector(newState));
         });
+    }
+
+    accessStateFunctionsWithStore(): StoreWithFunctions<T> {
+        this.#embedStateFunctions();
+        return this as unknown as StoreWithFunctions<T>;
+    }
+
+    #embedStateFunctions() {
+        const initialState = this.state;
+        const self: any = this;
+        for (const key in initialState) {
+            if (typeof initialState[key] === 'function') {
+                if(!(key in this)) {
+                    self[key] = initialState[key].bind(initialState);
+                } else {
+                    logger.warn(`Store already has a property named ${key}, skipping embedding function`);
+                }
+            }
+        }
     }
 }
