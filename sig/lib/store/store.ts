@@ -33,7 +33,7 @@ export class Store<T> implements IStore<T> {
     constructor(
         initialState: T, 
         middlewares: Middleware<T>[] = [],
-        _options: StoreOptions<T> = { }
+        _options: StoreOptions = { }
     ) {
         this.state = initialState;
         this.middlewares = middlewares;
@@ -89,9 +89,10 @@ export class Store<T> implements IStore<T> {
         const initialState = this.state;
         const self: any = this;
         for (const key in initialState) {
-            if (typeof initialState[key] === 'function') {
+            const value = initialState[key];
+            if (typeof value === 'function') {
                 if(!(key in this)) {
-                    self[key] = initialState[key].bind(initialState);
+                    self[key] = value.bind(initialState);
                 } else {
                     logger.warn(`Store already has a property named ${key}, skipping embedding function`);
                 }

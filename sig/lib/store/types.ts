@@ -12,7 +12,7 @@ export interface Middleware<T> {
     (newState: T, state: Partial<T>, store: IStore<T>): void;
 }
 
-export interface StoreOptions<T> { }
+export interface StoreOptions { }
 
 export interface IStore<T> {
     getState(): T;
