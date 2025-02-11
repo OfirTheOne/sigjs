@@ -16,6 +16,6 @@ export function createElement(
     return typeof type === 'function'
         ? createComponentElement(type, props, ...adaptedChildren)
         : isRawElement(type) ? 
-            createRawElement(type,  props, ...adaptedChildren) :
+            createRawElement(type, props, ...adaptedChildren) :
             createDomElement(type, props, ...adaptedChildren);
 }
