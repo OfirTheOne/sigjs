@@ -53,5 +53,5 @@ export function Link({
             router.push(to);
             onClick?.(e);
         }
-    }, children));
+    }, ...children));
 }
