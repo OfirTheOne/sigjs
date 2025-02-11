@@ -16,7 +16,7 @@ export interface ComponentFunctionWithMeta extends ComponentFunction {
 
 export type RenderablePrimitive = string | number | boolean | null | undefined;
 
-export type Renderable = JSX.IntrinsicElements | VirtualElement | RenderablePrimitive | Element | Text;
+export type Renderable = JSX.IntrinsicElements | VirtualElement | VirtualElement[] | RenderablePrimitive | Element | Text;
 
 export interface VirtualElement {
     type: string;
