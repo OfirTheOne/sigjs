@@ -4,6 +4,13 @@ set -e
 # Get the directory of the script
 SCRIPT_DIR=$(dirname "$0")
 
+# Function to sleep for a specified number of seconds
+sleep_for_seconds() {
+    local seconds=$1
+    echo "Sleeping for $seconds seconds..."
+    sleep "$seconds"
+}
+
 # Change to the script's directory
 cd "$SCRIPT_DIR"
 
@@ -41,6 +48,8 @@ if git diff --quiet --exit-code -- .; then
     git tag "sig/v$VERSION"
     git push origin main --tags
     git push origin "v$VERSION"
+
+    sleep_for_seconds 2
 
     # Validate that the new tag was actually pushed
     if git ls-remote --tags origin | grep -q "refs/tags/sig/v$VERSION"; then
