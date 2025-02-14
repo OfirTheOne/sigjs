@@ -26,9 +26,9 @@ export function createDynamicContainer(
     const { as, asProps } = props;
     if(as && isVirtualElement(as)) {
         // @TODO validate to be basic tag
-        const { type, props } = as;
-        const { children: [], ...propsWithoutChildren } = props;
-        const virtualElement = createElement(type, propsWithoutChildren);
+        const { props } = as;
+        const { children: [], tag, ...propsWithoutChildren } = props;
+        const virtualElement = createElement(tag as string, propsWithoutChildren);
         return render(virtualElement, undefined, key) as HTMLElement;
     } else if(as && typeof as === 'string') {
         return render(createElement(as, { ...asProps, role: containerTag }) as VirtualElement, undefined, key) as HTMLElement;
