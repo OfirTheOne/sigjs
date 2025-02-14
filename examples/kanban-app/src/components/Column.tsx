@@ -3,6 +3,7 @@ import { combineLatest, createSignal, For, Signal } from '@sigjs/sig';
 import { TaskCard } from './TaskCard';
 import { Column as ColumnType, Task, SortOption } from '../types';
 import { lucideSigjs } from '../lucide-adapter/lucide-adapter';
+import { store } from '../store/store';
 
 const TypeComponent = lucideSigjs(Type);
 const UserComponent = lucideSigjs(User);
@@ -57,13 +58,15 @@ export function Column({ column, tasks$, onDrop, onAssigneeChange, isShrunk$ }: 
   const [sortBy$, setSortBy] = createSignal<SortOption>('title');
   const [sortDirection$, setSortDirection] = createSignal<'asc' | 'desc'>('desc');
   const sortedTasks$ = getSortedTasks$(tasks$, sortBy$, sortDirection$);
-
   const handleDragOver = (e) => {
     e.preventDefault();
   };
+  const cardBeingDragged$ = store.select(s => s.cardBeingDragged);
 
   const handleDrop = (e) => {
     e.preventDefault();
+    if(store.getState().cardBeingDragged)
+      store.setState({ cardBeingDragged: false });
     const taskId = e.dataTransfer.getData('taskId');
     onDrop(taskId, column.status);
   };
@@ -79,7 +82,9 @@ export function Column({ column, tasks$, onDrop, onAssigneeChange, isShrunk$ }: 
 
   return (
     <div
-      className="bg-gray-100 p-4 rounded-lg w-80"
+      className={[" p-4 rounded-lg w-80", 
+          cardBeingDragged$.derive<string>((card) => card ? 'bg-blue-100 border border-blue-300' : 'bg-gray-100')
+      ]}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >

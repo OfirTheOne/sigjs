@@ -7,6 +7,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const initialTasksMap = new Map(initialTasks.map((task) => [task.id, task]));
 
 export const store = new Store({
+  cardBeingDragged: false,
   users: mockUsers,
   tasks: initialTasksMap,
   selectedTask: null,

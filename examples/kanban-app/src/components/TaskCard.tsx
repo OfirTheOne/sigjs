@@ -86,7 +86,8 @@ export function TaskCard({ taskId, onAssigneeChange, isShrunk$ }: TaskCardProps)
   );
 
   const handleDragStart = (e) => {
-    e.dataTransfer.setData("taskId", task$.value.id);
+    e.dataTransfer.setData("taskId", task$().id);
+    store.setState({ cardBeingDragged: true });
   };
 
   const toggleSubtask = (subtask: SubTask) => {
