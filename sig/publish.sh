@@ -47,7 +47,6 @@ if git diff --quiet --exit-code -- .; then
     git commit -m "Bump version to $VERSION"
     git tag "sig/v$VERSION"
     git push origin main --tags
-    git push origin "v$VERSION"
 
     sleep_for_seconds 2
 
