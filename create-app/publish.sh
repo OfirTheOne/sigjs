@@ -34,13 +34,12 @@ if git diff --quiet --exit-code -- .; then
     git commit -m "Bump version to $VERSION"
     git tag "create-app/v$VERSION"
     git push origin main --tags
-    git push origin "v$VERSION"
 
     # Validate that the new tag was actually pushed
-    if git ls-remote --tags origin | grep -q "refs/tags/sig/v$VERSION"; then
-        echo "Tag v$VERSION was successfully pushed."
+    if git ls-remote --tags origin | grep -q "refs/tags/create-app/v$VERSION"; then
+        echo "Tag create-app/v$VERSION was successfully pushed."
     else
-        echo "Failed to push tag v$VERSION."
+        echo "Failed to push tag create-app/v$VERSION."
         exit 1
     fi
 
