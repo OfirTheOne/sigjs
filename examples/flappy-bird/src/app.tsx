@@ -104,8 +104,6 @@ export function App() {
         }
     });
 
-
-
     const jump = () => {
         if (!gameOver$()) {
             setVelocity(JUMP_FORCE);
