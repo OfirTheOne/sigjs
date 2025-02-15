@@ -5,7 +5,7 @@ prev: false
 title: "Link"
 ---
 
-> **Link**(`__namedParameters`, `children`?): `VirtualElement`
+> **Link**(`__namedParameters`, `children`?): `VirtualElement` \| `VirtualElement`[]
 
 Defined in: router/link.ts:31
 
@@ -24,7 +24,7 @@ Anchor elements resulting from this component will have the class 'router-link'.
 
 ## Returns
 
-`VirtualElement`
+`VirtualElement` \| `VirtualElement`[]
 
 ## Throws
 

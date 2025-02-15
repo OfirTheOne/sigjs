@@ -7,7 +7,7 @@ title: "ExtractSignalType"
 
 > **ExtractSignalType**\<`T`\>: `T` *extends* `Signal`\<infer U\> ? `U` : `never`
 
-Defined in: core/signal/signal.types.ts:101
+Defined in: core/signal/signal.types.ts:132
 
 Extracts the type of the value of a Signal
 

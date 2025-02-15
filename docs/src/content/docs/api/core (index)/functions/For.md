@@ -7,7 +7,7 @@ title: "For"
 
 > **For**\<`T`\>(`props`): `VirtualElement`
 
-Defined in: core/control-flow/for/index.ts:62
+Defined in: core/control-flow/for/index.ts:78
 
 For control flow element
 
@@ -19,11 +19,11 @@ For control flow element
 
 ### props
 
-[`ForProps`](/api/core-index/interfaces/forprops/)\<`T`\>
+[`ForProps`](/api/core-index/type-aliases/forprops/)\<`T`\>
 
 For control flow element props
 
-using [ForProps](../../../../../../../api/core-index/interfaces/forprops)
+using [ForProps](../../../../../../../api/core-index/type-aliases/forprops)
 
 ## Returns
 

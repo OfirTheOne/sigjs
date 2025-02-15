@@ -7,7 +7,7 @@ title: "If"
 
 > **If**(`props`): `VirtualElement`
 
-Defined in: core/control-flow/if/index.ts:56
+Defined in: core/control-flow/if/index.ts:49
 
 If control flow element
 

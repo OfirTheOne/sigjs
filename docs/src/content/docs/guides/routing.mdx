@@ -19,7 +19,7 @@ route guards, navigation events, data loading and more. those features are expla
 
 ## Creating A Router
 
-`sig` comes with a build in `sig/router` module, providing `Router` functionalities that allows you to define your application's routes and views.
+`sig` comes with a build in `@sigjs/router` module, providing `Router` functionalities that allows you to define your application's routes and views.
 
 By calling the `createRouter` function with routes config, you create a `router` component.
 
@@ -63,7 +63,7 @@ And a common `Layout` component that will be used to wrap the pages:
 
 
 ```tsx {"1":10-11} {"2":16}
-import { Link } from "sig/router";
+import { Link } from "@sigjs/router";
 function Layout() {
     return (
         <div className="flex flex-col items-center">
@@ -85,7 +85,7 @@ function Layout() {
 Now, let's create the router and define the routes:
 
 ```tsx 
-import { createRouter } from 'sig';
+import { createRouter } from '@sigjs/router';
 function AppRouter() {
     return createRouter({
         routes: [{

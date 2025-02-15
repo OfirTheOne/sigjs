@@ -5,7 +5,7 @@ prev: false
 title: "Store"
 ---
 
-Defined in: store/store.ts:31
+Defined in: store/store.ts:25
 
 Store is a class that holds the state of the application and notifies subscribers when the state changes.
 
@@ -31,3 +31,7 @@ count$.setValue((prevCount) => prevCount + 1);
 ## Type Parameters
 
 • **T**
+
+## Implements
+
+- `IStore`\<`T`\>

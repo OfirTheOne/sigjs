@@ -7,7 +7,7 @@ title: "Unsignalize"
 
 > **Unsignalize**\<`T`\>: `T` *extends* `object` ? `{ [P in keyof T]: T[P] extends Signal<infer U> ? U : T[P] }` : `T` *extends* `Signal`\<infer U\> ? `U` : `T`
 
-Defined in: core/signal/signal.types.ts:126
+Defined in: core/signal/signal.types.ts:157
 
 Unwrap a Signal type to its original type
 If the input is an object, it will unwrap all properties that are Signals
