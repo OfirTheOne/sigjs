@@ -31,11 +31,13 @@ export class Store<T> implements IStore<T> {
     private middlewares: Middleware<T>[] = [];
 
     constructor(
-        initialState: T, 
+        initialStateOrFactory: (T | ((store: Store<T>) => T)), 
         middlewares: Middleware<T>[] = [],
         _options: StoreOptions = { }
     ) {
-        this.state = initialState;
+
+        this.state = initialStateOrFactory instanceof Function ? 
+            initialStateOrFactory(this) : initialStateOrFactory;
         this.middlewares = middlewares;
     }
 
