@@ -1,6 +1,9 @@
 ---
 title: Store
 description: A guide to using the Store class for state management in your application.
+banner:
+  content: |
+    <strong>Note:</strong> The library is in Beta stage.
 ---
 
 The `Store` class is a powerful tool for managing the state of your application. It holds the state, allows you to update it, and notifies subscribers when the state changes. This guide will walk you through the basics of using the `Store` class, including how to create a store, update the state, and subscribe to state changes.
