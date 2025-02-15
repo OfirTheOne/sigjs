@@ -1,4 +1,5 @@
-import { createSignal, createRef, For, If, onConnect, onDisconnect } from '@sigjs/sig';
+import { createSignal, createRef, For, If, onConnect, onDisconnect } from '@sigjs/sig/core';
+import type { Property } from '@sigjs/sig';
 
 interface Pipe {
     id: number;
@@ -130,7 +131,7 @@ export function App() {
                 <div
                     className="absolute w-8 h-8 left-[70px] transition-transform duration-50"
                     style={{
-                        top: birdPosition$.derive(p => `${p}px`),
+                        top: birdPosition$.derive<Property.Top<string | number>>(p => `${p}px`),
                         transform: velocity$.derive(v =>
                             `translateY(-50%) rotate(${v * 3}deg)`),
                     }}
@@ -150,8 +151,8 @@ export function App() {
                         <div
                             className="absolute w-[50px] bg-green-600"
                             style={{
-                                left: pipe$.derive(p => `${p?.x}px`),
-                                height: pipe$.derive(p => `${p?.height}px`),
+                                left: pipe$.derive<Property.Left<string | number>>(p => `${p?.x}px`),
+                                height: pipe$.derive<Property.Height<string | number>>(p => `${p?.height}px`),
                                 top: 0,
                             }}
                         >
@@ -161,9 +162,9 @@ export function App() {
                         <div
                             className="absolute w-[50px] bg-green-600"
                             style={{
-                                left: pipe$.derive(p => `${p?.x}px`),
-                                height: pipe$.derive(p => `${GAME_HEIGHT - p?.height - PIPE_GAP}px`),
-                                top: pipe$.derive(p => `${p?.height + PIPE_GAP}px`),
+                                left: pipe$.derive<Property.Left<string | number>>(p => `${p?.x}px`),
+                                height: pipe$.derive<Property.Height<string | number>>(p => `${GAME_HEIGHT - p?.height - PIPE_GAP}px`),
+                                top: pipe$.derive<Property.Top<string | number>>(p => `${p?.height + PIPE_GAP}px`),
                             }}
                         >
                             <div className="absolute top-0 left-[-5px] w-[60px] h-5 bg-green-600" />
