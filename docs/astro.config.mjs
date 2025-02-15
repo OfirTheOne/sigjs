@@ -90,7 +90,6 @@ export default defineConfig({
                     {
                         label: 'Store',
                         slug: 'guides/store',
-                        badge: 'Coming Soon',
                     },
                 ],
             },
