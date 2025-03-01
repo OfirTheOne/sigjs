@@ -77,6 +77,9 @@ export async function handleRoutesMatchedResult(
             };
             const componentVirtualElement = createElement(routeSync.component, routeComponentProps);
             currentComponentDom = render(componentVirtualElement, componentContainer, currentRouteRenderKey.push(routeId));
+            if(currentComponentDom === componentContainer) {
+                currentComponentDom = DOM.getChildNodes(componentContainer);
+            }
             memoRenderedRoute[routeId] = currentComponentDom;
             renderMatchResult = {
                 routeId,
