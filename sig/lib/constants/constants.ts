@@ -15,3 +15,5 @@ export const CONTROL_FLOW_TAG = {
     FOR: 'FOR',
     AWAIT: 'AWAIT'
 } as const;
+
+export const COMPONENT_NAME_SYMBOL = Symbol('ComponentName');

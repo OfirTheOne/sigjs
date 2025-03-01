@@ -24,6 +24,9 @@ export interface VirtualElement {
         [key: string]: unknown;
         children: Renderable[];
     };
+    meta?: {
+        [key: string]: unknown;
+    };
 }
 
 export interface ElementRef<T = HTMLElement> {

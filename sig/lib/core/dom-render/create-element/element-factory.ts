@@ -1,6 +1,6 @@
 import type { Renderable, VirtualElement, ComponentFunction, AsyncComponentFunction, Props } from "@/types";
 import type { Signal } from "@/core/signal";
-import { ELEMENT_TYPE } from "@/constants";
+import { ELEMENT_TYPE, COMPONENT_NAME_SYMBOL } from "@/constants";
 
 export function createTextElement(text: string): VirtualElement {
     return {
@@ -32,12 +32,16 @@ export function createEmptyElement(): VirtualElement {
 }
 
 export function createComponentElement(component: ComponentFunction | AsyncComponentFunction, props: object, ...children: Renderable[]): VirtualElement {
+    const componentName = component.name;
     return {
         type: ELEMENT_TYPE.COMPONENT,
         props: {
             ...props,
             component,
             children,
+        },
+        meta: {
+            [COMPONENT_NAME_SYMBOL]: componentName,
         }
     };
 }

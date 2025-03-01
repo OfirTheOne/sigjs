@@ -1,1 +1,1 @@
-export { ELEMENT_TYPE, CONTROL_FLOW_TAG } from './constants';
+export { ELEMENT_TYPE, CONTROL_FLOW_TAG, COMPONENT_NAME_SYMBOL } from './constants';
