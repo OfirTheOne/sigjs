@@ -1,4 +1,4 @@
-import { For, Signal } from 'sig';
+import { For, Signal } from '@sigjs/sig';
 import { RecipeCard } from './RecipeCard';
 import type { Recipe } from '../types/recipe';
 

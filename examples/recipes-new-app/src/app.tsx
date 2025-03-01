@@ -1,4 +1,4 @@
-import { createRouter, Navigate } from "sig/router"
+import { createRouter, Navigate } from "@sigjs/sig/router";
 import { Layout } from "./components/Layout"
 import { Categories } from "./pages/Categories";
 import { Recipe } from "./pages/Recipe";

@@ -1,4 +1,4 @@
-import { Signal } from "sig";
+import { Signal } from "@sigjs/sig";
 import Search from "../../assets/icons/search.svg";
 
 

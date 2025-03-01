@@ -1,6 +1,6 @@
 
-import { createSignal, If } from 'sig';
-import { Link } from 'sig/router';
+import { createSignal, If } from '@sigjs/sig';
+import { Link } from '@sigjs/sig/router';
 import Menu from '/assets/icons/menu.svg';
 import X from '/assets/icons/x.svg';
 import UtensilsCrossed from '/assets/icons/utensils-crossed.svg';

@@ -1,4 +1,4 @@
-import { combineLatest } from 'sig';
+import { combineLatest } from '@sigjs/sig';
 import { store } from '../store';
 import { SearchBar } from '../components/SearchBar';
 import { RecipeGrid } from '../components/RecipeGrid';

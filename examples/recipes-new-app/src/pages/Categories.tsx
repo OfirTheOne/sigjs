@@ -1,6 +1,6 @@
-import { getRouter } from 'sig/router';
+import { getRouter } from '@sigjs/sig/router';
 import { store } from '../store';
-import { For, onConnect, onDisconnect } from 'sig';
+import { For, onConnect, onDisconnect } from '@sigjs/sig/core';
 
 export function Categories() {
 

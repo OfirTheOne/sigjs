@@ -1,5 +1,5 @@
 
-import { Link } from 'sig/router';
+import { Link } from '@sigjs/sig/router';
 import type { Recipe } from '../types/recipe';
 
 interface RecipeCardProps {

@@ -1,4 +1,4 @@
-import { Store } from 'sig/store';
+import { Store } from '@sigjs/sig/store';
 import type { Recipe } from './types/recipe';
 
 interface RecipeStore {

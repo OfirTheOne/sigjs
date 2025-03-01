@@ -1,5 +1,5 @@
-import { createSignal, For, If, Signal } from 'sig';
-import { getRouter, type RouteComponentProps } from 'sig/router';
+import { createSignal, For, If, Signal } from '@sigjs/sig';
+import { getRouter, type RouteComponentProps } from '@sigjs/sig/router';
 import Users from '/assets/icons/users.svg';
 import Mail from '/assets/icons/mail.svg';
 import Clock from '/assets/icons/clock.svg';
