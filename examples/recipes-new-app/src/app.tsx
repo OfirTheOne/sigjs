@@ -17,21 +17,21 @@ export function App() {
 const AppRouter = () => createRouter({
     routes: [
         { 
-            path: '/', component: () => <Layout />,
+            path: '/', component: Layout,
             children: [
-                { index: true, component: () => <Navigate to="/categories" />, memo: false },
+                { index: true, component: function RedirectToCategories (){ return <Navigate to="/categories" /> }, memo: false },
                 { path: '/categories', component: Categories },
                 { path: '/recipes', component: Recipes, memo: false },
                 { 
                     path: '/recipe',
-                    component: () => null,
+                    component: function EmptyRecipePage() { return <router-outlet />; },
                     children: [
                         { path: '/:id', component: Recipe },
-                        { path: '/not-found', component: () => <div>Recipe Not Found</div> }
+                        { path: '/not-found', component: function RecipeNotFound () { return <div>Recipe Not Found</div>; } }
                     ]
                 },
-                { path: '/404', component: () => <div>Nonexistent</div> },
-                { path: '*', component: () => <Navigate to="/404" />},
+                { path: '/404', component: function Nonexistent() { return <div>Nonexistent</div>; } },
+                { path: '*', component: function RedirectToNonexistent() { return <Navigate to="/404" />; } },
             ]
         }
     ]
