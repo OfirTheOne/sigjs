@@ -3,6 +3,10 @@ import { ElementKeySymbol } from "@/symbols";
 import logger from "@/common/logger/logger";
 
 export const DOM = {
+    getChildNodes(dom: HTMLElement): ChildNode[] {
+        return Array.from(dom.childNodes);
+    },
+
     createElement(tagName: string, key: KeyBuilder, options?: ElementCreationOptions): HTMLElement {
         const element = document.createElement(tagName, options);
         element[ElementKeySymbol] = key.toString();
@@ -47,9 +51,13 @@ export const DOM = {
         }
     },
 
-    addComment(node: Node, comment: string) {
-        const commentNode = DOM.createComment(comment);
-        node.appendChild(commentNode);
+    insertBefore(referenceNode: ChildNode, newNode: (ChildNode | ChildNode[])) {
+        if (Array.isArray(newNode)) {
+            referenceNode.before(...newNode);
+        }
+        else {
+            referenceNode.before(newNode);
+        }
     },
 
     classListRemove(dom: HTMLElement, value: string | string[]) {
