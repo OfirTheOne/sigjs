@@ -3,6 +3,17 @@ import { ElementKeySymbol } from "@/symbols";
 import logger from "@/common/logger/logger";
 
 export const DOM = {
+
+    removeElementsBetween(start: Node, end: Node) {
+        let current = start.nextSibling;
+        while (current && current !== end) {
+            const next = current.nextSibling;
+            current.remove();
+            current = next;
+        }
+    },
+
+
     getChildNodes(dom: HTMLElement): ChildNode[] {
         return Array.from(dom.childNodes);
     },
