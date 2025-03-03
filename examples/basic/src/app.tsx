@@ -1,7 +1,7 @@
 import './app.scss';
-import { VirtualElement, createSignal } from 'sig';
-import { Await, For, If, createRef } from 'sig/core';
-import { createRouter, getRouter } from 'sig/router';
+import { VirtualElement, createSignal } from '@sigjs/sig';
+import { Await, For, If, createRef } from '@sigjs/sig/core';
+import { createRouter, getRouter } from '@sigjs/sig/router';
 import { store, increment } from './store'
 
 const myElem = document.createElement('p');
@@ -35,7 +35,7 @@ export function App(): VirtualElement {
                 },
                 {
                     path: '/about',
-                    component: () => {
+                    component: function About() {
                         return <div>
                             about page
                         </div>;
@@ -61,7 +61,7 @@ export function Page02(): JSX.Element {
         <a className='link' href='https://google.com'>
             Google
         </a>
-        <Await component={AsyncUser} fallback={<p>Loading...</p>} />
+        {/* <Await component={AsyncUser} fallback={<p>Loading...</p>} /> */}
         <Counter title='Counter 1' />
     </div>;
 }

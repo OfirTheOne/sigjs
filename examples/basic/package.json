@@ -25,7 +25,7 @@
     "mini-css-extract-plugin": "^2.7.3",
     "path-to-regexp": "^6.2.1",
     "postcss": "^8.4.30",
-    "sig": "link:/Users/og8217/projects/sig/sig",
+    "@sigjs/sig": "workspace:*",
     "tailwindcss": "^3.3.3"
   },
   "devDependencies": {

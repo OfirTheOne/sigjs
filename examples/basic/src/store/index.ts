@@ -1,5 +1,5 @@
 
-import { Store } from 'sig/store';
+import { Store } from '@sigjs/sig/store';
 
 function logMiddleware(newState, state, store) {
     console.log('new state:', newState);

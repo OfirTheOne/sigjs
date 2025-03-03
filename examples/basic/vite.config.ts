@@ -4,7 +4,7 @@ export default defineConfig({
     esbuild: {
         jsxFactory: 'createElement',
         jsxFragment: 'createFragment',
-        jsxInject: `import { createFragment, createElement } from 'sig/jsx'`,
+        jsxInject: `import { createFragment, createElement } from '@sigjs/sig/jsx'`,
     },
     optimizeDeps: {
         disabled: true,
