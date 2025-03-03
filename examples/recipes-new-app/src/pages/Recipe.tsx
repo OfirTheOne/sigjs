@@ -77,17 +77,18 @@ export function Recipe({ params }: RouteComponentProps) {
                             </button>
                         </div>
                     </div>
-                    <For
-                        as='div'
-                        asProps={{ className: "grid grid-cols-2 gap-4 mb-8" }}
-                        list={recipeImages$}
-                        // index={(image, index) => index}
-                        factory={(image, index) => <img 
-                            src={image} 
-                            alt={`${recipe$.value?.title} ${index + 1}`} 
-                            className='rounded-lg shadow-md w-full h-64 object-cover'
-                        />}
-                    />
+                    <div className="grid grid-cols-2 gap-4 mb-8">
+                        <For
+                            list={recipeImages$}
+                            provideItemSignal={false}
+                            // index={(image, index) => index}
+                            factory={(image, index) => <img 
+                                src={image} 
+                                alt={`${recipe$.value?.title} ${index + 1}`} 
+                                className='rounded-lg shadow-md w-full h-64 object-cover'
+                            />}
+                        />
+                    </div>
         
                     <div className="grid md:grid-cols-2 gap-8 mb-12">
                         <div>
@@ -144,9 +145,9 @@ export function Recipe({ params }: RouteComponentProps) {
                                 Add Comment
                             </button>
                         </form>
+                        <div className="space-y-6">
                             <For
-                                as='div'
-                                asProps={{ className: "space-y-6" }}
+                                provideItemSignal={false}
                                 list={recipeComments$}
                                 factory={(comment) => (
                                     <div className="bg-white p-4 rounded-lg shadow">
@@ -160,6 +161,7 @@ export function Recipe({ params }: RouteComponentProps) {
                                     </div>
                                 )}
                             />
+                        </div>
                     </div>
                 </div>
             }

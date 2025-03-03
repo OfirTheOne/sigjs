@@ -118,12 +118,13 @@ export function Column({ column, tasks$, onDrop, onAssigneeChange, isShrunk$ }: 
         </div>
       </div>
       <For
-        as={<div className={'space-y-3'} />}
         provideItemSignal={false}
         list={sortedTasks$}
         index={'id'}
         factory={(task) => (
-          <TaskCard taskId={task.id} onAssigneeChange={onAssigneeChange} isShrunk$={isShrunk$} />
+          <div className={'space-y-3'}>
+            <TaskCard taskId={task.id} onAssigneeChange={onAssigneeChange} isShrunk$={isShrunk$} />
+          </div>
         )}
       />
     </div>

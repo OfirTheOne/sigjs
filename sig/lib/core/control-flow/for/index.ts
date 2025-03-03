@@ -6,7 +6,7 @@ import { registerSignalSubscription } from "@/core/global/global-hook-executione
 import { DOM } from "@/core/html";
 import { KeyBuilder } from "@/common/key-builder/key-builder";
 import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
-import { createDynamicContainer, DynamicContainerProps } from "../dynamic-container-helper";
+import { DynamicContainerProps } from "../dynamic-container-helper";
 import type { RenderFunction } from "@/core/dom-render/render";
 import type { VirtualElement, Renderable } from "@/types";
 import { fragmentExtraction } from "../fragment-extraction";
@@ -92,6 +92,84 @@ customElements.define('for-ph', class extends HTMLElement { });
 
 function renderFor(
     element: VirtualElement,
+    container: HTMLElement,
+    render: RenderFunction,
+    key: KeyBuilder
+): HTMLElement | Text {
+
+    const { list, factory, index /*, as, asProps = {} */, empty, memo = true, provideItemSignal } = (element.props as unknown as ForProps);
+    const currentKey = key.clone().push(element.props.controlTag as string);
+    const currentKeyString = currentKey.toString();
+
+    // Create start and end comment nodes
+    const startComment = document.createComment('for;start;'+currentKeyString);
+    const endComment = document.createComment('for;end;'+currentKeyString);
+
+    // Append the start and end comment nodes to the container
+    container.appendChild(startComment);
+    container.appendChild(endComment);
+
+    const indexFn = typeof index === 'function' ? index : ((item: unknown, i: number) => {
+        if (typeof index === 'undefined' || index === null) {
+            return typeof item === 'object' ? String(i) : String(item);
+        }
+        return item?.[index as string] as string;
+    });
+    const indexItems = new Map<string, { dom: (HTMLElement | Text | (HTMLElement | Text)[]); }>();
+
+    if (!isSignal<Array<unknown>>(list)) {  
+        logger.error('For control flow element list prop must be a signal, in case of a non-signal list, use a static mapping instead');
+    } else {
+        const listSignal = list;
+        const unsubscribe = subscribeSignal(listSignal, (list) => {
+            // Remove all content between the start and end comments
+            DOM.removeElementsBetween(startComment, endComment);
+            let node = startComment.nextSibling;
+
+            if (list.length === 0) {
+                if (empty !== undefined) {
+                    const renderedResult = render(adaptVirtualElementChild(empty), container, key);
+                    const emptyDom = fragmentExtraction(renderedResult, container);
+                    DOM.insertBefore(endComment, emptyDom);
+                }
+                return;
+            }
+            
+            const elementsDom = list.map((item, i) => {
+                const indexValue = indexFn(item, i);
+                if (memo) {
+                    const indexItem = indexItems.get(indexValue);
+                    if (indexItem) {
+                        return indexItem.dom;
+                    }
+                }
+                const childKey = key.clone().pushIndex(i);
+                let element: Renderable;
+                if (provideItemSignal) {
+                    const itemSignal = listSignal.derive((items) => items.find((_, idx) => indexFn(_, idx) === indexValue));
+                    element = adaptVirtualElementChild(factory(item, i, list, itemSignal));
+                } else {
+                    element = adaptVirtualElementChild(factory(item, i, list));
+                }
+                const renderedResult = render(element, container, childKey);
+                const elementDom = fragmentExtraction(renderedResult, container);
+                if (memo) {
+                    indexItems.set(indexValue, { dom: elementDom });
+                }
+                return elementDom;
+            });
+
+            elementsDom.forEach((elementDom) => DOM.insertBefore(endComment, elementDom));
+        });
+
+        registerSignalSubscription(startComment, unsubscribe);
+    }
+    return container; // startComment;
+}
+
+/* 
+function renderFor(
+    element: VirtualElement,
     _container: HTMLElement,
     render: RenderFunction,
     key: KeyBuilder
@@ -156,6 +234,6 @@ function renderFor(
     }
     return placeholderDom;
 }
-
+*/
 export type { ForProps };
 export { For, renderFor };
