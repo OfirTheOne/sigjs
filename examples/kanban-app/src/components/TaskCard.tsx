@@ -176,15 +176,16 @@ export function TaskCard({ taskId, onAssigneeChange, isShrunk$ }: TaskCardProps)
       <ProgressBar progress$={progress$} />
 
       <If
-        as={<div className="p-3 flex items-center justify-between group" />}
         condition={displayShrunkCard$}
         then={
-          <ShrunkTaskCard
-            taskTitle$={taskTitle$}
-            assigneeImageElement={assigneeImageElement}
-            completedSubtasksLength$={completedSubtasksLength$}
-            subtasksLength$={subtasksLength$}
-          />
+          <div className="p-3 flex items-center justify-between group">
+            <ShrunkTaskCard
+              taskTitle$={taskTitle$}
+              assigneeImageElement={assigneeImageElement}
+              completedSubtasksLength$={completedSubtasksLength$}
+              subtasksLength$={subtasksLength$}
+            />
+          </div>
         }
         fallback={
           <ExpendedTaskCard
@@ -312,27 +313,25 @@ function ExpendedTaskCard({
             <ChevronDownComponent
               size={16}
               className={`transition-transform ${isSubtasksCollapsed$ ? "-rotate-90" : ""}`}
+              // className={[`transition-transform`, isSubtasksCollapsed$.derive(y => y ? "-rotate-90" : "")]}
             />
             <span>
               Subtasks ({completedSubtasksLength$}/{subtasksLength$})
             </span>
           </button>
           <If
-            as={
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsAddingSubtask(true);
-                }}
-                className="text-blue-500 hover:text-blue-600 text-sm flex items-center gap-1"
-              />
-            }
             condition={canAddSubtask$}
             then={
-              <>
+              <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsAddingSubtask(true);
+              }}
+              className="text-blue-500 hover:text-blue-600 text-sm flex items-center gap-1"
+              >
                 <PlusComponent size={14} />
                 Add
-              </>
+            </button>
             }
           />
         </div>
@@ -421,10 +420,9 @@ function AddNewSubtask({
 }) {
   return (
     <If
-      as={<div className={`flex gap-2 mb-2`} onClick={(e) => e.stopPropagation()} />}
       condition={isAddingSubtask$}
       then={
-        <>
+        <div className={`flex gap-2 mb-2`} onClick={(e) => e.stopPropagation()}>
           <input
             type="text"
             value={newSubtask$}
@@ -448,7 +446,7 @@ function AddNewSubtask({
           >
             <XComponent size={16} />
           </button>
-        </>
+        </div>
       }
     />
   );
@@ -463,37 +461,37 @@ function SubtaskList({
 }) {
   return (
     <For
-      as="div"
-      asProps={{ className: "space-y-1" }}
       list={subtasks$}
       index={"id"}
       provideItemSignal
       factory={(_0, _1, _2, subtask$) => {
         const completed$ = subtask$.select("completed");
         return (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleSubtask(subtask$());
-            }}
-            className="w-full flex items-center gap-2 p-1 hover:bg-gray-50 rounded text-left group/item"
-          >
-            <If
-              condition={completed$}
-              then={<CheckSquareComponent size={16} className="text-blue-500" />}
-              fallback={<SquareComponent size={16} className="text-gray-400" />}
-            />
-            <span
-              className={[
-                `text-sm flex-1`,
-                completed$.derive<string>((c) =>
-                  c ? "text-gray-500 line-through" : "text-gray-700"
-                ),
-              ]}
+          <div className="space-y-1" >
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleSubtask(subtask$());
+              }}
+              className="w-full flex items-center gap-2 p-1 hover:bg-gray-50 rounded text-left group/item"
             >
-              {subtask$.select("title")}
-            </span>
-          </button>
+              <If
+                condition={completed$}
+                then={<CheckSquareComponent size={16} className="text-blue-500" />}
+                fallback={<SquareComponent size={16} className="text-gray-400" />}
+              />
+              <span
+                className={[
+                  `text-sm flex-1`,
+                  completed$.derive<string>((c) =>
+                    c ? "text-gray-500 line-through" : "text-gray-700"
+                  ),
+                ]}
+              >
+                {subtask$.select("title")}
+              </span>
+            </button>
+          </div>
         );
       }}
     />
