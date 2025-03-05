@@ -13,7 +13,10 @@ export const ELEMENT_TYPE = {
 export const CONTROL_FLOW_TAG = {
     IF: 'IF',
     FOR: 'FOR',
-    AWAIT: 'AWAIT'
+    AWAIT: 'AWAIT',
+    SWITCH: 'SWITCH',
+    CASE: 'CASE',
+    DEFAULT: 'DEFAULT',
 } as const;
 
 export const COMPONENT_NAME_SYMBOL = Symbol('ComponentName');

@@ -13,3 +13,5 @@ export { For } from './for';
 export type { ForProps } from './for';
 export { Await } from './await';
 export type { AwaitProps } from './await';
+export { Switch, Case, Default } from './switch-case';
+export type { SwitchProps, CaseProps, DefaultProps } from './switch-case';

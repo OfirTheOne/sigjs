@@ -40,6 +40,8 @@ export type CommonProps = {
     ref?: ElementRef;
 };
 
+export type PropsWithChildren<T = Record<string, unknown>> = T & { children?: Renderable[] };
+
 export type Props<T = Record<string, unknown>> = T & CommonProps;
 
 export type ControlFlowTag = typeof CONTROL_FLOW_TAG[keyof typeof CONTROL_FLOW_TAG];

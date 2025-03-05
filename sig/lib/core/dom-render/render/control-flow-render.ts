@@ -4,6 +4,8 @@ import { renderFor } from "@/core/control-flow/for";
 import { renderIf } from "@/core/control-flow/if";
 import { VirtualElement } from "@/types";
 import { RenderFunction } from "./render.types";
+import { CONTROL_FLOW_TAG } from "@/constants";
+import { renderSwitch } from "@/core/control-flow/switch-case";
 
 export function controlFlowRender(
     element: VirtualElement,
@@ -12,12 +14,14 @@ export function controlFlowRender(
     render: RenderFunction
 ): HTMLElement | Text {
     switch (element.props.controlTag) {
-        case 'IF':
+        case CONTROL_FLOW_TAG.IF:
             return renderIf(element, container, render, key);
-        case 'FOR':
+        case CONTROL_FLOW_TAG.FOR:
             return renderFor(element, container, render, key);
-        case 'AWAIT':
+        case CONTROL_FLOW_TAG.AWAIT:
             return renderAwait(element, container, render, key);
+        case CONTROL_FLOW_TAG.SWITCH:
+            return renderSwitch(element, container, render, key);
         default:
             throw new Error(`Invalid control flow tag: ${element.props.controlTag}`);
     }

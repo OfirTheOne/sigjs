@@ -124,7 +124,6 @@ function renderFor(
         const unsubscribe = subscribeSignal(listSignal, (list) => {
             // Remove all content between the start and end comments
             DOM.removeElementsBetween(startComment, endComment);
-            let node = startComment.nextSibling;
 
             if (list.length === 0) {
                 if (empty !== undefined) {

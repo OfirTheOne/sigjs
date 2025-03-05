@@ -1,6 +1,6 @@
 import './app.scss';
 import { VirtualElement, createSignal } from '@sigjs/sig';
-import { Await, For, If, createRef } from '@sigjs/sig/core';
+import { Await, Case, Default, For, If, Switch, createRef } from '@sigjs/sig/core';
 import { createRouter, getRouter } from '@sigjs/sig/router';
 import { store, increment } from './store'
 
@@ -63,6 +63,18 @@ export function Page02(): JSX.Element {
         </a>
         {/* <Await component={AsyncUser} fallback={<p>Loading...</p>} /> */}
         <Counter title='Counter 1' />
+
+        <Switch condition={store.select((state) => state.count)}>
+            <Case value={(value) => value%3 === 0}>
+                <p>Count is divisible by 3</p>
+            </Case>
+            <Case value={(value) => value%2 === 0}>
+                <p>Count is even</p>
+            </Case>
+            <Default>
+                <p>Count is odd and not divisible by 3</p>
+            </Default>
+        </Switch>
     </div>;
 }
 

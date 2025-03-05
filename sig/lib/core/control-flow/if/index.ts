@@ -10,6 +10,7 @@ import { DynamicContainerProps } from "../dynamic-container-helper";
 import type { Renderable, VirtualElement } from "@/types";
 import type { RenderFunction } from "@/core/dom-render/render";
 import { fragmentExtraction } from "../fragment-extraction";
+import { createElement } from "@/jsx";
 
 
 /**
@@ -67,7 +68,12 @@ function renderIf(
     render: RenderFunction,
     key: KeyBuilder,
 ): HTMLElement | Text {
-
+    const renderSandboxContainer = render(
+        createElement('div', {}), // as unknown as VirtualElement[], 
+        undefined,//  as unknown as HTMLElement, 
+        key.clone().push('sandbox')
+    ) as HTMLElement;
+    
     const { condition, then, fallback, memo = true } = (element.props as unknown as IfProps);
     const currentKey = key.clone().push(element.props.controlTag as string);
     const currentKeyString = currentKey.toString();
@@ -94,8 +100,8 @@ function renderIf(
                 }
                 const thenKey = currentKey.clone().push('if-then');
                 const virtualThen = adaptVirtualElementChild(then);
-                const renderedResult = render(virtualThen, container, thenKey);
-                thenElementDom = fragmentExtraction(renderedResult, container);
+                const renderedResult = render(virtualThen, renderSandboxContainer, thenKey);
+                thenElementDom = fragmentExtraction(renderedResult, renderSandboxContainer);
                 DOM.insertBefore(endComment, thenElementDom);
             } else if (fallback) {
                 if (memo && fallbackElementDom) {
@@ -103,8 +109,8 @@ function renderIf(
                     return;
                 }
                 const fallbackKey = currentKey.clone().push('if-fallback');
-                const renderedResult = render(adaptVirtualElementChild(fallback), container, fallbackKey);
-                fallbackElementDom = fragmentExtraction(renderedResult, container);
+                const renderedResult = render(adaptVirtualElementChild(fallback), renderSandboxContainer, fallbackKey);
+                fallbackElementDom = fragmentExtraction(renderedResult, renderSandboxContainer);
                 DOM.insertBefore(endComment, fallbackElementDom);
             } else {
                 return container;
