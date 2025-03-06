@@ -1,7 +1,4 @@
-import type { VirtualElement } from "@/types";
-import type { RenderFunction } from "@/core/dom-render/render";
 import { registerSignalSubscription } from "@/core/global/global-hook-executioner";
-import { KeyBuilder } from "@/common/key-builder/key-builder";
 import { isSignal, Signal, subscribeSignal } from '@/core/signal';
 import logger from '@/common/logger/logger';
 import { DOM } from '@/core/html/html';
@@ -11,22 +8,23 @@ import { PropsWithChildren } from "@/types/common";
 import { isVirtualElement } from "@/core/utils";
 import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
 import { createElement } from "@/jsx";
+import type { VirtualElement } from "@/types";
+import type { RenderFunction } from "@/core/dom-render/render";
+import type { KeyBuilder } from "@/common/key-builder/key-builder";
 
 interface SwitchProps {
     condition: Signal<any>;
-    // children: VirtualElement[];
+    memoAll?: boolean;
 }
 
 interface CaseProps {
     value: unknown | ((value: unknown) => boolean);
-    // children: VirtualElement[];
+    memo?: boolean;
 }
 
 interface DefaultProps {
-    // children: VirtualElement[];
+    memo?: boolean;
 }
-
-
 
 export function renderSwitch(
     element: VirtualElement,
@@ -34,15 +32,17 @@ export function renderSwitch(
     render: RenderFunction,
     key: KeyBuilder,
 ): HTMLElement | Text {
-
     const renderSandboxContainer = render(
-        createElement('div', {}), // as unknown as VirtualElement[], 
-        undefined,//  as unknown as HTMLElement, 
+        createElement('div', {}), 
+        undefined,
         key.clone().push('sandbox')
     ) as HTMLElement;
 
+    const memoCaseMap = new Map<string, HTMLElement | Text | (HTMLElement | Text)[]>();
+    let memoDefault: HTMLElement | Text | (HTMLElement | Text)[] | undefined = undefined;
+
     const props = (element.props as unknown as PropsWithChildren<SwitchProps>);
-    const { condition, children = []} = props;
+    const { condition, children = [], memoAll = true} = props;
     const currentKey = key.clone().push(element.props.controlTag as string);
     const currentKeyString = currentKey.toString();
  
@@ -60,15 +60,25 @@ export function renderSwitch(
             // Remove all content between the start and end comments
             DOM.removeElementsBetween(startComment, endComment);
             let matched = false;
-            for (const child of children) {
+            for (const [idx, child] of Object.entries(children)) {
                 if (isVirtualElement(child) && child.props.component === Case) {
-                    const { value } = (child.props as unknown as PropsWithChildren<CaseProps>);
+                    const { value, memo } = (child.props as unknown as PropsWithChildren<CaseProps>);
                     const isMatch = typeof value === 'function' ? value(conditionValue) : value === conditionValue;
                     if (isMatch) {
+                        const shouldMemo = (memo === true) || (memoAll && memo !== false);
+                        const memoCaseElement = memoCaseMap.get(idx);
+                        if (shouldMemo && memoCaseElement) {
+                            DOM.insertBefore(endComment, memoCaseElement);
+                            matched = true;
+                            break;
+                        }
                         const caseKey = currentKey.clone().push('case');
                         const virtualCaseChildren = child.props.children.map(adaptVirtualElementChild);
                         const renderedResult = render(virtualCaseChildren, renderSandboxContainer, caseKey);
-                        const caseDom = fragmentExtraction(renderedResult, renderSandboxContainer) // fragmentExtraction(renderedResult, container);
+                        const caseDom = fragmentExtraction(renderedResult, renderSandboxContainer);
+                        if (shouldMemo) {
+                            memoCaseMap.set(idx, caseDom);
+                        }
                         DOM.insertBefore(endComment, caseDom);
                         matched = true;
                         break;
@@ -79,10 +89,21 @@ export function renderSwitch(
             if (!matched) {
                 for (const child of children) {
                     if (isVirtualElement(child) && child.props.component === Default) {
+                        const { memo } = (child.props as unknown as PropsWithChildren<DefaultProps>);
+                        const shouldMemo = (memo === true) || (memoAll && memo !== false);
+                        if (shouldMemo) {
+                            if(memoDefault) {
+                                DOM.insertBefore(endComment, memoDefault);
+                                break;
+                            }
+                        }
                         const defaultKey = currentKey.clone().push('default');
                         const virtualDefaultChildren = child.props.children.map(adaptVirtualElementChild);
                         const renderedResult = render(virtualDefaultChildren, renderSandboxContainer, defaultKey);
                         const defaultDom = fragmentExtraction(renderedResult, renderSandboxContainer);
+                        if (shouldMemo) {
+                            memoDefault = defaultDom;
+                        }
                         DOM.insertBefore(endComment, defaultDom);
                         break;
                     }
@@ -96,10 +117,7 @@ export function renderSwitch(
     return container;
 }
 
-// Export the components
-export const Switch = (props: SwitchProps, children: VirtualElement[]=[]
-
-): VirtualElement => ({
+export const Switch = (props: SwitchProps, children: VirtualElement[]=[]): VirtualElement => ({
     type: ELEMENT_TYPE.CONTROL_FLOW,
     props: {
         ...props,
