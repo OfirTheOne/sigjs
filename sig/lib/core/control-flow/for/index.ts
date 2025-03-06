@@ -4,12 +4,12 @@ import { isSignal, Signal, subscribeSignal } from "@/core/signal";
 import { ForControlFlow } from "@/symbols";
 import { registerSignalSubscription } from "@/core/global/global-hook-executioner";
 import { DOM } from "@/core/html";
-import { KeyBuilder } from "@/common/key-builder/key-builder";
 import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
-import { DynamicContainerProps } from "../dynamic-container-helper";
+import { fragmentExtraction } from "../fragment-extraction";
+import { createElement } from "@/jsx/create-element";
+import type { KeyBuilder } from "@/common/key-builder/key-builder";
 import type { RenderFunction } from "@/core/dom-render/render";
 import type { VirtualElement, Renderable } from "@/types";
-import { fragmentExtraction } from "../fragment-extraction";
 
 /**
  * For control flow element props
@@ -57,7 +57,7 @@ type ForProps<T = unknown> = ({
      * The element to render when the list is empty
      */
     empty?: Renderable;
-} & DynamicContainerProps;
+};
 /**
  * For control flow element
  * @param {ForProps} props - For control flow element props
@@ -68,8 +68,6 @@ type ForProps<T = unknown> = ({
  * 
  * @example
  *  <For 
- *      as='div'
- *      asProps={{ className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" }} 
  *      list={recipes$}
  *      index={(recipe) => recipe.id}
  *      factory={(recipe) => <RecipeCard recipe={recipe} />}
@@ -88,8 +86,6 @@ function For<T = unknown>(props: ForProps<T>): VirtualElement {
 
 For['$$type'] = ForControlFlow;
 
-customElements.define('for-ph', class extends HTMLElement { });
-
 function renderFor(
     element: VirtualElement,
     container: HTMLElement,
@@ -97,7 +93,13 @@ function renderFor(
     key: KeyBuilder
 ): HTMLElement | Text {
 
-    const { list, factory, index /*, as, asProps = {} */, empty, memo = true, provideItemSignal } = (element.props as unknown as ForProps);
+    const renderSandboxContainer = render(
+        createElement('div', {}), 
+        undefined,
+        key.clone().push('sandbox')
+    ) as HTMLElement;
+
+    const { list, factory, index, empty, memo = true, provideItemSignal } = (element.props as unknown as ForProps);
     const currentKey = key.clone().push(element.props.controlTag as string);
     const currentKeyString = currentKey.toString();
 
@@ -150,8 +152,8 @@ function renderFor(
                 } else {
                     element = adaptVirtualElementChild(factory(item, i, list));
                 }
-                const renderedResult = render(element, container, childKey);
-                const elementDom = fragmentExtraction(renderedResult, container);
+                const renderedResult = render(element, renderSandboxContainer, childKey);
+                const elementDom = fragmentExtraction(renderedResult, renderSandboxContainer);
                 if (memo) {
                     indexItems.set(indexValue, { dom: elementDom });
                 }
@@ -163,76 +165,8 @@ function renderFor(
 
         registerSignalSubscription(startComment, unsubscribe);
     }
-    return container; // startComment;
+    return container;
 }
 
-/* 
-function renderFor(
-    element: VirtualElement,
-    _container: HTMLElement,
-    render: RenderFunction,
-    key: KeyBuilder
-): HTMLElement | Text {
-    const { list, factory, index, as, asProps = {}, empty, memo = true, provideItemSignal } = (element.props as unknown as ForProps);
-    const currentKey = key.clone().push(element.props.controlTag as string);
-    const placeholderDom = createDynamicContainer('for-ph', { as, asProps }, render, currentKey);
-
-    const indexFn = typeof index === 'function' ? index : ((item: unknown, i: number) => {
-        if (typeof index === 'undefined' || index === null) {
-            return typeof item === 'object' ? String(i) : String(item);
-        }
-        return item?.[index as string] as string;
-    });
-    const indexItems = new Map<string, { dom: (HTMLElement | Text | (HTMLElement | Text)[]); }>();
-    DOM.removeAllChildren(placeholderDom);
-
-    if (!isSignal<Array<unknown>>(list)) {  
-        logger.error('For control flow element list prop must be a signal, in case of a non-signal list, use a static mapping instead');
-    } else {
-        const listSignal = list;
-        placeholderDom.setAttribute('signal', listSignal.id);
-        const unsubscribe = subscribeSignal(listSignal, (list) => {
-            DOM.removeAllChildren(placeholderDom);
-            if(list.length === 0) {
-                if(empty !== undefined) {
-                    const renderedResult = render(adaptVirtualElementChild(empty), placeholderDom, key);
-                    const emptyDom = fragmentExtraction(renderedResult, placeholderDom);
-                    DOM.appendChild(placeholderDom, emptyDom);
-                }
-                return;
-            }
-            
-            const elementsDom = list.map((item, i) => {
-                const indexValue = indexFn(item, i);
-                if(memo) {
-                    const indexItem = indexItems.get(indexValue);
-                    if (indexItem) {
-                        return indexItem.dom;
-                    }
-                }
-                const childKey = key.clone().pushIndex(i);
-                let element: Renderable;
-                if (provideItemSignal) {
-                    const itemSignal = listSignal.derive((items) => items.find((_, idx) => indexFn(_, idx) === indexValue));
-                    element = adaptVirtualElementChild(factory(item, i, list, itemSignal));
-                } else {
-                    element = adaptVirtualElementChild(factory(item, i, list));
-                }
-                const renderedResult = render(element, placeholderDom, childKey);
-                const elementDom = fragmentExtraction(renderedResult, placeholderDom);
-                if(memo) {
-                    indexItems.set(indexValue, { dom: elementDom });
-                }
-                return elementDom;
-            });
-
-            elementsDom.forEach((elementDom) => DOM.appendChild(placeholderDom, elementDom));
-        });
-
-        registerSignalSubscription(placeholderDom, unsubscribe);
-    }
-    return placeholderDom;
-}
-*/
 export type { ForProps };
 export { For, renderFor };

@@ -1,16 +1,15 @@
 import logger from "@/common/logger/logger";
-import { KeyBuilder } from "@/common/key-builder/key-builder";
 import { registerSignalSubscription } from "@/core/global/global-hook-executioner";
 import { DOM } from "@/core/html";
 import { Signal, isSignal, subscribeSignal } from "@/core/signal";
 import { IfControlFlow } from "@/symbols";
 import { ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/constants";
 import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
-import { DynamicContainerProps } from "../dynamic-container-helper";
-import type { Renderable, VirtualElement } from "@/types";
-import type { RenderFunction } from "@/core/dom-render/render";
 import { fragmentExtraction } from "../fragment-extraction";
 import { createElement } from "@/jsx";
+import type { KeyBuilder } from "@/common/key-builder/key-builder";
+import type { Renderable, VirtualElement } from "@/types";
+import type { RenderFunction } from "@/core/dom-render/render";
 
 
 /**
@@ -20,7 +19,7 @@ import { createElement } from "@/jsx";
  * used in {@link If}
  * 
  */ 
-interface IfProps extends DynamicContainerProps {
+interface IfProps {
     /**
      * The condition to check
      */
@@ -60,8 +59,6 @@ function If(props: IfProps): VirtualElement {
 
 If['$$type'] = IfControlFlow;
 
-customElements.define('if-ph', class extends HTMLElement { });
-
 function renderIf(
     element: VirtualElement,
     container: HTMLElement,
@@ -69,8 +66,8 @@ function renderIf(
     key: KeyBuilder,
 ): HTMLElement | Text {
     const renderSandboxContainer = render(
-        createElement('div', {}), // as unknown as VirtualElement[], 
-        undefined,//  as unknown as HTMLElement, 
+        createElement('div', {}), 
+        undefined,
         key.clone().push('sandbox')
     ) as HTMLElement;
     
