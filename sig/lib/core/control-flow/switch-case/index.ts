@@ -12,17 +12,50 @@ import type { VirtualElement } from "@/types";
 import type { RenderFunction } from "@/core/dom-render/render";
 import type { KeyBuilder } from "@/common/key-builder/key-builder";
 
+/**
+ * Switch control flow element props
+ * 
+ * used in {@link Switch}
+ */
 interface SwitchProps {
+    /**
+     * The condition to check
+     */
     condition: Signal<any>;
+    /**
+     * Should memoize all the cases
+     * @default true
+     */
     memoAll?: boolean;
 }
 
+/**
+ * Case control flow element props
+ * 
+ * used in {@link Case}
+ */
 interface CaseProps {
+    /**
+     * The value to match, if a function is provided, it will be called with the condition value
+     **/
     value: unknown | ((value: unknown) => boolean);
+    /**
+     * Memoize the element, overrides the memoAll prop in the Switch element
+     * @default true
+     */
     memo?: boolean;
 }
 
+/**
+ * Default control flow element props
+ * 
+ * used in {@link Default}
+ */
 interface DefaultProps {
+    /**
+     * Memoize the element, overrides the memoAll prop in the Switch element
+     * @default true
+     */
     memo?: boolean;
 }
 
@@ -117,6 +150,16 @@ export function renderSwitch(
     return container;
 }
 
+
+/**
+ * Switch control flow element
+ * 
+ * @param {SwitchProps} props 
+ * @param children Case and Default elements
+ *
+ * @category Control-Flow
+ * @group Control-Flow
+ */
 export const Switch = (props: SwitchProps, children: VirtualElement[]=[]): VirtualElement => ({
     type: ELEMENT_TYPE.CONTROL_FLOW,
     props: {
@@ -126,6 +169,15 @@ export const Switch = (props: SwitchProps, children: VirtualElement[]=[]): Virtu
     },
 });
 
+/**
+ * Case control flow element
+ * 
+ * @param {CaseProps} props 
+ * @param children 
+ *
+ * @category Control-Flow
+ * @group Control-Flow
+ */
 export const Case = (props: CaseProps, children: VirtualElement[]=[]): VirtualElement => ({
     type: ELEMENT_TYPE.CONTROL_FLOW,
     props: {
@@ -135,6 +187,15 @@ export const Case = (props: CaseProps, children: VirtualElement[]=[]): VirtualEl
     },
 });
 
+/**
+ * Default control flow element
+ * 
+ * @param {DefaultProps} props 
+ * @param children 
+ *
+ * @category Control-Flow
+ * @group Control-Flow
+ */
 export const Default = (props: DefaultProps, children: VirtualElement[]=[]): VirtualElement => ({
     type: ELEMENT_TYPE.CONTROL_FLOW,
     props: {
