@@ -20,6 +20,7 @@ Dynamic content in `sig` is achieved by using some of the primitives provided by
 
 - `If` component: Renders its condition branch based on the signal value.
 - `For` component: Render a list of items based on the signal that holds the list.
+- `Switch`, `Case` & `Default` components: Render the first `Case` component whose `condition` signal is truthy, otherwise render the `Default` component.
 
 
 :::note 
@@ -144,3 +145,33 @@ When no `index` prop provided, the default indexing behavior is the following:
 - If the item is a primitive value, the index will be the item value.
 - If the item is an `object`, the index will be the index of the item in the list.
 
+---
+
+### `Switch`, `Case` & `Default` Components
+
+The `Switch`, `Case` & `Default` components are used to render the first `Case` component whose `condition` signal is truthy, otherwise render the `Default` component.
+
+Here is an example of how to use the `Switch`, `Case` & `Default` components to render a component based on the selected tab:
+
+```tsx
+import { createSignal, Switch, Case, Default } from 'sig';
+
+function TabContent() {
+    const [selectedTab$, setSelectedTab] = createSignal('Tab1');
+    return (<div className="...">
+        <button onClick={() => setSelectedTab('Tab1')}>Tab1</button>
+        <button onClick={() => setSelectedTab('Tab2')}>Tab2</button>
+        <Switch condition={selectedTab$}>
+            <Case value='Tab1'>
+                <div>Tab1 content</div>
+            </Case>
+            <Case value='Tab2'>
+                <div>Tab2 content</div>
+            </Case>
+            <Default>
+                <div>No content</div>
+            </Default>
+        </Switch>
+    </div>);
+}
+```

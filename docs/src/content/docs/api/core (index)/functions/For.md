@@ -7,7 +7,7 @@ title: "For"
 
 > **For**\<`T`\>(`props`): `VirtualElement`
 
-Defined in: core/control-flow/for/index.ts:78
+Defined in: core/control-flow/for/index.ts:76
 
 For control flow element
 
@@ -33,8 +33,6 @@ using [ForProps](../../../../../../../api/core-index/type-aliases/forprops)
 
 ```ts
 <For 
-     as='div'
-     asProps={{ className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" }} 
      list={recipes$}
      index={(recipe) => recipe.id}
      factory={(recipe) => <RecipeCard recipe={recipe} />}

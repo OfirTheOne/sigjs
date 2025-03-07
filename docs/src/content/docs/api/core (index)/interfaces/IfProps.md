@@ -11,44 +11,7 @@ If control flow element props
 
 used in [If](../../../../../../../api/core-index/functions/if)
 
-## Extends
-
-- `DynamicContainerProps`
-
 ## Properties
-
-### as?
-
-> `optional` **as**: `Renderable`
-
-Defined in: core/control-flow/dynamic-container-helper.ts:13
-
-The tag of the element to render
-if not provided, it will render a custom element with the tag 'if-ph'
-
-#### Inherited from
-
-`DynamicContainerProps.as`
-
-***
-
-### asProps?
-
-> `optional` **asProps**: `object`
-
-Defined in: core/control-flow/dynamic-container-helper.ts:17
-
-The props of the element to render
-
-#### Index Signature
-
-\[`key`: `string`\]: `unknown`
-
-#### Inherited from
-
-`DynamicContainerProps.asProps`
-
-***
 
 ### condition
 

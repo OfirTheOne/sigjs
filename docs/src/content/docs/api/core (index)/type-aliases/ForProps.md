@@ -5,7 +5,7 @@ prev: false
 title: "ForProps"
 ---
 
-> **ForProps**\<`T`\>: \{ `factory`: (`item`, `index`, `list`, `itemSignal`) => `Renderable`; `provideItemSignal`: `true`; \} \| \{ `factory`: (`item`, `index`, `list`) => `Renderable`; `provideItemSignal`: `false`; \} & `object` & `DynamicContainerProps`
+> **ForProps**\<`T`\>: \{ `factory`: (`item`, `index`, `list`, `itemSignal`) => `Renderable`; `provideItemSignal`: `true`; \} \| \{ `factory`: (`item`, `index`, `list`) => `Renderable`; `provideItemSignal`: `false`; \} & `object`
 
 Defined in: core/control-flow/for/index.ts:20
 
