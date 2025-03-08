@@ -1,6 +1,6 @@
 
 
-import { createElement as renderCreateElement } from "@/core/dom-render/create-element";
+import { createElement as internalCreateElement } from "@/core/dom-render/create-element";
 import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
 import { createFragment } from "./create-fragment";
 import type { Renderable, VirtualElement, ComponentFunction } from "@/types";
@@ -14,5 +14,5 @@ export function createElement(
         const fragmentList = createFragment(null, props, ...children) as VirtualElement[];
         return fragmentList.map(adaptVirtualElementChild);
     }
-    return renderCreateElement(tag, props, ...children);
+    return internalCreateElement(tag, props, ...children);
 }
