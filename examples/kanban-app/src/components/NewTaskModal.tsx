@@ -1,10 +1,9 @@
 import { Task } from "../types";
 import { mockUsers } from "../data";
-import { X } from "lucide";
 import { createSignal } from "@sigjs/sig";
-import { lucideSigjs } from "../lucide-adapter/lucide-adapter";
+import { icons } from "../icons";
 
-const XComponent = lucideSigjs(X);
+const XComponent = icons.X;
 
 interface NewTaskModalProps {
   onClose: () => void;

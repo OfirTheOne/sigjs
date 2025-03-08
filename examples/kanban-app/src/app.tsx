@@ -1,14 +1,13 @@
 import { Column } from "./components/Column";
 import { NewTaskModal } from "./components/NewTaskModal";
 import { Task } from "./types";
-import { Plus, Minimize2, Maximize2 } from "lucide";
 import { createSignal, If } from "@sigjs/sig";
-import { lucideSigjs } from "./lucide-adapter/lucide-adapter";
+import { icons } from "./icons";
 import { store } from "./store/store";
 
-const PlusComponent = lucideSigjs(Plus);
-const Minimize2Component = lucideSigjs(Minimize2);
-const Maximize2Component = lucideSigjs(Maximize2);
+const PlusComponent = icons.Plus;
+const Minimize2Component = icons.Minimize2;
+const Maximize2Component = icons.Maximize2;
 
 const columns = [
   { id: "todo", title: "To Do", status: "todo" as const },

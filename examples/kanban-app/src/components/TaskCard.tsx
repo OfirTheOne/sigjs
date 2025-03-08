@@ -1,28 +1,18 @@
+import { combineLatest, createSignal, For, If, Signal } from "@sigjs/sig";
+import { Property } from "@sigjs/sig/types";
 import { SubTask, Task } from "../types";
 import { mockUsers } from "../data";
-import {
-  Trophy,
-  GripVertical,
-  ChevronRight,
-  CheckSquare,
-  Square,
-  Plus,
-  X,
-  ChevronDown,
-} from "lucide";
-import { combineLatest, createSignal, For, If, Signal } from "@sigjs/sig";
-import { lucideSigjs } from "../lucide-adapter/lucide-adapter";
-import { Property } from "@sigjs/sig/types";
+import { icons } from "../icons";
 import { store } from "../store/store";
 
-const TrophyComponent = lucideSigjs(Trophy);
-const GripVerticalComponent = lucideSigjs(GripVertical);
-const ChevronRightComponent = lucideSigjs(ChevronRight);
-const CheckSquareComponent = lucideSigjs(CheckSquare);
-const SquareComponent = lucideSigjs(Square);
-const PlusComponent = lucideSigjs(Plus);
-const XComponent = lucideSigjs(X);
-const ChevronDownComponent = lucideSigjs(ChevronDown);
+const TrophyComponent = icons.Trophy;
+const GripVerticalComponent = icons.GripVertical;
+const ChevronRightComponent = icons.ChevronRight;
+const CheckSquareComponent = icons.CheckSquare;
+const SquareComponent = icons.Square;
+const PlusComponent = icons.Plus;
+const XComponent = icons.X;
+const ChevronDownComponent = icons.ChevronDown;
 
 interface TaskCardProps {
   taskId: string;
@@ -312,8 +302,8 @@ function ExpendedTaskCard({
           >
             <ChevronDownComponent
               size={16}
-              className={`transition-transform ${isSubtasksCollapsed$ ? "-rotate-90" : ""}`}
-              // className={[`transition-transform`, isSubtasksCollapsed$.derive(y => y ? "-rotate-90" : "")]}
+              // className={`transition-transform ${isSubtasksCollapsed$ ? "-rotate-90" : ""}`}
+              className={[`transition-transform`, isSubtasksCollapsed$.derive(y => y ? "-rotate-90" : "")]}
             />
             <span>
               Subtasks ({completedSubtasksLength$}/{subtasksLength$})

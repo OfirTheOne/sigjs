@@ -1,14 +1,13 @@
-import { ArrowUpDown, Type, User, Calendar } from 'lucide';
 import { combineLatest, createSignal, For, Signal } from '@sigjs/sig';
 import { TaskCard } from './TaskCard';
 import { Column as ColumnType, Task, SortOption } from '../types';
-import { lucideSigjs } from '../lucide-adapter/lucide-adapter';
+import { icons } from "../icons";
 import { store } from '../store/store';
 
-const TypeComponent = lucideSigjs(Type);
-const UserComponent = lucideSigjs(User);
-const ArrowUpDownComponent = lucideSigjs(ArrowUpDown);
-const CalendarComponent = lucideSigjs(Calendar);
+const TypeComponent = icons.Type;
+const UserComponent = icons.User;
+const ArrowUpDownComponent = icons.ArrowUpDown;
+const CalendarComponent = icons.Calendar;
 
 function getSortedTasks$(
   tasks$: Signal<Task[]>,
