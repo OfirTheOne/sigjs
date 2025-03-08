@@ -16,5 +16,5 @@ export function rawRender(
     Object.keys(props)
         .filter(isProperty)
         .forEach(name => attachPropertyToElement(dom, name, props[name]));
-    return dom
+    return dom;
 }
