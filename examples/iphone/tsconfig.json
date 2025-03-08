@@ -1,0 +1,54 @@
+{
+  "extends": "./tsconfig.paths.json",
+  "compilerOptions": {
+    // "target": "es2015",
+    // "module": "es2015",
+    // "module": "esnext", // add this line
+    // "moduleResolution": "node" /* Specify what module code is generated. */,
+    // "lib": ["dom", "dom.iterable", "esnext"],
+    "esModuleInterop": true,
+    // "isolatedModules": true,
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    // "sourceMap": true,
+    "jsx": "preserve",
+    "jsxFactory": "createElement",
+    "jsxFragmentFactory": "createFragment",
+    "outDir": "./public/dist",
+    "baseUrl": "./",
+    "incremental": true,
+    // "skipLibCheck": true,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "strictBindCallApply": false,
+    "forceConsistentCasingInFileNames": false,
+    // "noFallthroughCasesInSwitch": false,
+
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "typeRoots": ["node_modules/@types"],
+    "plugins": [{ "name": "typescript-plugin-css-modules" }]
+  },
+  "include": ["types", "typings", "src"],
+  "exclude": ["node_modules", "test", "dist", "**/*spec.ts", "public"]
+}
