@@ -21,6 +21,8 @@ export type * from "./signal/signal.types";
 
 export  { isSignal, subscribeSignal, createSignal, combineLatest } from "./signal";
 
+export * from './dom-render/create-element/element-factory';
+
 export {
     onConnect,
     onCreate,

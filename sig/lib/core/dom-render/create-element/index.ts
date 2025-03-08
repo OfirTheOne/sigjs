@@ -1,4 +1,2 @@
-import { createElement } from "./create-element";
-import { createEmptyElement, createTextElement, createSignalElement } from "./element-factory";
-
-export { createElement, createTextElement, createSignalElement, createEmptyElement };
+export { createElement } from "./create-element";
+export * from "./element-factory";
