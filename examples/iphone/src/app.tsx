@@ -11,7 +11,7 @@ const {
     Settings,
     Clock,
     X
-} = icons
+} = icons;
 
 interface App {
     id: string;
