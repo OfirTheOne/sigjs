@@ -1,12 +1,9 @@
-import { defineConfig } from 'vite';
+
+import { defineConfig, Plugin } from 'vite';
+import sigjsPlugin from '@sigjs/vite-plugin';
+import svgSig from '@sigjs/svg-sig';
+
+
 export default defineConfig({
-    css: { modules: { localsConvention: 'camelCase' } },
-    esbuild: {
-        jsxFactory: 'createElement',
-        jsxFragment: 'createFragment',
-        jsxInject: `import { createFragment, createElement } from '@sigjs/sig/jsx'`,
-    },
-    optimizeDeps: {
-        disabled: true,
-    },
+  plugins: [sigjsPlugin() as Plugin, svgSig() as Plugin],
 });

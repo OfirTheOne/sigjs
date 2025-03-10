@@ -1,8 +1,9 @@
-import './app.scss';
 import { VirtualElement, createSignal } from '@sigjs/sig';
-import { Await, Case, Default, For, If, Switch, createRef } from '@sigjs/sig/core';
+import { Case, Default, For, If, Switch, createRef } from '@sigjs/sig';
 import { createRouter, getRouter } from '@sigjs/sig/router';
 import { store, increment } from './store'
+import { Icon } from './assets/HomerSimpson.svg';
+
 
 const myElem = document.createElement('p');
 myElem.innerHTML='Hello World';
@@ -25,7 +26,7 @@ function AppLayout(_props, children) {
     </div>
 } 
 
-export function App(): VirtualElement {
+export function App() {
     return <AppLayout>
         {createRouter({
             routes: [
@@ -75,6 +76,7 @@ export function Page02(): JSX.Element {
                 <p>Count is odd and not divisible by 3</p>
             </Default>
         </Switch>
+        <Icon />
     </div>;
 }
 

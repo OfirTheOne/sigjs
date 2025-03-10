@@ -1,5 +1,5 @@
 {
-  "name": "examples/snake-game",
+  "name": "sigjs-template",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -19,32 +19,24 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "autoprefixer": "^10.4.16",
-    "css-loader": "^6.7.3",
-    "events": "^3.3.0",
-    "mini-css-extract-plugin": "^2.7.3",
-    "path-to-regexp": "^6.2.1",
-    "postcss": "^8.4.30",
-    "@sigjs/sig": "workspace:*",
-    "tailwindcss": "^3.3.3"
+    "@sigjs/sig": "workspace:*"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.191",
+    "postcss": "^8.4.30",
+    "autoprefixer": "^10.4.16",
+    "@sigjs/vite-plugin": "workspace:*",
+    "@sigjs/svg-sig": "workspace:*",
     "@types/node": "^18.11.18",
-    "@types/reflect-metadata": "^0.1.0",
-    "@typescript-eslint/eslint-plugin": "^5.58.0",
-    "@typescript-eslint/parser": "^5.58.0",
-    "eslint": "^8.38.0",
-    "happy-dom": "^10.3.2",
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "eslint": "^9.18.0",
     "http-server": "^14.1.1",
     "lodash": "^4.17.21",
-    "node-sass": "^8.0.0",
     "prettier": "2.8.7",
     "sass": "^1.63.6",
     "serve": "^14.2.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
-    "vite": "^4.4.4",
-    "vitest": "^0.33.0"
+    "vite": "^4.5.3"
   }
 }
