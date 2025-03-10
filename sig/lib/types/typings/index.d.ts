@@ -8,14 +8,6 @@ import type { createFragment } from '@/jsx';
 type Fragment = typeof createFragment;
 
 declare global {
-
-  module '*.svg' {
-    const factory = (props: { className: string}) => SVGElement;
-    export default factory;
-  }
-}
-
-declare global {
   export const Fragment: Fragment;
   export const createFragment: Fragment;
 
