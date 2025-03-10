@@ -1,0 +1,25 @@
+{
+  "name": "@sigjs/svg-sig",
+  "version": "0.0.1",
+  "description": "A Vite plugin for svg files in Sig.JS",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "unbuild"
+  },
+  "author": "Ofir G.",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.10.7",
+    "typescript": "^5.7.3",
+    "unbuild": "^3.3.1"
+  },
+  "peerDependencies": {
+    "vite": "^4.5.5"
+  }
+}
