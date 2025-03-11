@@ -7,7 +7,8 @@
   "types": "./dist/index.d.ts",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "client.d.ts"
   ],
   "scripts": {
     "build": "unbuild"
@@ -17,9 +18,11 @@
   "devDependencies": {
     "@types/node": "^22.10.7",
     "typescript": "^5.7.3",
+    "@sigjs/sig": "workspace:*",
     "unbuild": "^3.3.1"
   },
   "peerDependencies": {
-    "vite": "^4.5.5"
+    "vite": "^4.5.5",
+    "@sigjs/sig": "workspace:*"
   }
 }

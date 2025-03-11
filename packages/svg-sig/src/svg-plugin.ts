@@ -39,7 +39,7 @@ export function svgSig(): Plugin {
 
   let svgElement = null;
 
-  export function Icon(props = {}) {
+  export function SvgComponent(props = {}) {
     svgElement = svgElement || createSvgElement(${escapedSvgContent});
     const svg = cloneSvgElement(svgElement);
     return adaptSvgToVirtualElement(svg, props);

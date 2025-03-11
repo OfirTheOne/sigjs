@@ -1,13 +1,21 @@
-# Sig.JS Vite Plugin
+# SVG Vite Plugin for Sig.JS
 
-This is a Vite plugin for Sig.js application.
+Vite plugin to transform SVGs into sIG.js components.
 
 ## Installation
 
 To install the plugin, run:
 
 ```bash
-npm install @sigjs/vite-plugin
+# npm
+npm install --save-dev @sigjs/svg-sig
+
+# yarn
+yarn add -D @sigjs/svg-sig
+
+# pnpm
+pnpm add -D @sigjs/svg-sig
+
 ```
 
 ## Usage
@@ -15,24 +23,38 @@ npm install @sigjs/vite-plugin
 Add the plugin to your `vite.config.js`:
 
 ```javascript
+// vite.config.js
 import { defineConfig } from 'vite';
-import sigjsPlugin from '@sigjs/vite-plugin';
+import svgSig from '@sigjs/vite-plugin';
 
 export default defineConfig({
-    plugins: [sigjsPlugin()],
+    // ...
+    plugins: [
+        // ...
+        svgSig(),
+    ],
 });
 ```
 
-## Configuration
+Add the following to your `src/vite-env.d.ts` for better type interface:
 
-You can configure the plugin by passing options:
+```typescript
+/// <reference types="@sigjs/svg-sig/client" />
+```
+
+
+Now you can import SVG files as Sig.JS components:
 
 ```javascript
-sigjsPlugin({
-    publicDir: path.resolve(__dirname, './public-dir'),
-});
+import { SvgComponent } from './path/to/file.svg';
+
+const App = () => {
+    return (
+        <SvgComponent />
+    );
+};
 ```
 
 ## License
 
-This project is licensed under the MIT License.
+MIT 
