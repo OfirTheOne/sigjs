@@ -40,7 +40,7 @@ function generateIconsPlugin() {
           "types": `./dist/generated-icons/${iconName}.d.ts`
         };
       });
-      pkg.exports = exportsConfig as any;
+      pkg['exports'] = exportsConfig as any;
       fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2), 'utf-8');
 
 
