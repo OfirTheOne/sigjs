@@ -1,6 +1,6 @@
 {
   "name": "@sigjs/svg-sig",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A Vite plugin for svg files in Sig.JS",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
