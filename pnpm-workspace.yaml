@@ -1,3 +1,6 @@
 packages:
 - sig
+- create-app
+- vite-plugin
 - examples/*
+- packages/*
