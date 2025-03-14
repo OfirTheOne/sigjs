@@ -4,6 +4,14 @@ const { prompt } = require('inquirer');
 const { join } = require('path');
 const { copy } = require('fs-extra');
 
+const ignoredFiles = [
+  'node_modules',
+  'package-lock.json',
+  'pnpm-lock.yaml',
+  '.git',
+  '.DS_Store'
+];
+
 async function createSigJsApp() {
   const answers = await prompt([
     {
@@ -38,20 +46,14 @@ async function createSigJsApp() {
     await copy(templatePath, projectPath, {
       filter: (src, dest) => {
         // Include all files, including those starting with a dot
-        return !ignoredFiles.includes(src);
+        return !ignoredFiles.some(file => src.endsWith('/' + file));
       }
     });
+
     console.log('Project created successfully at', projectPath);
   } catch (err) {
     console.error('Error creating project:', err);
   }
 }
-
-const ignoredFiles = [
-  'node_modules',
-  'package-lock.json',
-  '.git',
-  '.DS_Store'
-];
 
 createSigJsApp();
