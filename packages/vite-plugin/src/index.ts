@@ -5,17 +5,17 @@ import path from 'path';
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-export interface SigjsAppConfig {
+interface SigjsAppConfig {
   logLevel?: 'none' | 'error' | 'warn' | 'info' | 'debug';
   memoize?: boolean;
 }
 
-export interface SigjsPluginOptions { 
+interface SigjsPluginOptions { 
   publicDir?: string; 
   appConfig?: SigjsAppConfig;
 }
 
-export default function sigjsPlugin(options?: SigjsPluginOptions): Plugin {
+function sigjsPlugin(options?: SigjsPluginOptions): Plugin {
 
   const publicDir = options?.publicDir || path.resolve(__dirname, './assets');
   return {
@@ -40,3 +40,5 @@ export default function sigjsPlugin(options?: SigjsPluginOptions): Plugin {
     },
   };
 }
+export default sigjsPlugin;
+export type { SigjsAppConfig, SigjsPluginOptions };

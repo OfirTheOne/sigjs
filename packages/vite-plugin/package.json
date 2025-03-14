@@ -2,15 +2,19 @@
   "name": "@sigjs/vite-plugin",
   "version": "0.0.6",
   "description": "A Vite plugin for Sig.JS",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
+  },
   "type": "module",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "unbuild"
+    "clean": "rm -rf dist",
+    "build": "pnpm run clean && unbuild"
   },
   "author": "Ofir G.",
   "license": "ISC",
