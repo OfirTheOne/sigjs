@@ -36,7 +36,6 @@ async function addTailwindDependencies(projectPath) {
 
     packageData.devDependencies = {
       ...packageData.devDependencies,
-      "postcss": "^8.4.30",
       "tailwindcss": "^4.0.12",
       "@tailwindcss/vite": "^4.0.6",
     };
