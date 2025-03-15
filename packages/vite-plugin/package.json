@@ -1,6 +1,6 @@
 {
   "name": "@sigjs/vite-plugin",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A Vite plugin for Sig.JS",
   "exports": {
     ".": {
@@ -24,7 +24,7 @@
     "unbuild": "^3.3.1"
   },
   "peerDependencies": {
-    "vite": "^4.5.5",
-    "@sigjs/sig": "^0.0.8"
+    "vite": "^5.4.14",
+    "@sigjs/sig": "~0.0.8"
   }
 }
