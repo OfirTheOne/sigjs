@@ -14,7 +14,7 @@ const ignoredFiles = [
 
 async function addTailwindToScss(projectPath) {
   const indexScssPath = join(projectPath, 'src/index.scss');
-  const tailwindImport = '@use "tailwindcss";\n';
+  const tailwindImport = '@tailwind base;\n@tailwind components;\n@tailwind utilities;\n';
   try {
     const existingContent = await readFile(indexScssPath, 'utf8');
     if (!existingContent.includes(tailwindImport)) {
@@ -36,8 +36,9 @@ async function addTailwindDependencies(projectPath) {
 
     packageData.devDependencies = {
       ...packageData.devDependencies,
-      "tailwindcss": "^4.0.12",
-      "@tailwindcss/vite": "^4.0.6",
+      "postcss": "^8.4.35",
+      "tailwindcss": "^3.4.1",
+      "autoprefixer": "^10.4.18"
     };
 
     await writeFile(packageJsonPath, JSON.stringify(packageData, null, 2));
