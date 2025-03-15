@@ -30,6 +30,6 @@
   },
   "peerDependencies": {
     "vite": "^4.5.5",
-    "@sigjs/sig": "^0.0.8"
+    "@sigjs/sig": "~0.0.8"
   }
 }
