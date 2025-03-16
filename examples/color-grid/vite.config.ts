@@ -1,6 +1,6 @@
 
 import { defineConfig, Plugin } from 'vite';
-import sigjsPlugin from '@sigjs/vite-plugin/dist/index';
+import sigjsPlugin from '@sigjs/vite-plugin';
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
