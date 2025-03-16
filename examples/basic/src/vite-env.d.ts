@@ -1,8 +1,4 @@
 
 
-declare module '*.svg' {
-    const Icon: any;
-    export { Icon};
-}
-// declare global {
-// }
+/// <reference types="@sigjs/svg-sig/client" />
+

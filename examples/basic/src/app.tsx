@@ -1,9 +1,9 @@
-import { VirtualElement, createSignal } from '@sigjs/sig';
+import { createSignal } from '@sigjs/sig';
 import { Case, Default, For, If, Switch, createRef } from '@sigjs/sig';
 import { createRouter, getRouter } from '@sigjs/sig/router';
 import { store, increment } from './store'
-import { Icon } from './assets/HomerSimpson.svg';
-
+import { SvgComponent } from './assets/HomerSimpson.svg';
+import AArrowDown from "@sigjs/lucide-sig/AArrowDown";
 
 const myElem = document.createElement('p');
 myElem.innerHTML='Hello World';
@@ -64,7 +64,7 @@ export function Page02(): JSX.Element {
         </a>
         {/* <Await component={AsyncUser} fallback={<p>Loading...</p>} /> */}
         <Counter title='Counter 1' />
-
+        <AArrowDown />
         <Switch condition={store.select((state) => state.count)}>
             <Case value={(value) => value%3 === 0}>
                 <p>Count is divisible by 3</p>
@@ -76,7 +76,7 @@ export function Page02(): JSX.Element {
                 <p>Count is odd and not divisible by 3</p>
             </Default>
         </Switch>
-        <Icon />
+        <SvgComponent />
     </div>;
 }
 
