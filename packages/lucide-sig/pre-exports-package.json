@@ -17,7 +17,7 @@
     "vite-plugin-dts": "^3.5.3"
   },
   "peerDependencies": {
-    "@sigjs/sig": "workspace:*",
+    "@sigjs/sig": "^0.0.8",
     "lucide": "^0.474.0"
   },
   "dependencies": { },
