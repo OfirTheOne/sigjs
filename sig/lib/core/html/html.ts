@@ -4,6 +4,24 @@ import logger from "@/common/logger/logger";
 
 export const DOM = {
 
+    replaceWith(dom: HTMLElement | Text, newNode: Node) {
+        dom.replaceWith(newNode);
+    },
+
+    getAllElementsBetween(start: Node, end: Node): Node[] {
+        if (start.parentNode !== end.parentNode) {
+            logger.warn("Start and end nodes must have the same parent.");
+            return [];
+        }
+        const elements: Node[] = [];
+        let current = start.nextSibling;
+        while (current && current !== end) {
+            elements.push(current);
+            current = current.nextSibling;
+        }
+        return elements;
+    },
+
     removeElementsBetween(start: Node, end: Node) {
         let current = start.nextSibling;
         while (current && current !== end) {
