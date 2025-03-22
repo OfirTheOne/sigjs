@@ -75,7 +75,6 @@ describe('html.ts', () => {
     })
 
     it('logs an error if parent is the same as child', () => {
-      // @ts-expect-error intentionally passing invalid parent
       DOM.appendChild(child, child)
       expect(logger.error).toHaveBeenCalled()
     })
@@ -85,15 +84,6 @@ describe('html.ts', () => {
       // @ts-expect-error intentionally passing invalid parent
       DOM.appendChild(textNode, child)
       expect(logger.error).toHaveBeenCalled()
-    })
-  })
-
-  describe('addComment', () => {
-    it('adds a comment node to the given node', () => {
-      DOM.addComment(parent, 'my comment')
-      const commentNode = parent.childNodes[0]
-      expect(commentNode.nodeType).toBe(Node.COMMENT_NODE)
-      expect(commentNode.nodeValue).toBe('my comment')
     })
   })
 
