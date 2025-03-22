@@ -71,9 +71,7 @@ export function renderSwitch(
         key.clone().push('sandbox')
     ) as HTMLElement;
 
-    const memoCaseMap = new Map<string, HTMLElement | Text | (HTMLElement | Text)[]>();
-    let memoDefault: HTMLElement | Text | (HTMLElement | Text)[] | undefined = undefined;
-
+    const memoCaseMap = new Map<number | string, HTMLElement | Text | (HTMLElement | Text)[]>();
     const props = (element.props as unknown as PropsWithChildren<SwitchProps>);
     const { condition, children = [], memoAll = true} = props;
     const currentKey = key.clone().push(element.props.controlTag as string);
@@ -87,31 +85,46 @@ export function renderSwitch(
     DOM.appendChild(container, startComment);
     DOM.appendChild(container, endComment);
 
+    let currentCaseIdx: string | number = -1;
+
     if (isSignal(condition)) {
         const conditionSignal = condition;
         const unsubscribe = subscribeSignal(conditionSignal, (conditionValue) => {
             // Remove all content between the start and end comments
-            DOM.removeElementsBetween(startComment, endComment);
             let matched = false;
             for (const [idx, child] of Object.entries(children)) {
-                if (isVirtualElement(child) && child.props.component === Case) {
+                if (isVirtualElement(child) && child.meta?.component === Case) {
                     const { value, memo } = (child.props as unknown as PropsWithChildren<CaseProps>);
                     const isMatch = typeof value === 'function' ? value(conditionValue) : value === conditionValue;
                     if (isMatch) {
                         const shouldMemo = (memo === true) || (memoAll && memo !== false);
-                        const memoCaseElement = memoCaseMap.get(idx);
-                        if (shouldMemo && memoCaseElement) {
-                            DOM.insertBefore(endComment, memoCaseElement);
+                        const memoElement = memoCaseMap.get(idx);
+                        if (shouldMemo && memoElement) {
+                            const currentMatchedResult = DOM.getAllElementsBetween(startComment, endComment) as (HTMLElement | Text)[];
+                            memoCaseMap.set(currentCaseIdx, currentMatchedResult);
+                            DOM.removeElementsBetween(startComment, endComment);
+                            currentCaseIdx = idx;
+                            DOM.insertBefore(endComment, memoElement);
                             matched = true;
                             break;
                         }
+
                         const caseKey = currentKey.clone().push('case');
                         const virtualCaseChildren = child.props.children.map(adaptVirtualElementChild);
                         const renderedResult = render(virtualCaseChildren, renderSandboxContainer, caseKey);
                         const caseDom = fragmentExtraction(renderedResult, renderSandboxContainer);
+                        
                         if (shouldMemo) {
                             memoCaseMap.set(idx, caseDom);
+                            const isFirstTimeRender = memoCaseMap.size === 0;
+                            if(!isFirstTimeRender) {
+                                const currentMatchedResult = DOM.getAllElementsBetween(startComment, endComment) as (HTMLElement | Text)[];
+                                memoCaseMap.set(currentCaseIdx, currentMatchedResult);
+                            }
                         }
+                        
+                        DOM.removeElementsBetween(startComment, endComment);
+                        currentCaseIdx = idx;
                         DOM.insertBefore(endComment, caseDom);
                         matched = true;
                         break;
@@ -121,22 +134,35 @@ export function renderSwitch(
 
             if (!matched) {
                 for (const child of children) {
-                    if (isVirtualElement(child) && child.props.component === Default) {
+                    if (isVirtualElement(child) && child.meta?.component === Default) {
                         const { memo } = (child.props as unknown as PropsWithChildren<DefaultProps>);
                         const shouldMemo = (memo === true) || (memoAll && memo !== false);
-                        if (shouldMemo) {
-                            if(memoDefault) {
-                                DOM.insertBefore(endComment, memoDefault);
-                                break;
-                            }
+                        const memoElement = memoCaseMap.get(-1);
+                        if (shouldMemo && memoElement) {
+                            const currentMatchedResult = DOM.getAllElementsBetween(startComment, endComment) as (HTMLElement | Text)[];
+                            memoCaseMap.set(currentCaseIdx, currentMatchedResult);
+                            DOM.removeElementsBetween(startComment, endComment);
+                            currentCaseIdx = -1;
+                            DOM.insertBefore(endComment, memoElement);
+                            break;
                         }
+
                         const defaultKey = currentKey.clone().push('default');
                         const virtualDefaultChildren = child.props.children.map(adaptVirtualElementChild);
                         const renderedResult = render(virtualDefaultChildren, renderSandboxContainer, defaultKey);
                         const defaultDom = fragmentExtraction(renderedResult, renderSandboxContainer);
+                        
                         if (shouldMemo) {
-                            memoDefault = defaultDom;
+                            memoCaseMap.set(-1, defaultDom);
+                            const isFirstTimeRender = memoCaseMap.size === 0;
+                            if(!isFirstTimeRender) {
+                                const currentMatchedResult = DOM.getAllElementsBetween(startComment, endComment) as (HTMLElement | Text)[];
+                                memoCaseMap.set(currentCaseIdx, currentMatchedResult);
+                            }
                         }
+                        
+                        DOM.removeElementsBetween(startComment, endComment);
+                        currentCaseIdx = -1;
                         DOM.insertBefore(endComment, defaultDom);
                         break;
                     }
@@ -144,6 +170,7 @@ export function renderSwitch(
             }
         });
         registerSignalSubscription(startComment, unsubscribe);
+            
     } else {
         logger.error('Switch control flow element condition prop must be a signal, in case of a non-signal condition, use a static conditional rendering instead');
     }
