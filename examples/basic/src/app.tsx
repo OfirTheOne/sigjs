@@ -1,9 +1,11 @@
 import { createSignal } from '@sigjs/sig';
-import { Case, Default, For, If, Switch, createRef } from '@sigjs/sig';
+import { Case, Default, For, If, Switch, createRef, Await } from '@sigjs/sig';
 import { createRouter, getRouter } from '@sigjs/sig/router';
 import { store, increment } from './store'
 import { SvgComponent } from './assets/HomerSimpson.svg';
 import AArrowDown from "@sigjs/lucide-sig/AArrowDown";
+
+const LazyAsyncUser = () => import('./AsyncUser');
 
 const myElem = document.createElement('p');
 myElem.innerHTML='Hello World';
@@ -50,6 +52,13 @@ export function App() {
 
 export function Page02(): JSX.Element {
     const { push } = getRouter();
+
+    const [toggleSignal$, setToggleSignal] = createSignal(false);
+
+    setTimeout(() => {
+        setToggleSignal(true);
+    }, 5 * 1000);
+
     return <div className='container'>
         { myElem }
         <h1 className='title'>Hello World</h1>
@@ -62,7 +71,12 @@ export function Page02(): JSX.Element {
         <a className='link' href='https://google.com'>
             Google
         </a>
-        {/* <Await component={AsyncUser} fallback={<p>Loading...</p>} /> */}
+        <If
+            condition={toggleSignal$}
+            then={
+            <Await component={LazyAsyncUser} fallback={<p>Loading...</p>} />
+        }
+        />
         <Counter title='Counter 1' />
         <AArrowDown />
         <Switch condition={store.select((state) => state.count)}>
@@ -116,16 +130,7 @@ function Counter({ title }: { title: string }) {
     );
 }
 
-async function AsyncUser() {
-    await delay(5000);
-    return <div>
-        <p>User name: John Doe</p>
-    </div>;
-}
 
-function delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 export function Page01() {
     const [searchInput, setSearchInput] = createSignal('');
@@ -133,6 +138,7 @@ export function Page01() {
     const [filteredUsers,] = createSignal<string[]>(users());
     const menuButton = createRef<HTMLInputElement>();
     const { push } = getRouter();
+
     filteredUsers.link(searchInput, (searchInputValue) => {
         return users().filter(user => user.includes(searchInputValue));
     });
