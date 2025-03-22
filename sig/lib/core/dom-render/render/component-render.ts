@@ -7,13 +7,22 @@ import { RenderFunction } from "./render.types";
 import { ElementKeySymbol } from "@/symbols";
 import { adaptVirtualElementChild } from "../create-element/adapt-virtual-element-child";
 
+type VirtualComponentElement = (VirtualElement & {
+    meta: {
+        component: ComponentFunctionWithMeta;
+    };
+})
+
 export function componentRender(
-    componentElement: VirtualElement,
+    element: VirtualElement,
     container: HTMLElement,
     key: KeyBuilder,
     render: RenderFunction
 ): HTMLElement | Text {
-    const { component, children = [], ...props } = componentElement.props;
+    const componentElement = element as VirtualComponentElement;
+    const { children = [],  ...props } = componentElement.props
+    const { meta: { component } } = componentElement;
+
     if (typeof component !== 'function') {
         throw new Error('Component must be a function');
     }
@@ -21,10 +30,10 @@ export function componentRender(
     const currentKey = key.clone().push(componentFunction.name);
     const context = createComponentContext(componentFunction, container, getRenderedRoot(), currentKey.toString());
     setActiveContext(context);
-    const element = componentFunction(props, children as VirtualElement[]);
+    const componentVirtualElementOutput = componentFunction(props, children as VirtualElement[]);
     removeActiveContext();
     
-    const domElement = render(adaptVirtualElementChild(element), container, currentKey);
+    const domElement = render(adaptVirtualElementChild(componentVirtualElementOutput), container, currentKey);
     context.element = domElement as Element; 
     context.elementKey = domElement[ElementKeySymbol];
     addComponentContext(context.elementKey || context.key, context);

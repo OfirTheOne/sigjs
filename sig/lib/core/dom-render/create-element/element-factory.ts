@@ -18,7 +18,7 @@ export function createSignalElement<T = unknown>(signal: Signal<T>): VirtualElem
         props: {
             signal,
             children: []
-        }
+        },
     };
 }
 
@@ -37,10 +37,10 @@ export function createComponentElement(component: ComponentFunction | AsyncCompo
         type: ELEMENT_TYPE.COMPONENT,
         props: {
             ...props,
-            component,
             children,
         },
         meta: {
+            component,
             [COMPONENT_NAME_SYMBOL]: componentName,
         }
     };
