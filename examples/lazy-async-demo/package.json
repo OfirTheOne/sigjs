@@ -1,0 +1,42 @@
+{
+  "name": "sigjs-template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "yarn eslint ./src/index.ts  --ext .ts,.tsx",
+    "format": "yarn prettier --write .",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "clean": "rm -rf dist",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@sigjs/sig": "workspace:*"
+  },
+  "devDependencies": {
+    "@sigjs/svg-sig": "~0.0.7",
+    "@sigjs/vite-plugin": "~0.0.5",
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "eslint": "^9.18.0",
+    "http-server": "^14.1.1",
+    "prettier": "2.8.7",
+    "sass": "^1.63.6",
+    "serve": "^14.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.4.14",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "autoprefixer": "^10.4.18"
+  }
+}
