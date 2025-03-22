@@ -7,4 +7,7 @@ import svgSig from '@sigjs/svg-sig';
 
 export default defineConfig({
   plugins: [sigjsPlugin(), svgSig()],
+  build: {
+    sourcemap: true,
+  }
 });

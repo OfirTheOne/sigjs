@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sigjs/sig": "workspace:*",
+    "@sigjs/sig": "workspace:*"
   },
   "devDependencies": {
     "@sigjs/svg-sig": "^0.0.5",
