@@ -1,7 +1,7 @@
 
 import { Store } from '@sigjs/sig/store';
 
-function logMiddleware(newState, state, store) {
+function logMiddleware(newState, state) {
     console.log('new state:', newState);
     console.log('old state:', state);
 }
