@@ -21,7 +21,7 @@ Dynamic content in `sig` is achieved by using some of the primitives provided by
 - `If` component: Renders its condition branch based on the signal value.
 - `For` component: Render a list of items based on the signal that holds the list.
 - `Switch`, `Case` & `Default` components: Render the first `Case` component whose `condition` signal is truthy, otherwise render the `Default` component.
-
+- `Await` component: Render an asynchronous component or a lazy-loaded component (or both).
 
 :::note 
 Conditional rendering and list rendering that embedded in a simple JSX syntax are not dynamic, they are static and result with the output of the first render.
@@ -127,7 +127,7 @@ import SearchList_480 from '../../../assets/SearchList_480.gif';
     style={{ margin: 'auto', display: 'block', padding: '1rem' }}
     src={SearchList_480} alt="SearchList" />
 
-{/* ![SearchList_480.gif](../../../assets/SearchList_480.gif) */}
+{/* ![SearchList_480.gif](../../../assets/SearchList_480.gif) */}   
 
 
 #### `For` Item Indexing
@@ -137,13 +137,13 @@ The `For` component manages indexing of the rendered items in the list, it is cr
 The `For` component will use the `index` to track the items in the list, and update the items in the list when the list changes.
 By providing an `index` to the `For` component, you can specify how to generate the key for each item.
 
-When `index` prop is provided :
-- if it is a `function`, it will be called with the item and the index of the item in the list.
-- if it is a `string`, it will be used as a property name to extract the key from the item object.
+When `index` prop is provided :<br/>
+\- if it is a `function`, it will be called with the item and the index of the item in the list.<br/>
+\- if it is a `string`, it will be used as a property name to extract the key from the item object.
 
-When no `index` prop provided, the default indexing behavior is the following:
-- If the item is a primitive value, the index will be the item value.
-- If the item is an `object`, the index will be the index of the item in the list.
+When no `index` prop provided, the default indexing behavior is the following:<br/>
+\- If the item is a primitive value, the index will be the item value.<br/>
+\- If the item is an `object`, the index will be the index of the item in the list.
 
 ---
 
@@ -172,6 +172,71 @@ function TabContent() {
                 <div>No content</div>
             </Default>
         </Switch>
+    </div>);
+}
+```
+
+
+---
+
+### `Await` Component
+
+The `Await` component is used to render an asynchronous component or a lazy-loaded component (or both).
+
+Basically the `Await` component expect a `component` field, that can be a : <br/>
+\-  An async component function. <br/>
+\- Function that return a `Promise` of an object with a `default` field with a value of a component function.
+
+Lets focus first on the lazy loading part first, This is useful when you want to load a component only when it is needed, and not including it unnecessarily in the main build.
+
+Combining the `Await` component with the `import` function, we're getting a powerful pattern, to ship only the necessary code to the client. 
+
+Here is an example of how to use the `Await` component to render a lazy-loaded component:
+
+```tsx
+import { Await, If } from 'sig';
+const lazyComponent = () => import('./LazyComponent');
+
+function MainPage() {
+    const [showLazyComponent$, setShowLazyComponent] = createSignal(false);
+    return (<div>
+        <button onClick={() => setShowLazyComponent((curr) => !curr)}>Toggle</button>
+        <If condition={showLazyComponent$}
+            then={<Await component={lazyComponent} />
+    </div>);
+}
+
+```
+
+:::note
+The dynamically imported module must default export the component.
+:::
+
+In the above example, the `If` component will render the `Await` component only when the `showLazyComponent$` signal is truthy, 
+and when the `Await` component is rendered, it will load and render the `LazyComponent` component.
+
+When inspecting the network tab in the browser, you will see that the `LazyComponent` build file, is loaded only when the button is clicked.
+
+
+The `Await` component can also be used to render an asynchronous component, which is useful when you need to fetch data asynchronously before rendering the component.
+
+Here is an example of how to use the `Await` component to render a component that fetches data asynchronously:
+
+```tsx
+import { createSignal, Await } from 'sig';
+
+async function AsyncUserCard() {
+    const user = await fetch('/api/user').then((res) => res.json());
+
+    return (<div>
+        <img src={user.avatar} alt={user.name} />
+        <div>{user.name}</div>
+    </div>);
+}
+
+function HomePage() {
+    return (<div>
+        <Await component={AsyncUserCard} />
     </div>);
 }
 ```
