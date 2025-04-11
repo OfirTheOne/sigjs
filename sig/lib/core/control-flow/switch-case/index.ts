@@ -133,8 +133,10 @@ export function renderSwitch(
             }
 
             if (!matched) {
+                let foundDefault = false;
                 for (const child of children) {
                     if (isVirtualElement(child) && child.meta?.component === Default) {
+                        foundDefault = true;
                         const { memo } = (child.props as unknown as PropsWithChildren<DefaultProps>);
                         const shouldMemo = (memo === true) || (memoAll && memo !== false);
                         const memoElement = memoCaseMap.get(-1);
@@ -166,6 +168,12 @@ export function renderSwitch(
                         DOM.insertBefore(endComment, defaultDom);
                         break;
                     }
+                }
+                if (!foundDefault) {
+                    const currentMatchedResult = DOM.getAllElementsBetween(startComment, endComment) as (HTMLElement | Text)[];
+                    memoCaseMap.set(currentCaseIdx, currentMatchedResult);
+                    DOM.removeElementsBetween(startComment, endComment);
+                    currentCaseIdx = -1;
                 }
             }
         });

@@ -82,16 +82,26 @@ function renderIf(
     DOM.appendChild(container, startComment);
     DOM.appendChild(container, endComment);
 
+    let previousConditionValue: null | boolean = null;
+
     let thenElementDom: (HTMLElement | Text) | (HTMLElement | Text)[];
     let fallbackElementDom: (HTMLElement | Text) | (HTMLElement | Text)[];
     if (isSignal(condition)) {
         const conditionSignal = condition;
         const unsubscribe = subscribeSignal(conditionSignal, (conditionValue) => {
             // Remove all content between the start and end comments
+
+            const booleanConditionValue = Boolean(conditionValue)
+            if (previousConditionValue === booleanConditionValue) {
+                return;
+            }
+            const currentRenderedDom = DOM.getAllElementsBetween(startComment, endComment) as (HTMLElement | Text) | (HTMLElement | Text)[];;
+            previousConditionValue = booleanConditionValue;
             DOM.removeElementsBetween(startComment, endComment);
 
-            if (conditionValue) {
+            if (booleanConditionValue) {
                 if (memo && thenElementDom) {
+                    fallbackElementDom = currentRenderedDom     
                     DOM.insertBefore(endComment, thenElementDom);
                     return;
                 }
@@ -109,8 +119,6 @@ function renderIf(
                 const renderedResult = render(adaptVirtualElementChild(fallback), renderSandboxContainer, fallbackKey);
                 fallbackElementDom = fragmentExtraction(renderedResult, renderSandboxContainer);
                 DOM.insertBefore(endComment, fallbackElementDom);
-            } else {
-                return container;
             }
         });
         registerSignalSubscription(startComment, unsubscribe);
