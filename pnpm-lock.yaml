@@ -225,6 +225,9 @@ importers:
         specifier: ^4.0.12
         version: 4.0.12
     devDependencies:
+      '@sigjs/lucide-sig':
+        specifier: workspace:*
+        version: link:../../packages/lucide-sig
       '@sigjs/vite-plugin':
         specifier: ^0.0.5
         version: 0.0.5(vite@5.4.14(@types/node@18.19.77)(lightningcss@1.29.1)(sass@1.85.1)(terser@5.39.0))
@@ -399,7 +402,7 @@ importers:
   examples/pacman:
     dependencies:
       '@sigjs/sig':
-        specifier: link:/Users/ofirg/projects/sigjs/sig
+        specifier: workspace:*
         version: link:../../sig
       '@tailwindcss/vite':
         specifier: ^4.0.6
