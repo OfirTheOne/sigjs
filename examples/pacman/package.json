@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sigjs/sig": "link:/Users/ofirg/projects/sigjs/sig",
+    "@sigjs/sig": "workspace:*",
     "@tailwindcss/vite": "^4.0.6",
     "tailwindcss": "^4.0.6"
   },
