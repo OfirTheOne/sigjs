@@ -1,17 +1,15 @@
-import { createSignal, If, Renderable } from '@sigjs/sig';
-import { icons } from './icons';
+import { combineLatest, createSignal, For, If, Renderable } from '@sigjs/sig';
 
-const {
-    Camera,
-    MessageSquare,
-    Phone,
-    Mail,
-    Calendar,
-    Music2,
-    Settings,
-    Clock,
-    X
-} = icons;
+import Camera from '@sigjs/lucide-sig/Camera'
+import MessageSquare from '@sigjs/lucide-sig/MessageSquare'
+import Phone from '@sigjs/lucide-sig/Phone'
+import Mail from '@sigjs/lucide-sig/Mail'
+import Calendar from '@sigjs/lucide-sig/Calendar'
+import Music2 from '@sigjs/lucide-sig/Music2'
+import Settings from '@sigjs/lucide-sig/Settings'
+import Clock from '@sigjs/lucide-sig/Clock'
+import X from '@sigjs/lucide-sig/X'
+
 
 interface App {
     id: string;
@@ -94,9 +92,40 @@ const createTimeString = () => {
 export function App() {
     const [openApp$, setOpenApp] = createSignal<App | null>(null);
     const [time$] = createSignal(createTimeString());
+    const [searchQuery$, setSearchQuery] = createSignal('');
+    const [showSearchBar$, setShowSearchBar] = createSignal(false);
+
+    const filteredApps$ = searchQuery$.derive(() => {
+        if (searchQuery$() === '') {
+            return apps;
+        }
+        return apps.filter(app => app.name.toLowerCase().includes(searchQuery$().toLowerCase()));
+    });
+
+    const handlePullDown = (e: TouchEvent) => {
+        const startY = e.touches[0].clientY;
+        const onTouchMove = (moveEvent: TouchEvent) => {
+            const currentY = moveEvent.touches[0].clientY;
+            if (currentY - startY > 50) {
+                setShowSearchBar(true);
+                document.removeEventListener('touchmove', onTouchMove);
+                document.removeEventListener('touchend', onTouchEnd);
+            }
+        };
+        const onTouchEnd = () => {
+            document.removeEventListener('touchmove', onTouchMove);
+            document.removeEventListener('touchend', onTouchEnd);
+        };
+        document.addEventListener('touchmove', onTouchMove);
+        document.addEventListener('touchend', onTouchEnd);
+    };
 
     return (
-        <div className="min-h-screen bg-[url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809')] bg-cover flex items-center justify-center p-4">
+        <div
+            className="max-h-screen bg-[url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809')] bg-cover flex items-center justify-center p-4"
+            onTouchStart={handlePullDown}
+        >
+        {/* <div className="min-h-screen bg-[url('https://images.unsplash.com/photo-1579546929518-9e396f3cc809')] bg-cover flex items-center justify-center p-4"> */}
             <div className="w-[375px] h-[812px] bg-black rounded-[60px] overflow-hidden relative shadow-2xl border-8 border-gray-800">
                 {/* Notch */}
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-[40%] h-7 bg-black rounded-b-3xl z-50"></div>
@@ -109,11 +138,42 @@ export function App() {
                         <div className="w-4 h-4 rounded-full border-2 border-white"></div>
                     </div>
                 </div>
+                {/* Search Bar */}
+                {/* // className="px-6 py-2 bg-black/20 backdrop-blur-xl"> */}
+                <div 
+                className={[`bg-black/20 backdrop-blur-xl transition-all duration-300`,
+                    showSearchBar$.derive<string>(v => v ? 'px-6 py-2 translate-y-0 opacity-100' : '-translate-y-full opacity-0')
+                ]}>
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        value={searchQuery$()}
+                        onInput={(e) => setSearchQuery(e.currentTarget.value)}
+                        className="w-full px-4 py-2 rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                </div>
+                {/* <If
+                    condition={showSearchBar$}
+                    then={(
+                    )}
+                /> */}
 
+                {/* <div className="px-6 py-2 bg-black/20 backdrop-blur-xl">
+                    <input
+                        type="text"
+                        placeholder="Search"
+                        value={searchQuery$()}
+                        onInput={(e) => setSearchQuery(e.currentTarget.value)}
+                        className="w-full px-4 py-2 rounded-full bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                </div> */}
                 {/* App Grid */}
                 <div className="h-full pt-12 px-6 pb-8 bg-black/20 backdrop-blur-xl">
                     <div className="grid grid-cols-4 gap-6">
-                        {apps.map((app) => (
+                    <For 
+                        provideItemSignal={false}
+                        list={filteredApps$}
+                        factory={(app) => (
                             <button
                                 key={app.id}
                                 onClick={() => setOpenApp(app)}
@@ -124,7 +184,8 @@ export function App() {
                                 </div>
                                 <span className="text-white text-xs">{app.name}</span>
                             </button>
-                        ))}
+                        )}
+                    />
                     </div>
                 </div>
 
