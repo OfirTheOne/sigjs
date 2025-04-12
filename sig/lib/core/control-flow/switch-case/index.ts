@@ -1,5 +1,5 @@
 import { registerSignalSubscription } from "@/core/global/global-hook-executioner";
-import { isSignal, Signal, subscribeSignal } from '@/core/signal';
+import { isSignal, Signal } from '@/core/signal';
 import logger from '@/common/logger/logger';
 import { DOM } from '@/core/html/html';
 import { fragmentExtraction } from "../fragment-extraction";
@@ -89,7 +89,7 @@ export function renderSwitch(
 
     if (isSignal(condition)) {
         const conditionSignal = condition;
-        const unsubscribe = subscribeSignal(conditionSignal, (conditionValue) => {
+        const unsubscribe = conditionSignal.subscribe((conditionValue) => {
             // Remove all content between the start and end comments
             let matched = false;
             for (const [idx, child] of Object.entries(children)) {
@@ -176,7 +176,7 @@ export function renderSwitch(
                     currentCaseIdx = -1;
                 }
             }
-        });
+        }, { emitOnSubscribe: true });
         registerSignalSubscription(startComment, unsubscribe);
             
     } else {

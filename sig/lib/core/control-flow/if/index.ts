@@ -1,7 +1,7 @@
 import logger from "@/common/logger/logger";
 import { registerSignalSubscription } from "@/core/global/global-hook-executioner";
 import { DOM } from "@/core/html";
-import { Signal, isSignal, subscribeSignal } from "@/core/signal";
+import { Signal, isSignal } from "@/core/signal";
 import { IfControlFlow } from "@/symbols";
 import { ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/constants";
 import { adaptVirtualElementChild } from "@/core/dom-render/create-element/adapt-virtual-element-child";
@@ -88,7 +88,7 @@ function renderIf(
     let fallbackElementDom: (HTMLElement | Text) | (HTMLElement | Text)[];
     if (isSignal(condition)) {
         const conditionSignal = condition;
-        const unsubscribe = subscribeSignal(conditionSignal, (conditionValue) => {
+        const unsubscribe = conditionSignal.subscribe((conditionValue) => {
             // Remove all content between the start and end comments
 
             const booleanConditionValue = Boolean(conditionValue)
@@ -120,7 +120,7 @@ function renderIf(
                 fallbackElementDom = fragmentExtraction(renderedResult, renderSandboxContainer);
                 DOM.insertBefore(endComment, fallbackElementDom);
             }
-        });
+        }, { emitOnSubscribe: true });
         registerSignalSubscription(startComment, unsubscribe);
     } else {
         logger.error('If control flow element condition prop must be a signal, in case of a non-signal condition, use a static conditional rendering instead');

@@ -1,4 +1,4 @@
-import { isSignal, Signal, subscribeSignal } from "../signal";
+import { isSignal, Signal } from "../signal";
 import { registerSignalSubscription } from "../global/global-hook-executioner";
 import { DOM } from "../html";
 
@@ -41,12 +41,12 @@ function attachStyleToElement(
         Signal<Record<string, string | number>>
     ): void {
     if(isSignal<Record<string, string | number>>(style)) {
-        const unsubscribe = subscribeSignal(style, (value: Record<string, string | number>) => {
+        const unsubscribe = style.subscribe((value: Record<string, string | number>) => {
             Object.keys(value).forEach((key) => {
                 const styleValue = value[key];
                 attachStylePropertyToElement(dom, key, styleValue);
             });
-        });
+        }, { emitOnSubscribe: true });
         registerSignalSubscription(dom, unsubscribe);
         return;
     }
@@ -88,9 +88,9 @@ function attachSignalToElement<T = unknown>(
     property: string
 ): unknown {
     element.setAttribute(`sid:${property}`, signal.id);
-    const unsubscribe = subscribeSignal(signal, (value: unknown) => {
+    const unsubscribe = signal.subscribe((value: unknown) => {
         attachPropertyToElement(element, property, value);
-    });
+    }, { emitOnSubscribe: true });
     registerSignalSubscription(element, unsubscribe);
     return unsubscribe;
 }
@@ -101,9 +101,9 @@ function attachSignalToElementStyle(
     property: string
 ): unknown {
     element.setAttribute(`sid:style:${property}`, signal.id);
-    const unsubscribe = subscribeSignal(signal, (value: string | number) => {
+    const unsubscribe = signal.subscribe((value: string | number) => {
         attachStylePropertyToElement(element, property, value);
-    });
+    }, { emitOnSubscribe: true });
     registerSignalSubscription(element, unsubscribe);
     return unsubscribe;
 }
@@ -116,11 +116,11 @@ function attachSignalToElementClass(
     const sidClass = currentSidClass ? `${currentSidClass};${signal.id}` : signal.id;
     element.setAttribute(`sid:class`, sidClass);
     let lastValue: string = signal.value;
-    const unsubscribe = subscribeSignal(signal, (value: string) => {
+    const unsubscribe = signal.subscribe((value: string) => {
         DOM.classListRemove(element, lastValue);
         DOM.classListAdd(element, value);
         lastValue = value;
-    });
+    }, { emitOnSubscribe: true });
     registerSignalSubscription(element, unsubscribe);
 }
 

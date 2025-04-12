@@ -1,5 +1,5 @@
 import { signal } from "./signal";
-import type { Listener, Signal, Unsignalize } from "./signal.types";
+import type { Signal, Unsignalize } from "./signal.types";
 
 export function getSignalValue<T>(signal: Signal<T> | T): T {
     return isSignal<T>(signal) ? signal.value : signal;
@@ -17,16 +17,6 @@ export function unsignalizeObject<T extends object>(object: T): Unsignalize<T> {
 
 export function isSignal<T = unknown>(value: unknown): value is Signal<T> {
     return typeof value === 'function' && typeof (value as Signal<T>).subscribe === 'function';
-}
-
-export function subscribeSignal<T = unknown>(signal: Signal<T>, callback: Listener<T>): () => void {
-    let lastValue: T = signal.value;
-    const unsubscribe = signal.subscribe((value) => {
-        lastValue = value;
-        callback(value);
-    });
-    callback(lastValue);
-    return unsubscribe;
 }
 
 

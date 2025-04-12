@@ -1,6 +1,6 @@
 import logger from "@/common/logger/logger";
 import { ELEMENT_TYPE, CONTROL_FLOW_TAG } from "@/constants";
-import { isSignal, Signal, subscribeSignal } from "@/core/signal";
+import { isSignal, Signal } from "@/core/signal";
 import { ForControlFlow } from "@/symbols";
 import { registerSignalSubscription } from "@/core/global/global-hook-executioner";
 import { DOM } from "@/core/html";
@@ -123,7 +123,7 @@ function renderFor(
         logger.error('For control flow element list prop must be a signal, in case of a non-signal list, use a static mapping instead');
     } else {
         const listSignal = list;
-        const unsubscribe = subscribeSignal(listSignal, (list) => {
+        const unsubscribe = listSignal.subscribe((list) => {
             // Remove all content between the start and end comments
             DOM.removeElementsBetween(startComment, endComment);
 
@@ -161,7 +161,7 @@ function renderFor(
             });
 
             elementsDom.forEach((elementDom) => DOM.insertBefore(endComment, elementDom));
-        });
+        }, { emitOnSubscribe: true });
 
         registerSignalSubscription(startComment, unsubscribe);
     }
