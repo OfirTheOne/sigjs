@@ -7,7 +7,7 @@ title: "Default"
 
 > **Default**(`props`, `children`): `VirtualElement`
 
-Defined in: core/control-flow/switch-case/index.ts:226
+Defined in: core/control-flow/switch-case/index.ts:234
 
 Default control flow element
 

@@ -7,7 +7,7 @@ title: "Switch"
 
 > **Switch**(`props`, `children`): `VirtualElement`
 
-Defined in: core/control-flow/switch-case/index.ts:190
+Defined in: core/control-flow/switch-case/index.ts:198
 
 Switch control flow element
 

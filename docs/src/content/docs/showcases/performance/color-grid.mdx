@@ -1,0 +1,110 @@
+---
+title: Performance Comparison
+description: React Paradigm vs SigJS Paradigm - A Performance Comparison
+---
+
+## React Paradigm vs SigJS Paradigm
+
+When building modern web applications, managing state and rendering efficiently is critical for delivering a smooth user experience. <br/>
+In this article, we'll compare the paradigms of React and SigJS by implementing the same app in both frameworks. 
+The app demonstrates a color grid with a modal that follows the mouse position and displays the hovered color. <br/>
+Additionally, it includes a computationally expensive component (`HeavyComputationComponent`) to highlight the performance differences between the two paradigms.
+
+<br/>
+<br/>
+
+---
+---
+
+
+#### **TL;DR:** 
+In this comparison, the 
+<span style="color: rgb(179, 199, 255);"> **core difference lies in how UI updates are handled**. </span> <br/>
+In <span style="color: rgb(179, 199, 255);">**React, when state changes,** </span> the component where the change occurred—and all of its children—are re-executed. This means even <span style="color: rgb(179, 199, 255);">**unrelated parts of the UI may rerun** </span>unless explicitly optimized with memo or hooks like useMemo. <br/>
+In contrast, <span style="color: rgb(179, 199, 255);">**SigJS updates the DOM directly** </span>by streaming only the changed signal values to the elements that depend on them—<span style="color: rgb(179, 199, 255);">**without re-executing any component functions**. </span>This leads to more efficient updates with no manual optimization needed.
+
+<br/>
+<br/>
+
+---
+---
+
+### React Paradigm
+
+In React, state changes trigger a re-render of the component holding the state and all its child components. 
+This means that even if only a small part of the UI needs to update, React will reconstruct the entire virtual DOM subtree for the component and its children. <br/>
+While React uses reconciliation to minimize actual DOM updates, the re-rendering process (re-executed component functions) can still be computationally expensive. especially when heavy computations are involved.
+
+---
+
+### React Implementation
+
+Here's the React implementation of the app:
+
+<iframe
+    style="width: 100%; height: 500px; border: none;"
+    src="https://stackblitz.com/edit/sb1-xsjn92ea?embed=1&file=src%2FApp.tsx&hideExplorer=1&view=editor" ></iframe> 
+
+
+---
+
+### React Implementation Summary
+
+In the React implementation:
+- Mouse movement updates state via `setMousePosition` and `setHoveredColor`.
+- These updates trigger a re-render of the root component, including `HeavyComputationComponent`.
+- As a result, the `HeavyComputationComponent` recalculates `fibonacci(40)` on each update, even though its output is static.
+- The modal's position lags significantly behind the mouse during movement due to the rendering cost.
+
+---
+
+### SigJS Paradigm
+
+In SigJS, state is managed using **signals**, which are reactive primitives. 
+When a signal's value changes, only the DOM elements or subscribers connected to that signal are updated. 
+Components themselves do not re-render unless explicitly required. 
+This eliminates unnecessary computations and ensures efficient updates.
+
+
+---
+
+### SigJS Implementation
+
+Here's the SigJS implementation of the same app:
+
+<iframe
+    style="width: 100%; height: 500px; border: none;"
+    src="https://stackblitz.com/edit/vitejs-vite-ue7dctfb?embed=1&file=src%2Fapp.tsx&hideExplorer=1&view=editor" ></iframe> 
+
+
+---
+
+### SigJS Implementation Summary
+
+- `mousePosition` and `hoveredColor` are signals.
+- Updates to these signals only affect DOM nodes that read from them.
+- The HeavyComputationComponent is rendered once and does not respond to signal changes, avoiding unnecessary recomputation.
+- The modal remains responsive to mouse movements regardless of computational load elsewhere in the application.
+
+---
+
+## Key Behavioral Differences
+
+
+|   Aspect |	    React |     SigJS
+|-----------------------------|-----------------------------------------|-----------------------------------------|
+| **State Propagation** | 	    Triggers full component subtree re-renders | 	Updates only signal-dependent elements | 
+| **Computation Isolation** | 	Requires manual memoization (useMemo, etc.) |	Isolated by default; unaffected unless subscribed to signals | 
+| **Update Granularity** | 	    Component-level |	                            DOM element-level | 
+| **Rendering Model** | 	        Virtual DOM diffing |	                        Direct reactive bindings | 
+| **Performance Under Load** | 	Degrades with frequent state changes |  	    Remains stable due to fine-grained updates | 
+
+---
+
+## Conclusion
+
+The SigJS paradigm offers a significant performance advantage by avoiding unnecessary re-renders and isolating updates to only the affected DOM elements. This makes it an excellent choice for applications where performance is critical, especially when dealing with frequent state changes or heavy computations.
+
+By adopting SigJS, developers can achieve smoother user experiences with less effort, as demonstrated in this color grid app. While React is a powerful and widely-used library, SigJS provides a compelling alternative for scenarios where fine-grained reactivity and performance are paramount.
+
+This comparison highlights the differences between component-based and signal-based rendering models in the context of dynamic UIs with independent reactive elements and costly computation.

@@ -7,7 +7,7 @@ title: "Case"
 
 > **Case**(`props`, `children`): `VirtualElement`
 
-Defined in: core/control-flow/switch-case/index.ts:208
+Defined in: core/control-flow/switch-case/index.ts:216
 
 Case control flow element
 
