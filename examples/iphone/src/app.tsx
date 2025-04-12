@@ -173,9 +173,9 @@ export function App() {
                     <For 
                         provideItemSignal={false}
                         list={filteredApps$}
+                        index={app => app.id}
                         factory={(app) => (
                             <button
-                                key={app.id}
                                 onClick={() => setOpenApp(app)}
                                 className="flex flex-col items-center gap-2"
                             >
