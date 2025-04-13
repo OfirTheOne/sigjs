@@ -234,19 +234,19 @@ export const Pacman = () => {
         {/* Ghosts */}
         <For
           list={ghosts$}
-          provideItemSignal
-          factory={(ghost, _1, _2, ghost$) => (
+          // provideItemSignal
+          factory={({ item, item$ }) => (
             <div
               className="absolute transition-all duration-200 flex items-center justify-center"
               style={{
-                top: ghost$.select('position', 'y', y => `${y * CELL_SIZE}px` as Property.Top<string | number>),
-                left: ghost$.select('position', 'x', x => `${x * CELL_SIZE}px` as Property.Left<string | number>),
+                top: item$.select('position', 'y', y => `${y * CELL_SIZE}px` as Property.Top<string | number>),
+                left: item$.select('position', 'x', x => `${x * CELL_SIZE}px` as Property.Left<string | number>),
                 width: `${CELL_SIZE}px`,
                 height: `${CELL_SIZE}px`,
               }}
             >
               <div
-                className={[`w-6 h-6 rounded-full`, isPowerMode$.derive(y => y ? 'bg-blue-400' : ghost.color)]}
+                className={[`w-6 h-6 rounded-full`, isPowerMode$.derive(y => y ? 'bg-blue-400' : item.color)]}
               />
             </div>
           )}

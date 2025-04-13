@@ -12,7 +12,7 @@ export function RecipeGrid({ recipes$ }: RecipeGridProps) {
       <For 
         list={recipes$}
         index={(recipe) => recipe.id}
-        factory={(recipe) => <RecipeCard recipe={recipe} />}
+        factory={({item: recipe}) => <RecipeCard recipe={recipe} />}
       />
     </div>
   );

@@ -80,9 +80,7 @@ export function Recipe({ params }: RouteComponentProps) {
                     <div className="grid grid-cols-2 gap-4 mb-8">
                         <For
                             list={recipeImages$}
-                            provideItemSignal={false}
-                            // index={(image, index) => index}
-                            factory={(image, index) => <img 
+                            factory={({item: image, index}) => <img 
                                 src={image} 
                                 alt={`${recipe$.value?.title} ${index + 1}`} 
                                 className='rounded-lg shadow-md w-full h-64 object-cover'
@@ -147,9 +145,8 @@ export function Recipe({ params }: RouteComponentProps) {
                         </form>
                         <div className="space-y-6">
                             <For
-                                provideItemSignal={false}
                                 list={recipeComments$}
-                                factory={(comment) => (
+                                factory={({item: comment}) => (
                                     <div className="bg-white p-4 rounded-lg shadow">
                                         <div className="flex justify-between items-center mb-2">
                                             <h4 className="font-semibold text-gray-900">{comment.author}</h4>

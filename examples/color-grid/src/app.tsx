@@ -22,13 +22,7 @@ const HeavyComputationComponent = ({ mousePosition }: { mousePosition: Signal<{ 
   );
 };
 
-const ColorSquare = ({ 
-  color, 
-  onMouseMove 
-}: { 
-  color: string;
-  onMouseMove: (e: MouseEvent) => void;
-}) => {
+const ColorSquare = ({ color, onMouseMove }: { color: string; onMouseMove: (e: MouseEvent) => void; }) => {
   return (
     <div
       className="w-24 h-24 cursor-pointer transition-transform hover:scale-105"
@@ -38,13 +32,7 @@ const ColorSquare = ({
   );
 };
 
-const ColorPreview = ({ 
-  color, 
-  position 
-}: { 
-  color: Signal<string>;
-  position: Signal<{ x: number; y: number }>;
-}) => {
+const ColorPreview = ({ color, position }: { color: Signal<string>; position: Signal<{ x: number; y: number }>; }) => {
   return (
     <div
       className="fixed z-50 bg-white rounded-lg shadow-xl p-4 pointer-events-none"
@@ -126,4 +114,3 @@ export function App() {
     </div>
   );
 }
-

@@ -122,7 +122,7 @@ function Counter({ title }: { title: string }) {
                 />
                 <For
                     list={list}
-                    factory={(item) => <p>{item}</p>}
+                    factory={({item}) => <p>{item}</p>}
                     index={(item, i) => `${item}-${i}`}
                 />
             </div>
@@ -158,7 +158,7 @@ export function Page01() {
         </div>
         <For
             list={filteredUsers}
-            factory={(user) => <p>{user}</p>}
+            factory={({item: user}) => <p>{user}</p>}
             index={(user, i) => `${user}-${i}`}
         />
     </div>;

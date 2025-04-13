@@ -453,15 +453,14 @@ function SubtaskList({
     <For
       list={subtasks$}
       index={"id"}
-      provideItemSignal
-      factory={(_0, _1, _2, subtask$) => {
-        const completed$ = subtask$.select("completed");
+      factory={({ item$ }) => {
+        const completed$ = item$.select("completed");
         return (
           <div className="space-y-1" >
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                toggleSubtask(subtask$());
+                toggleSubtask(item$());
               }}
               className="w-full flex items-center gap-2 p-1 hover:bg-gray-50 rounded text-left group/item"
             >
@@ -478,7 +477,7 @@ function SubtaskList({
                   ),
                 ]}
               >
-                {subtask$.select("title")}
+                {item$.select("title")}
               </span>
             </button>
           </div>

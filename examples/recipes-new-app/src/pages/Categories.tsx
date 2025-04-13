@@ -28,7 +28,7 @@ export function Categories() {
                 <For
                     list={categories$}
                     index={(category) => category.id}
-                    factory={(category) =>
+                    factory={({item: category}) =>
                         <div
                             onClick={() => handleCategoryClick(category.name)}
                             className="cursor-pointer group"

@@ -1,5 +1,5 @@
 
-import { For, Signal, createSignal } from 'sig';
+import { For, Signal, createSignal } from '@sigjs/sig/core';
 import { combineLatest } from 'sig/core';
 import { Recipe } from '../../types';
 import XIcon from '../../../assets/icons/x-icon.svg';
@@ -117,7 +117,7 @@ function RecipesGrid({ recipes$ }: { recipes$: Signal<Recipe[]> }) {
             asProps={{ className: 'flex flex-wrap justify-around gap-4' }}
             list={recipes$}
             index={(recipe) => recipe.id}
-            factory={(recipe) => <RecipeCard {...recipe} />}
+            factory={({item: recipe}) => <RecipeCard {...recipe} />}
         />
     );
 }

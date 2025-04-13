@@ -38,10 +38,9 @@ function Bird(
 
 function Pipes({ pipes$ }: { pipes$: Signal<Pipe[]> }) {
     return (<For
-        provideItemSignal={true}
         list={pipes$}
         index="id"
-        factory={(_pipe, _1, _2, pipe$) => (<>
+        factory={({item$: pipe$}) => (<>
             {/* Top pipe */}
             <div
                 className="absolute w-[50px] bg-green-600"

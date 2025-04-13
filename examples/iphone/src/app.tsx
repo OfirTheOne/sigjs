@@ -171,10 +171,10 @@ export function App() {
                 <div className="h-full pt-12 px-6 pb-8 bg-black/20 backdrop-blur-xl">
                     <div className="grid grid-cols-4 gap-6">
                     <For 
-                        provideItemSignal={false}
+                        // provideItemSignal={false}
                         list={filteredApps$}
                         index={app => app.id}
-                        factory={(app) => (
+                        factory={({item: app}) => (
                             <button
                                 onClick={() => setOpenApp(app)}
                                 className="flex flex-col items-center gap-2"
