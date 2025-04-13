@@ -12,36 +12,39 @@ import type { RenderFunction } from "@/core/dom-render/render";
 import type { VirtualElement, Renderable } from "@/types";
 
 /**
+ * used in {@link ForProps}
+ * 
+ */ 
+type ForFactory<T = unknown> = {
+    /**
+     * The item signal
+     */
+    item$: Signal<T>, 
+    /**
+     * The item
+     */
+    item: T, 
+    /**
+     * The index of the item
+     */
+    index: number, 
+    /**
+     * The list of items
+     */
+    list: T[], 
+}
+
+/**
  * For control flow element props
  * 
  * used in {@link For}
  * 
  */ 
-type ForProps<T = unknown> = ({
-    /**
-     * Whether to provide the item signal to the factory function
-     * Provide the item signal if true
-     * In this case, the factory function should have the fourth argument as the item signal
-     * @note 
-     * Creating an item signal is done be finding an item with the same index-value as the current item that being rendered - that cost O(n)
-     * if done for every item, it will cost O(n^2)
-     * therefore, it is recommended to use this option only when necessary 
-     * 
-     */
-    provideItemSignal: true;
+type ForProps<T = unknown> = {
     /**
      * The factory function to create the elements
      */
-    factory: (item: T, index: number, list: T[], itemSignal: Signal<T>) => Renderable;
-    
-} |{
-    provideItemSignal?: false | undefined;
-    /**
-     * The factory function to create the elements
-     */
-    factory: (item: T, index: number, list: T[]) => Renderable;
-}) & {
-    // factory: (item: T, index: number, list: T[]) => Renderable;
+    factory: (args: ForFactory<T>) => Renderable;    
     /**
      * The list of items to iterate over
      */ 
@@ -57,7 +60,7 @@ type ForProps<T = unknown> = ({
      * The element to render when the list is empty
      */
     empty?: Renderable;
-};
+}
 /**
  * For control flow element
  * @param {ForProps} props - For control flow element props
@@ -99,7 +102,7 @@ function renderFor(
         key.clone().push('sandbox')
     ) as HTMLElement;
 
-    const { list, factory, index, empty, memo = true, provideItemSignal } = (element.props as unknown as ForProps);
+    const { list, factory, index, empty, memo = true } = (element.props as unknown as ForProps);
     const currentKey = key.clone().push(element.props.controlTag as string);
     const currentKeyString = currentKey.toString();
 
@@ -136,6 +139,9 @@ function renderFor(
                 return;
             }
             
+            const mapSignal = listSignal.derive((items) => {
+                return new Map(items.map((item, i) => [indexFn(item, i), item]))
+            });
             const elementsDom = list.map((item, i) => {
                 const indexValue = indexFn(item, i);
                 if (memo) {
@@ -146,12 +152,11 @@ function renderFor(
                 }
                 const childKey = key.clone().pushIndex(i);
                 let element: Renderable;
-                if (provideItemSignal) {
-                    const itemSignal = listSignal.derive((items) => items.find((_, idx) => indexFn(_, idx) === indexValue));
-                    element = adaptVirtualElementChild(factory(item, i, list, itemSignal));
-                } else {
-                    element = adaptVirtualElementChild(factory(item, i, list));
-                }
+                const item$ = mapSignal.derive((map) => {
+                    const item = map.get(indexValue);
+                    return item as unknown;
+                });
+                element = adaptVirtualElementChild(factory({item, index: i, list, item$}));
                 const renderedResult = render(element, renderSandboxContainer, childKey);
                 const elementDom = fragmentExtraction(renderedResult, renderSandboxContainer);
                 if (memo) {
@@ -168,5 +173,5 @@ function renderFor(
     return container;
 }
 
-export type { ForProps };
+export type { ForProps, ForFactory };
 export { For, renderFor };
