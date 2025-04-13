@@ -7,7 +7,7 @@ title: "For"
 
 > **For**\<`T`\>(`props`): `VirtualElement`
 
-Defined in: core/control-flow/for/index.ts:76
+Defined in: core/control-flow/for/index.ts:79
 
 For control flow element
 
